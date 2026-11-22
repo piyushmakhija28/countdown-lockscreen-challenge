@@ -30,3 +30,4 @@ countdown-lockscreen-challenge/
 - **Level 2.2 Docstrings-Only:** Every public function and class must include contract docstrings specifying inputs, outputs, and behavior. Avoid redundant inline commentary narrating trivial statements.
 - **Ergonomics First:** Every visual design must respect phone lock screen constraints: top 25-30% reserved for system clock/date/widgets, middle 50% for countdown & milestones, bottom 10-15% for system indicators.
 - **Git Commit Standards:** Use conventional commit messages (`feat:`, `fix:`, `docs:`, `refactor:`, `test:`).
+

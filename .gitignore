@@ -41,3 +41,8 @@ Thumbs.db
 /INSTALL.md
 /USAGE.md
 /API.md
+
+# Machine-specific / Local AI Scaffolding (Excluded from public repo)
+.claude/
+library.lock.json
+.claude/settings.local.json
