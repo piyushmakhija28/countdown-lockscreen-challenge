@@ -152,3 +152,10 @@ Each functional requirement is formally specified with unique identifier, descri
 | FR-15   | F-05 Download      | BlobExporter        | CanvasRenderer.ts    | TC-POS-11                 |
 +---------+--------------------+---------------------+----------------------+---------------------------+
 ```
+
+---
+
+## 5. Architectural & Mathematical Blueprint Cross-References
+- **Mathematical Blueprint:** `docs/lld/09-pixel-perfect-mathematical-blueprint.md` (`DOC-LLD-09`) defines closed-form mathematical equations for 2D Affine TRS transforms, DPR sub-pixel quantization, Oklab perceptual color space, Fritsch-Carlson monotone cubic splines, Fitts's Law ergonomics, and OLED micro-orbital shifting.
+- **System Vulnerability Audit:** `docs/lld/08-system-design-vulnerability-audit.md` (`DOC-LLD-08`) covers the exhaustive 100-vulnerability resilience suite across 44 architectural dimensions.
+

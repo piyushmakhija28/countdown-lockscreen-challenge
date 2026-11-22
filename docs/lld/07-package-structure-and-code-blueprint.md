@@ -27,7 +27,7 @@ countdown-lockscreen-challenge/
 │   ├── 06-adr/                        # ADR-001 through ADR-008 (MADR 3.0)
 │   ├── 07-architecture-tradeoffs-and-faq.md
 │   ├── ui-ux/                         # Design tokens, ergonomics, a11y
-│   ├── lld/                           # Low-level design 01-08 (Classes, Sequences, Audit)
+│   ├── lld/                           # Low-level design 01-09 (Classes, Sequences, Audit, Math Blueprint)
 │   ├── devops/                        # Docker, CI/CD, hosting specs
 │   ├── security/                      # STRIDE, OWASP, input sanitization
 │   ├── resilience/                    # Bulkhead, retry, error catalog
@@ -79,3 +79,16 @@ To maintain strict acyclic dependencies ($D \le 0.15$):
 - `ai/` modules depend only on `core/types`.
 - `canvas/` modules depend only on `core/TimeEngine` and `config/themes`.
 - `app.js` is the sole orchestrator wiring modules together, ensuring strict inward-pointing dependencies conforming to Clean Architecture.
+
+---
+
+## 3. Mathematical Rigor & Geometry Integration (`DOC-LLD-09`)
+
+All low-level graphics, transforms, and chronometric state machines must strictly adhere to the closed-form algebraic formulations derived in `docs/lld/09-pixel-perfect-mathematical-blueprint.md`:
+1. **Coordinate Pipeline:** Affine TRS matrix mapping with $O(1)$ inverse unprojection.
+2. **Sub-Pixel Quantization:** $y_{\text{snapped}} = \lfloor y \cdot \text{DPR} + 0.5 \rfloor / \text{DPR}$.
+3. **Color Blending:** Oklab perceptual color space matrix pipeline eliminating sRGB gray dead zones.
+4. **Milestone Waves:** Fritsch-Carlson monotone cubic spline interpolation ensuring $\alpha_k^2 + \beta_k^2 \le 9$.
+5. **Ergonomic Safe Zones:** Fitts's Law index of difficulty $ID \le 3.5\text{ bits}$ on mobile viewports.
+6. **OLED AOD Protection:** Continuous procedural micro-orbital shifting with $R = 2.0\text{px}$ and $T = 3600\text{s}$.
+
