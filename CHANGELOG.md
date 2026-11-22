@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.0.0] - 2026-11-22
 
+### Changed
+- **Single-Source SRS Consolidation:** Merged Handshake X Google 4-pillar acceptance criteria and scope boundaries into `docs/05-srs.md`, establishing it as the sole, authoritative Software Requirements Specification.
+- **Root Directory Clean Governance:** Removed redundant root `SRS.md`, enforcing strict governance where the root directory contains strictly the 4 project management files (`README.md`, `CLAUDE.md`, `VERSION`, `CHANGELOG.md`) and all specifications live exclusively under `docs/`.
+
 ### Added
 - **Cross-Device Pixel-Perfect Mathematical Blueprint (`DOC-LLD-09` across 10 Modules):**
   - Synthesized comprehensive mathematical design blueprint deriving all quantitative calculations from first principles.

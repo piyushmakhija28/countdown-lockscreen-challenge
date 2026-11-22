@@ -13,12 +13,18 @@ countdown-lockscreen-challenge/
 ├── .gitignore               # Ignored files & Level 2.2 doc exclusions
 ├── VERSION                  # Single source of truth version (1.0.0)
 ├── CHANGELOG.md             # Keep a Changelog release history
-├── SRS.md                   # Software Requirements Specification
 ├── CLAUDE.md                # Developer instructions & context
 ├── README.md                # Main documentation & challenge playbook
-├── docs/                    # Non-root documentation & design specifications
-│   ├── competition-rules-summary.md  # Exhaustive contest rules summary
-│   └── lockscreen-design-strategy.md # Safe-zone ergonomics & UI guide
+├── docs/                    # Architectural specifications & requirements
+│   ├── 00-problem-statement.md
+│   ├── 01-prd.md
+│   ├── 02-hld.md
+│   ├── 03-api-contract.md
+│   ├── 04-competition-and-platform-research.md
+│   ├── 05-srs.md            # Canonical Software Requirements Specification
+│   ├── 06-adr/              # Architecture Decision Records
+│   ├── lld/                 # Low-level design & mathematical blueprints
+│   └── ...                  # Specialized engineering subsystems
 └── src/                     # Source code (web app / wallpaper generator)
     ├── index.html           # Main application entry point
     ├── css/                 # Modern styling & design tokens
@@ -26,7 +32,7 @@ countdown-lockscreen-challenge/
 ```
 
 ## Development Guidelines
-- **Strict Level 2.2 Governance:** Only 5 documentation files are permitted at the root: `SRS.md`, `README.md`, `CLAUDE.md`, `VERSION`, `CHANGELOG.md`. All other markdown documents MUST reside in `docs/`.
+- **Strict Level 2.2 Governance:** Root directory strictly contains only 4 project management files: `README.md`, `CLAUDE.md`, `VERSION`, `CHANGELOG.md`. All architectural, functional, and requirement specifications (including `05-srs.md`) reside strictly in `docs/` to preserve a clean single source of truth.
 - **Level 2.2 Docstrings-Only:** Every public function and class must include contract docstrings specifying inputs, outputs, and behavior. Avoid redundant inline commentary narrating trivial statements.
 - **Ergonomics First:** Every visual design must respect phone lock screen constraints: top 25-30% reserved for system clock/date/widgets, middle 50% for countdown & milestones, bottom 10-15% for system indicators.
 - **Git Commit Standards:** Use conventional commit messages (`feat:`, `fix:`, `docs:`, `refactor:`, `test:`).

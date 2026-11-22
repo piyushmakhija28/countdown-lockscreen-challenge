@@ -65,7 +65,6 @@ countdown-lockscreen-challenge/
 ├── .gitignore                         # Level 2.2 strict doc exclusions
 ├── VERSION                            # Single source of truth (1.0.0)
 ├── CHANGELOG.md                       # Keep a Changelog standard
-├── SRS.md                             # Canonical root specification
 ├── CLAUDE.md                          # Project developer guidelines
 └── README.md                          # Main project playbook
 ```
