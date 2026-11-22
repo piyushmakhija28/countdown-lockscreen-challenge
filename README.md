@@ -93,7 +93,7 @@ Avoid generic "My Birthday" or "New Year" themes. Instead, pick a high-stakes, i
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/techdeveloper-org/countdown-lockscreen-challenge.git
+   git clone https://github.com/piyushmakhija28/countdown-lockscreen-challenge.git
    cd countdown-lockscreen-challenge
    ```
 
