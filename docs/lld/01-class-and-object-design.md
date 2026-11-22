@@ -241,4 +241,62 @@ export class CanvasRenderer {
    */
   public dispose(): void;
 }
+
+/**
+ * Offscreen DOM text shaping bridge ensuring 100% accurate Indic/Arabic complex script shaping.
+ */
+export interface BiDiTextShaper {
+  rasterizeComplexText(text: string, fontFamily: string, fontSize: number, color: string): Promise<ImageBitmap>;
+  detectDirectionality(text: string): 'rtl' | 'ltr';
+  wrapDirectionalIsolates(text: string): string;
+}
+
+/**
+ * Perceptually uniform Oklab color space gradient interpolation engine.
+ */
+export interface OklabGradientEngine {
+  interpolateOklab(colorA: string, colorB: string, t: number): string;
+  createOklabCanvasGradient(ctx: CanvasRenderingContext2D, x0: number, y0: number, x1: number, y1: number, stops: [number, string][]): CanvasGradient;
+}
+
+/**
+ * Adaptive tri-modal frame governor mitigating mobile GPU thermal throttling.
+ */
+export interface AdaptiveFrameGovernor {
+  setInteractionState(active: boolean): void;
+  getThrottleIntervalMs(): number;
+  registerVisibilityListener(): void;
+}
+
+/**
+ * Procedural micro-orbital shifting engine preventing OLED sub-pixel burn-in on AOD displays.
+ */
+export interface MicroOrbitalBurnInGuard {
+  getOrbitalOffset(timestampMs: number): { dx: number; dy: number };
+  clampRelativeLuminance(rgb: [number, number, number]): [number, number, number];
+}
+
+/**
+ * Dual-transport URL and binary bit-packed state encoding service.
+ */
+export interface DualTransportUrlService {
+  encodeCompactBinary(state: CountdownState): Uint8Array;
+  decodeCompactBinary(bytes: Uint8Array): CountdownState;
+  generateShareableLink(state: CountdownState, mode: 'hash' | 'query'): string;
+  renderMicroQrVector(bytes: Uint8Array, sizePx: number): Promise<ImageBitmap>;
+}
+
+/**
+ * Resilient streaming JSON repair parser handling mid-token disconnections.
+ */
+export interface StreamingJSONRepairService {
+  repairAndParse<T>(truncatedJson: string): T | null;
+}
+
+/**
+ * Dynamic lockscreen safe zone router handling notification peek and foldable morphing.
+ */
+export interface DynamicSafeZoneRouter {
+  getActiveSafeZone(aspectRatio: string, notificationActive: boolean): SafeZoneBounds;
+}
 ```

@@ -64,3 +64,15 @@ We must establish the exact canvas resolution and antialiasing strategy to produ
 - Memory buffer allocation is strictly $47.4\text{MB}$, comfortably below mobile Safari's $256\text{MB}$ safety threshold.
 - Supersampling eliminates sub-pixel anti-aliasing artifacts, creating print-quality typography on OLED screens.
 - Output dimensions ($1170 \times 2532$) match the exact native display resolution of the iPhone 13/14/15/16 and easily crop to Android $1080 \times 2400$ screens without aspect ratio distortion.
+
+### 5.2 Wide-Gamut Display P3 Context Negotiation
+When rendering high-saturation neon gradients (e.g. Cyber Obsidian cyan `#00F5FF` or Solar Gold `#FFD700`) on modern OLED screens, 8-bit sRGB leads to color clipping. The renderer dynamically checks `window.matchMedia('(color-gamut: p3)').matches` and initializes the Canvas context with `{ colorSpace: 'display-p3' }`. For legacy sRGB displays, perceptual Oklab color space blending is employed to guarantee zero gradient banding.
+
+### 5.3 EXIF Auto-Orientation Compensation
+Mobile photo uploads from smartphone cameras embed orientation tags (e.g., EXIF Tag 6). The pipeline employs `createImageBitmap(blob, { imageOrientation: 'from-image' })` with an EXIF TIFF header byte-parser fallback, ensuring uploaded photos are automatically rotated correctly on the lockscreen canvas.
+
+### 5.4 Adaptive File Size Clamping (< 4.0MB Budget)
+To prevent messaging platforms (Discord, WeChat, WhatsApp) from rejecting exported wallpapers due to file size limits, the export engine enforces an adaptive compression ladder:
+1. Primary: Uncompressed 24-bit PNG.
+2. If size exceeds $4.0\text{MB}$, it automatically steps down to adaptive PNG-8 with Floyd-Steinberg dithering or WebP (quality 0.95, 4:4:4 chroma subsampling), maintaining crisp countdown typography within the strict $<4.0\text{MB}$ budget.
+

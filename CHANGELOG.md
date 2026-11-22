@@ -8,7 +8,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.0.0] - 2026-11-22
 
 ### Added
-- **28-Issue System Design & LLD Vulnerability Audit Suite (`DOC-LLD-08`):**
+- **60-Issue System Design & LLD Vulnerability Audit Suite (`DOC-LLD-08` across 24 Dimensions):**
+  - Expanded from 28 to **60 exhaustive, mathematically formulated system design and low-level engineering vulnerabilities** with exact failure triggers and production-grade TypeScript architectural solutions.
+  - Dimension 8: Multilingual Typography & Complex Text Shaping (Indic Devanagari/Thai matra detachment fix via SVG DOM rasterization bridge, sub-pixel baseline quantization, Unicode UAX #9 BiDi RTL isolates).
+  - Dimension 9: Extreme Compression, Link Transport & Social Sandboxes (12-byte packed binary struct with Deflate/LZ compression reducing URLs by $75\%$, dual-transport `#v1=` / `?s=` routing, lockscreen footer Micro-QR vector matrix for zero-network peer scan).
+  - Dimension 10: Persistent Storage Resilience & Mobile OS Purges (WebKit ITP 7-day storage purge defense via `navigator.storage.persist()`, standalone PWA detection, RFC 5545 `.ics` calendar sync, tiered storage degradation ladder).
+  - Dimension 11: Hardware Longevity, Display Ergonomics & Thermals (Always-On Display OLED micro-orbital pixel shifting $R=2.0\text{px}$ to prevent burn-in, Adaptive Tri-Modal Frame Governor to eliminate mobile GPU thermal throttling).
+  - Dimension 12: Mobile OS Lockscreen Ecosystem Dynamic Collision (Dynamic notification peek corridor $Y \in [45\%, 65\%]$ avoidance via Dual-Zone Anchor Topologies, Foldable Bi-Fold Synchronized dual export for Galaxy Z Fold cover and unfolded displays).
+  - Dimension 13: Color Science, Gamut Mapping & Oklab Gradients (Display-P3 context negotiation, Oklab perceptual color space blending eliminating muddy gray gradient dead zones).
+  - Dimension 14: Security, CSP & Incomplete Streaming JSON Recovery (Zero-external-asset strict CSP, regex hex color validator, `JSONRepairStream` auto-closing brackets on truncated token drops).
+  - Dimensions 15â€“24: ProMotion 120Hz microsecond chronometry, external screen V-Sync tearing immunity, 1D Kalman filter for 3D gyro tilt drift, non-Gregorian Hijri/Buddhist calendar mapping, EXIF auto-rotation, adaptive PNG-8/WebP $<4.0\text{MB}$ clamping, pinch-zoom containment, CSS `100dvh` keyboard adaptation, and zero-dependency $<65\text{KB}$ bundle constraints.
+  - Complete 60-Issue Resolution Verification Matrix mapping every vulnerability to its corresponding test case and specification.
+- **28-Issue System Design & LLD Vulnerability Audit Suite (`DOC-LLD-08` Initial Milestone):**
   - Exhaustive 7-dimensional system design failure mode audit with mathematical proofs and architectural solutions.
   - Dimension 1: High-Resolution & Canvas Graphics Pipeline (16.7M WebKit ceiling, font race condition, Display P3 gamut, multi-byte emoji metrics, transient RAM spikes).
   - Dimension 2: Stability & State Resilience (GPU texture leaks, object URL leaks, ambiguous timezone skew, past negative time runaway, corrupt URL hash recovery).

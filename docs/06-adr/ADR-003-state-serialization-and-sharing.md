@@ -55,3 +55,23 @@ Contestants, students, and evaluators must be able to share their configured cou
 - State is serialized into a compact JSON schema, converted to UTF-8 bytes, and Base64 URL-safe encoded into `window.location.hash`.
 - Total generated URL length is typically between **$280\text{ and } 450\text{ characters}$**, well below the $2048\text{ character}$ ceiling.
 - Judges can evaluate any shared countdown link with zero server dependencies.
+
+### 5.2 Dual-Transport State & Social WebView Stripping Resilience
+Social media sharing gateways (Twitter/X, WhatsApp, LinkedIn, URL shorteners like `bit.ly`) often strip everything following the `#` hash fragment per RFC 3986. To eliminate state loss:
+- The sharing engine generates links using **Dual-Transport Routing**:
+  - Primary: `https://domain/#v1=...` (client-side only, zero server logging).
+  - Fallback: `https://domain/?s=...` (query parameter transport for social card scrapers and webview redirects).
+- The client-side router checks `window.location.hash` first; if empty, it inspects `window.location.search`, seamlessly reconstructing the full countdown state.
+
+### 5.3 12-Byte Packed Binary Struct & Deflate/LZ Compression
+For complex multilingual countdowns (Hindi, Japanese, Arabic with extensive affirmations), naive JSON Base64 can balloon past $2000$ characters. The engine introduces a **12-Byte Packed Binary Struct**:
+- 8 bytes: Unix Epoch Target Milliseconds ($uint64$).
+- 1 byte: Theme Preset Identifier ($uint8$).
+- 1 byte: Milestone Status Bitmask ($uint8$, up to 8 milestones).
+- 2 bytes: Reserved flags / Aspect Ratio ID ($uint16$).
+- Variable length: Deflate/LZ-compressed string payload.
+Total payload size is compressed by $65\text{--}80\%$, keeping shared URLs strictly under $320\text{ characters}$ even for multi-byte Unicode scripts.
+
+### 5.4 Wallpaper Micro-QR Vector Matrix (Zero-Network Peer Scan)
+As a tertiary fail-safe, the wallpaper rasterizer embeds an optional $120 \times 120\text{px}$ vector **Micro-QR Code** in the bottom-left corner of the exported wallpaper. Any friend or judge can point their smartphone camera at the lock screen wallpaper to instantly import and fork the countdown without needing an active internet connection!
+
