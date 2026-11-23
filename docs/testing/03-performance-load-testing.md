@@ -7,7 +7,7 @@
 **Reviewer:** Architecture Review Board  
 **Status:** APPROVED  
 **Standard:** Level 2.2 Documentation Governance (Performance Benchmarks & Load Profiles)  
-**Version:** 2.3.2
+**Version:** 2.3.4
 
 ---
 
@@ -131,13 +131,13 @@ Because chronometric tick calculations use pre-allocated static flyweight lookup
 +-----------------------------------+--------------------+---------------------+-----------------------------------------+
 | Architectural Subsystem           | Latency Budget     | P99 Observed Metric | SLA / Acceptance Gate                   |
 +-----------------------------------+--------------------+---------------------+-----------------------------------------+
-| **Font Readiness Gate**           | $T < 35	ext{ms}$  | $18.4	ext{ms}$     | $150	ext{ms}$ hard timeout fallback    |
-| **9-Stage Canvas Rasterization**  | $T < 350	ext{ms}$ | $142.0	ext{ms}$    | Sub-350ms 2x supersampled export        |
-| **Dynamic Scrim Normalization**   | $T < 10	ext{ms}$  | $3.2	ext{ms}$      | $32 	imes 32$ subsampled grid analysis |
-| **Tri-Modal Sensory Sync Jitter** | $\Delta t < 20	ext{ms}$| $4.1	ext{ms}$ | Audio, haptic & confetti phase lock     |
+| **Font Readiness Gate**           | $T < 35\text{ms}$  | $18.4\text{ms}$     | $150\text{ms}$ hard timeout fallback    |
+| **9-Stage Canvas Rasterization**  | $T < 350\text{ms}$ | $142.0\text{ms}$    | Sub-350ms 2x supersampled export        |
+| **Dynamic Scrim Normalization**   | $T < 10\text{ms}$  | $3.2\text{ms}$      | $32 \times 32$ subsampled grid analysis |
+| **Tri-Modal Sensory Sync Jitter** | $\Delta t < 20\text{ms}$| $4.1\text{ms}$ | Audio, haptic & confetti phase lock     |
 | **Cumulative Layout Shift (CLS)** | $CLS = 0.000$      | $0.000$             | OpenType 'tnum' tabular numeral metrics |
 +-----------------------------------+--------------------+---------------------+-----------------------------------------+
 ```
 
 ### 5.1 Zero-CLS Tabular Numeral Verification Benchmark
-Under automated high-frequency DOM mutation profiling, digit switches between narrow glyphs ('1') and wide glyphs ('8') maintain identical glyph bounding boxes ($\Delta w = 0.00	ext{px}$), guaranteeing zero visual jitter and zero browser reflow recalculations.
+Under automated high-frequency DOM mutation profiling, digit switches between narrow glyphs ('1') and wide glyphs ('8') maintain identical glyph bounding boxes ($\Delta w = 0.00\text{px}$), guaranteeing zero visual jitter and zero browser reflow recalculations.

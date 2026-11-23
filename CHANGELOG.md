@@ -1,5 +1,32 @@
 # Changelog
 
+## [2.3.4] - 2026-11-23
+
+### Fixed
+- **LLD-07 Code Blueprint Realignment (`DOC-LLD-07`):**
+  - Overhauled repository directory tree in `docs/lld/07-package-structure-and-code-blueprint.md` to reflect exact disk reality across all 66 specs.
+  - Corrected 9 divergent phantom file names in `devops/`, `lld/`, `management/`, `observability/`, `resilience/`, `security/`, and `testing/`.
+  - Realigned all 10 ADR file slugs in `docs/06-adr/` (`ADR-005` through `ADR-014`).
+  - Corrected LLD specs count to 11 (adding `DOC-LLD-11`), observability to 3 specs, and testing to 3 specs.
+- **Traceability Matrix File Path Precision (`DOC-MGT-03`):**
+  - Corrected truncated file paths on lines 93, 250, and 253 to `03-credential-logging-governance.md`, `07-design-rationale-and-anti-pattern-defense.md`, and `10-cognitive-ergonomics-heuristics-usability.md`.
+- **LaTeX Escape Sequences Sanitization:**
+  - Eliminated all raw backspace (`\x08`) and tab (`\t`) corrupted escape characters across `docs/07-architecture-tradeoffs-and-faq.md`, `docs/08-handshake-submission-package.md`, `docs/testing/03-performance-load-testing.md`, and `CHANGELOG.md:184`.
+  - Re-rendered mathematical formulas with strict raw string escaping: $\bar{Y}_{\text{bg}} > 0.35$, $1170 \times 2532$, $16.7\text{MP}$, and $< 20\text{ms}$.
+- **PRD Invariant Table Completion (`DOC-01-PRD`):**
+  - Added missing invariants `INV-018` (Tabular Numeral Advance Width Invariance & Zero CLS), `INV-019` (Dual-Constraint Hardware Buffer Allocation & Dynamic Scrim Bounds), and `INV-020` (Tri-Modal Sensory Synchronization Temporal Bound).
+  - Added Section 5.1 detailing Tier-1 Architectural Constraints (`SYS-INV-001` through `SYS-INV-010`).
+- **HLD Invariant & ADR Disconnect Resolution (`DOC-02-HLD`):**
+  - Added Section 7 detailing the comprehensive ADR 001-015 and Invariant Realization Matrix (`SYS-INV-001..010`, `INV-001..020`).
+  - Linked Section 1.1 architectural guarantees to formal invariant IDs (`SYS-INV-007`, `SYS-INV-009`, `SYS-INV-006`, `INV-013/019`, `INV-018`, `INV-020`).
+- **Component Interface Contract Expansion (`DOC-03-API`):**
+  - Added Section 11 establishing the formal `ISensoryCoordinator` component contract and FSM for Tri-Modal Sensory Synchronization.
+- **Documentation Asset Reconciliation:**
+  - Realigned `README.md:225` link to `(ADR 001-015)`.
+  - Reconciled asset counters across `DOC-08` and `DOC-09` to exactly 66 specifications in `docs/` and 92 total canonical assets.
+- **Repository-Wide Version Synchronization (`v2.3.4`):**
+  - Unified all 66 specs in `docs/`, `VERSION`, `SRS.md`, `docs/05-srs.md`, `README.md`, and `CLAUDE.md` to `2.3.4`.
+
 ## [2.3.3] - 2026-11-23
 ### Added
 - **Two-Tier System Invariant Architecture (`SYS-INV-001..010` & `INV-001..020`):** Formalized Tier 1 System Architectural Invariants (`SYS-INV-001` through `SYS-INV-010`) in `docs/00-problem-statement.md` and harmonized with Tier 2 Mathematical Precision Invariants (`INV-001` through `INV-020`) derived in `DOC-LLD-09` and specified in `docs/05-srs.md` and `docs/management/03-traceability-matrix.md`.
@@ -181,7 +208,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Added Stage 3 ADR and Draw.io parity gates to `DOC-DEVOPS-02`.
   - Updated `DOC-MGT-03` Traceability Matrix Tables 3 & 4 mapping ADR-011 and ADR-012 to Pillars P-07 and P-09.
 - **Physical Submission Package Mockup Asset (`assets/`):**
-  - Programmatically synthesized the official $1170 	imes 2532\text{px}$ flagship lock screen wallpaper mockup in `assets/cover-showcase-iphone16pro-mockup.png` following exact specs in `DOC-UI-01`, `DOC-UI-02`, and `DOC-LLD-09`.
+  - Programmatically synthesized the official $1170 \times 2532\text{px}$ flagship lock screen wallpaper mockup in `assets/cover-showcase-iphone16pro-mockup.png` following exact specs in `DOC-UI-01`, `DOC-UI-02`, and `DOC-LLD-09`.
 
 ### Changed
 - **Version String Unification (`v2.0.0`):**

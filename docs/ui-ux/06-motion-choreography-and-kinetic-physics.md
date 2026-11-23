@@ -8,7 +8,7 @@
 **Reviewer:** Architecture Review Board  
 **Status:** APPROVED  
 **Standard:** Level 2.2 Documentation Governance (Kinetic Physics & Sensory Specification)  
-**Version:** 2.3.2  
+**Version:** 2.3.4  
 
 ---
 

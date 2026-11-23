@@ -7,7 +7,7 @@
 **Reviewer:** Architecture Review Board  
 **Status:** APPROVED  
 **Standard:** Level 2.2 Documentation Governance (ISO/IEC/IEEE 29148 Standard)  
-**Version:** 2.3.2
+**Version:** 2.3.4
 
 ---
 
@@ -585,4 +585,66 @@ export interface IHapticService {
    */
   vibrate(pattern: number | number[]): boolean;
 }
+```
+
+---
+
+## 11. `ISensoryCoordinator` Component Contract (Tri-Modal Synchronization)
+
+The `ISensoryCoordinator` interface coordinates visual spring particle kinetics, procedural Web Audio ADSR synthesis, and device tactile haptics within an inter-sensory offset $\Delta t < 20\text{ms}$ (`ADR-015`, `INV-020`):
+
+### 11.1 TypeScript Interface Definition
+
+```typescript
+export interface SensoryTriggerResult {
+  readonly success: boolean;
+  readonly visualTriggered: boolean;
+  readonly audioTriggered: boolean;
+  readonly hapticTriggered: boolean;
+  readonly jitterMs: number;
+}
+
+export interface ISensoryCoordinator {
+  /**
+   * Triggers deterministic tri-modal feedback upon milestone checkbox completion.
+   * Visual: spring checkmark pop (zeta ~ 0.70).
+   * Audio: procedural ascending C5 -> E5 -> G5 pentatonic chime.
+   * Haptic: navigator.vibrate([15, 30, 20]).
+   */
+  triggerMilestoneFeedback(themeId: string): Promise<SensoryTriggerResult>;
+
+  /**
+   * Triggers continuous celebratory feedback upon target timer expiration (T <= 0).
+   * Visual: second-order damped harmonic particle explosion (120 particles).
+   * Audio: procedural victory fanfare chord (C4 + E4 + G4 + C5) governed by Web Locks mutex.
+   * Haptic: navigator.vibrate([100, 50, 100, 50, 200]).
+   */
+  triggerVictoryCelebration(themeId: string): Promise<SensoryTriggerResult>;
+
+  /**
+   * Halts active victory fanfare and cleans up running particle animation loops.
+   */
+  stopCelebration(): void;
+
+  /**
+   * Releases Web Audio AudioContext, terminates animation loops, and cleans up event listeners.
+   */
+  dispose(): void;
+}
+```
+
+### 11.2 State Machine Lifecycle
+
+```mermaid
+stateDiagram-v2
+    [*] --> IDLE
+    IDLE --> MILESTONE_ARMED : Milestone Checkbox Clicked
+    MILESTONE_ARMED --> MILESTONE_TRIGGERED : Concurrent Microtask Dispatch (<20ms)
+    MILESTONE_TRIGGERED --> IDLE : ADSR Decay & Haptic Complete
+
+    IDLE --> VICTORY_ACQUIRING_LOCK : Timer T <= 0
+    VICTORY_ACQUIRING_LOCK --> VICTORY_CELEBRATING : Web Lock Acquired (Primary Tab)
+    VICTORY_ACQUIRING_LOCK --> VICTORY_VISUAL_ONLY : Lock Contended (Secondary Tab)
+    VICTORY_CELEBRATING --> IDLE : stopCelebration() / Set New Goal
+    VICTORY_VISUAL_ONLY --> IDLE : stopCelebration() / Set New Goal
 ```

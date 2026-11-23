@@ -7,7 +7,7 @@
 **Reviewer:** Architecture Review Board  
 **Status:** APPROVED  
 **Standard:** Level 2.2 Documentation Governance (ISO/IEC/IEEE 29148 Standard)  
-**Version:** 2.3.2
+**Version:** 2.3.4
 
 ---
 
@@ -50,11 +50,14 @@ The system employs a **Decoupled Dual-Engine Architecture** executing entirely w
 ```
 
 ### 1.1 Architectural Guarantees & Fitness Functions
-1. **Zero-PII Privacy Invariant:** No user data, goals, or telemetry are transmitted to any database. Client state is strictly localized to `window.location.hash` and `sessionStorage`.
-2. **Sub-second Startup ($FCP < 0.8\text{s}$):** Static edge distribution on GitHub Pages ensures instant distribution without server cold-start penalties.
-3. **Dual-Clock Deterministic Frame Rate ($60\text{ fps}$):** The animation chronometer couples universal UTC epoch anchoring with `requestAnimationFrame` and `visibilitychange` lifecycle listeners, guaranteeing zero timing drift during device sleep.
-4. **GPU Texture Memory Safety:** Buffer allocations are dynamically bounded by `AdaptiveBufferAllocator`, ensuring total canvas area never exceeds $16,777,216\text{ pixels}$ ($2^{24}$) and maximum linear dimension never exceeds $4096\text{px}$ on memory-constrained devices.
-5. **Architectural Acyclicity ($D \le 0.15$):** Strict inward dependency injection conforming to Clean Architecture principles.
+1. **Zero-PII Privacy Invariant (`SYS-INV-007`):** No user data, goals, or telemetry are transmitted to any database. Client state is strictly localized to `window.location.hash` (`ADR-003`) and `sessionStorage` (`ADR-006`).
+2. **Sub-Second Startup & Edge Delivery (`SYS-INV-009`):** Static edge distribution on GitHub Pages ensures instant distribution ($FCP < 0.8\text{s}$) without server cold-start penalties (`ADR-008`).
+3. **Zero Runtime Chronometry Drift (`SYS-INV-006`, `INV-009`):** The animation chronometer couples universal UTC epoch anchoring with `requestAnimationFrame` and `visibilitychange` lifecycle listeners, guaranteeing zero timing drift during device sleep (`ADR-007`).
+4. **Tabular Numeral Advance Width & Zero CLS (`INV-018`, `ADR-013`):** Hardware font-readiness barrier and OpenType `font-variant-numeric: tabular-nums` ensure $w(d_i) \equiv w(d_j)$ and strictly $CLS = 0.000$ during 1Hz/60Hz ticking.
+5. **GPU Texture Memory Safety & Dynamic Scrim Bounds (`INV-013`, `INV-019`, `ADR-004`, `ADR-014`):** Buffer allocations are dynamically bounded by `AdaptiveBufferAllocator`, ensuring total canvas area never exceeds $16,777,216\text{ pixels}$ ($2^{24}$) and linear dimension never exceeds $4096\text{px}$, with dynamic ambient scrim adapting when $\bar{Y}_{\text{bg}} > 0.35$ to guarantee APCA $L^c \ge 75$.
+6. **Tri-Modal Sensory Synchronization (`INV-020`, `ADR-015`):** `SensoryCoordinator` binds visual spring kinetics ($m\ddot{x} + c\dot{x} + kx = 0$), procedural Web Audio ADSR synthesis (`ADR-009`), and tactile haptics within an inter-sensory offset $< 20\text{ms}$.
+7. **Single-Instance Victory Mutex (`SYS-INV-010`, `INV-016`, `ADR-012`):** Web Locks API arbitrates alarm audio across tabs, guaranteeing exactly one tab sounds the fanfare.
+8. **Architectural Acyclicity ($D \le 0.15$):** Strict inward dependency injection conforming to Clean Architecture principles (`ADR-001`).
 
 ---
 
@@ -414,4 +417,50 @@ All browser infrastructure dependencies (`requestAnimationFrame`, `history.repla
 |   | **Resilience & Security**   |        | `InputSanitizer`, `UrlStateService`,| Trojan Source sanitizer, 15-error matrix,|
 |   |                             |        | `AudioChimeService`, Service Worker| 4-state Web Audio FSM, zero-PII privacy.|
 +---+-----------------------------+--------+------------------------------------+-----------------------------------------+
+```
+
+---
+
+## 7. Architecture Decision Records (ADR 001-015) & System Invariant Realization Matrix
+
+Every major design decision and invariant is realized in concrete implementation modules and verified by automated fitness tests:
+
+```
++---------+-----------------------------------------+---------------------------------------+----------------------------------+
+| Spec ID | Architectural Capability                | Concrete Realization Module           | Verification Test Artifact       |
++---------+-----------------------------------------+---------------------------------------+----------------------------------+
+| ADR-001 | Vanilla ES2022 Zero-Build Architecture  | `src/js/app.js`, `src/index.html`     | `test/e2e/test_bundle_free.js`   |
+| ADR-002 | Canvas 2D + DOM Ergonomic Decoupling    | `src/js/canvas/CanvasRenderer.js`     | `test/unit/test_canvas_render.js`|
+| ADR-003 | Stateless URL Hash Codec (#v1=)         | `src/js/core/UrlStateService.js`      | `test/unit/test_url_codec.js`    |
+| ADR-004 | Adaptive High-DPI Buffer Allocation     | `src/js/canvas/AdaptiveBufferAlloc.js`| `test/unit/test_buffer_alloc.js` |
+| ADR-005 | Glassmorphism & Token Design System     | `src/css/glassmorphism.css`           | `test/a11y/test_contrast.js`     |
+| ADR-006 | Privacy-First Local Storage Engine      | `src/js/core/ResilientStorageServ.js` | `test/security/test_no_pii.js`   |
+| ADR-007 | Dual-Clock Driftless Chronometry        | `src/js/core/DualClockTimeEngine.js`  | `test/unit/test_time_drift.js`   |
+| ADR-008 | Asset-Differentiated SW Cache PWA       | `public/sw.js`                        | `test/e2e/test_offline_sw.js`    |
+| ADR-009 | Procedural Web Audio ADSR Synthesizer   | `src/js/services/AudioChimeService.js`| `test/unit/test_audio_synth.js`  |
+| ADR-010 | Token Bucket History PushState Guard    | `src/js/core/TokenBucketHistGuard.js` | `test/unit/test_history_guard.js`|
+| ADR-011 | Cross-Tab BroadcastChannel Sync         | `src/js/core/StateStore.js`           | `test/unit/test_broadcast_sync.js`|
+| ADR-012 | Web Locks Single-Instance Alarm Mutex   | `src/js/services/AudioChimeService.js`| `test/unit/test_alarm_mutex.js`  |
+| ADR-013 | Tabular Numeral Typography & Zero CLS   | `src/js/services/FontService.js`      | `test/perf/test_zero_cls.js`     |
+| ADR-014 | 9-Stage Canvas Wallpaper Engine         | `src/js/canvas/CanvasRenderer.js`     | `test/unit/test_9stage_export.js`|
+| ADR-015 | Tri-Modal Sensory Synchronization       | `src/js/services/SensoryCoord.js`     | `test/unit/test_sensory_sync.js` |
++---------+-----------------------------------------+---------------------------------------+----------------------------------+
+```
+
+### 7.1 System Invariant Realization Mapping
+
+```
++-------------------+-----------------------------------------+---------------------------------------+
+| Invariant Range   | Architectural Responsibility            | Enforcing Modules                     |
++-------------------+-----------------------------------------+---------------------------------------+
+| SYS-INV-001..002  | Goal Input & Checkpoint Boundaries      | `InputSanitizer.js`, `GeminiClient.js`|
+| SYS-INV-003..004  | Biomechanical Safe-Zone Clearance       | `SafeZoneOverlay.js`, `tokens.css`    |
+| SYS-INV-005..006  | Flagship Export & Zero Runtime Drift    | `CanvasRenderer.js`, `TimeEngine.js`  |
+| SYS-INV-007..008  | Zero-PII Privacy & Sunlight Contrast    | `UrlStateService.js`, Scrim Compositor|
+| SYS-INV-009..010  | Edge CDN Delivery & Single-Tab Mutex   | GitHub Pages CDN, Web Locks Mutex     |
+| INV-001..010      | Mathematical Layout & Affine Geometry   | `09-pixel-perfect-mathematical-blueprint.md` |
+| INV-011..015      | Dynamic Physics & Oklab Gamut Mapping   | `ParticleEngine.js`, Oklab Math       |
+| INV-016..017      | Multi-Tab Mutex & Broadcast Sync        | Web Locks API, BroadcastChannel API   |
+| INV-018..020      | Tabular CLS, Scrim Bounds & Tri-Modal   | `FontService.js`, `SensoryCoordinator`|
++-------------------+-----------------------------------------+---------------------------------------+
 ```

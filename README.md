@@ -222,7 +222,7 @@ Detailed design documents are maintained in [`docs/`](docs/):
   - [DOC-03: API & Contract Specifications](docs/03-api-contract.md)
   - [DOC-04: Competition & Platform Research](docs/04-competition-and-platform-research.md)
   - [DOC-05: Software Requirements Specification (SRS)](docs/05-srs.md)
-  - [DOC-06: Architecture Decision Records (ADR 001-012)](docs/06-adr/)
+  - [DOC-06: Architecture Decision Records (ADR 001-015)](docs/06-adr/)
   - [DOC-07: Architecture Tradeoffs & FAQ](docs/07-architecture-tradeoffs-and-faq.md)
   - [DOC-08: Handshake Official Contest Submission Package](docs/08-handshake-submission-package.md)
   - [Contest Rules Summary](docs/competition-rules-summary.md)

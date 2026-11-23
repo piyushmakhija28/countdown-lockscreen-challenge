@@ -7,7 +7,7 @@
 **Reviewer:** Architecture Review Board  
 **Status:** APPROVED  
 **Standard:** Level 2.2 Documentation Governance (Contest Execution Blueprint)  
-**Version:** 2.3.2
+**Version:** 2.3.4
 
 ---
 

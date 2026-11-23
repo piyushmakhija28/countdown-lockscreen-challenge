@@ -7,7 +7,7 @@
 **Reviewer:** Architecture Review Board  
 **Status:** APPROVED  
 **Standard:** Level 2.2 Documentation Governance (ISO/IEC/IEEE 29148 Standard)  
-**Version:** 2.3.2
+**Version:** 2.3.4
 
 ---
 
@@ -235,7 +235,7 @@ journey
 
 ## 5. Hard System Invariants & Architectural Constraints (INV-001 to INV-020)
 
-The application design is mathematically bounded by 17 immutable system invariants guaranteeing sub-pixel precision, zero-drift timing, zero-PII privacy, and multi-tab coordination:
+The application design is mathematically bounded by 20 immutable mathematical invariants guaranteeing sub-pixel precision, zero-drift timing, zero-PII privacy, and multi-tab coordination:
 
 | Invariant ID | Formulation / Constraint | Physical / Psychological Rationale |
 |:---|:---|:---|
@@ -256,6 +256,26 @@ The application design is mathematically bounded by 17 immutable system invarian
 | **INV-015** | $S_{\text{effective}} \ge S_{\text{floor}} = 10\text{px}$ | Cross-font fallback minimum size prevents text collision under system font. |
 | **INV-016** | $\text{LocksHeld}(\text{alarm}) \le 1$ | Web Locks API mutex guarantees single-tab victory audio playback. |
 | **INV-017** | $\Delta t_{\text{sync}} \le 50\text{ms}, \text{senderId} \neq \text{instanceId}$ | BroadcastChannel sync converges within 50ms while discarding cyclic echoes. |
+| **INV-018** | $w(d_i) \equiv w(d_j) \quad \forall i, j \in [0, 9] \implies CLS = 0.000$ | Tabular numeral glyph advance width equality eliminates horizontal number wobble and cumulative layout shift. |
+| **INV-019** | $S^* \le \min(\text{DPR}, S_{\text{area}}, S_{\text{edge}}) \land (\bar{Y}_{\text{bg}} > 0.35 \implies \alpha \in [0.45, 0.75], L^c \ge 75)$ | Dual-constraint buffer allocation and dynamic ambient scrim guarantee contrast under outdoor sunlight without GPU OOM. |
+| **INV-020** | $\max(|\Delta t_{\text{visual}} - \Delta t_{\text{audio}}|, |\Delta t_{\text{audio}} - \Delta t_{\text{haptic}}|) < 20\text{ms}$ | Tri-modal sensory synchronization binds visual spring ODE, Web Audio ADSR, and haptics within perceptual simultaneity window. |
+
+### 5.1 System-Level Architectural Constraints (SYS-INV-001 to SYS-INV-010)
+
+In addition to the 20 mathematical invariants above, the system enforces 10 overarching macro-architectural invariants:
+
+| Constraint ID | Architectural Guarantee | Enforcement Mechanism |
+|:---|:---|:---|
+| **SYS-INV-001** | **Future Target Timestamp:** Countdown target must be strictly $> \text{now}$. | Form validation rejection & disabled submission state. |
+| **SYS-INV-002** | **Cognitive Checkpoint Bounding:** Exactly 3 to 5 milestone checkpoints. | Gemini JSON Schema validation & Heuristic Generator bounds. |
+| **SYS-INV-003** | **Upper Clock Safe-Zone Exclusion:** Top 28% of lock screen preserved. | `SafeZoneOverlay` clipping & layout translation bounds. |
+| **SYS-INV-004** | **Lower Gesture Safe-Zone Exclusion:** Bottom 18% of lock screen preserved. | Ergonomic clearance zone above home indicator / navigation bar. |
+| **SYS-INV-005** | **Flagship High-DPI Resolution:** Canvas export native resolution $1170 \times 2532\text{px}$. | Bilinear downsampling from supersampled buffer ($S \le 2.0$). |
+| **SYS-INV-006** | **Zero Runtime Chronometry Drift:** Timing error accumulates $< 1\text{ms}$. | Dual-Clock model coupling UTC epoch timestamps with RAF loop. |
+| **SYS-INV-007** | **Zero Server PII Persistence:** Exactly 0 bytes stored on remote servers. | Pure client-side execution; state preserved solely in URL hash / local session. |
+| **SYS-INV-008** | **Outdoor Sunlight Contrast:** Body text APCA $L^c \ge 60$, digits $L^c \ge 75$. | Adaptive ambient scrim composite when $\bar{Y}_{\text{bg}} > 0.35$. |
+| **SYS-INV-009** | **Sub-Second Edge Delivery:** First Contentful Paint $FCP < 0.8\text{s}$. | Static PWA bundle hosted on global GitHub Pages Edge CDN. |
+| **SYS-INV-010** | **Multi-Tab Alarm Mutex:** Exactly 1 tab plays victory audio upon zero epoch. | W3C Web Locks API (`navigator.locks.request`) single-instance lock. |
 
 ---
 

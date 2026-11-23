@@ -7,7 +7,7 @@
 **Reviewer:** Architecture Review Board  
 **Status:** APPROVED  
 **Standard:** Level 2.2 Documentation Governance (Bidirectional Traceability Standard)  
-**Version:** 2.3.3
+**Version:** 2.3.4
 
 ---
 
@@ -90,7 +90,7 @@
 | **ADR-003**| URL Hash State Serialization    | Frictionless database-free share  | `js/core/UrlStateService.js`        |
 | **ADR-004**| Adaptive Dual-Constraint Scale  | WebKit 16.7M px & 4096px texture  | `js/canvas/AdaptiveBufferAllocator.js`|
 | **ADR-005**| Glassmorphic Design System      | Premium OLED lockscreen aesthetic | `src/css/glassmorphism.css`         |
-| **ADR-006**| Privacy-First Local Storage     | Zero server PII storage invariant | `docs/security/03-credential-logging.md`|
+| **ADR-006**| Privacy-First Local Storage     | Zero server PII storage invariant | `docs/security/03-credential-logging-governance.md`|
 | **ADR-007**| Dual-Clock Chronometry Anchor   | Prevent mobile sleep timing drift | `js/core/DualClockTimeEngine.js`    |
 | **ADR-008**| Cache-First PWA Topology        | 100% offline edge resilience      | `public/sw.js`                      |
 | **ADR-009**| Autoplay-Primed Web Audio Chime | Zero asset overhead, no rejection | `js/services/AudioChimeService.js`  |
@@ -247,10 +247,10 @@
 | **DOC-UI-04** | Component Interaction Specifications      | UI/UX Architecture | `src/js/app.js`, `tokens.css` |
 | **DOC-UI-05** | Information Architecture & User Journeys  | UX Strategy        | `src/index.html`, `app.js`   |
 | **DOC-UI-06** | Motion Choreography & Kinetic Physics     | Motion & Animation | `js/canvas/ParticleEngine.js` |
-| **DOC-UI-07** | Design Rationale & Anti-Pattern Defense   | UX Governance      | `docs/ui-ux/07-design-rationale.md`|
+| **DOC-UI-07** | Design Rationale & Anti-Pattern Defense   | UX Governance      | `docs/ui-ux/07-design-rationale-and-anti-pattern-defense.md`|
 | **DOC-UI-08** | Typographic Engineering & Font System     | Typography         | `js/services/FontService.js` |
 | **DOC-UI-09** | Canvas Wallpaper Composition Engine       | 2D Graphics Engine | `js/canvas/CanvasRenderer.js` |
-| **DOC-UI-10** | Cognitive Ergonomics & Usability Heuristics| Usability Science | `docs/ui-ux/10-cognitive-ergonomics.md`|
+| **DOC-UI-10** | Cognitive Ergonomics & Usability Heuristics| Usability Science | `docs/ui-ux/10-cognitive-ergonomics-heuristics-usability.md`|
 | **DOC-LLD-01**| Class & Object Design Contracts           | Low-Level Design   | All 21 Classes in `src/js/`  |
 | **DOC-LLD-02**| Dynamic Interaction Sequences             | Low-Level Design   | `uml/sequence_diagram.md`    |
 | **DOC-LLD-03**| State Machine & Lifecycle FSM             | Low-Level Design   | `uml/state_diagram.md`       |
