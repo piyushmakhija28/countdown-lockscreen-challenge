@@ -6,7 +6,8 @@
 **Author:** Piyush Makhija (Lead Systems Architect & Developer)  
 **Reviewer:** Architecture Review Board  
 **Status:** APPROVED  
-**Standard:** Level 2.2 Documentation Governance (Zero-Credential & Zero-PII Standard)
+**Standard:** Level 2.2 Documentation Governance (Zero-Credential & Zero-PII Standard)  
+**Version:** 2.3.0
 
 ---
 

@@ -11,19 +11,20 @@ This repository contains the design, code, and documentation for the **Handshake
 ```
 countdown-lockscreen-challenge/
 ├── .gitignore                         # Ignored files & Level 2.2 doc exclusions
+├── SRS.md                             # Authoritative ISO/IEC/IEEE 29148 Software Requirements Specification
 ├── VERSION                            # Single source of truth version (2.3.0)
 ├── CHANGELOG.md                       # Keep a Changelog release history
 ├── CLAUDE.md                          # Developer instructions & context
 ├── README.md                          # Main documentation & challenge playbook
 ├── drawio/                            # The 13 Canonical Draw.io XML Diagrams (Rule 45 Parity)
-├── docs/                              # Level 2.2 Deep Architecture & Governance (63 Specs)
+├── docs/                              # Level 2.2 Deep Architecture & Governance (66 Specs)
 │   ├── 00-problem-statement.md        # Problem Statement, Invariants & Ground Truth
 │   ├── 01-prd.md                      # PRD, User Personas & Journey Maps
 │   ├── 02-hld.md                      # High-Level Design, C4 Models & Dual Engine
 │   ├── 03-api-contract.md             # Gemini 3.8 Flash Schema, URL Codec & APIs
 │   ├── 04-competition-and-platform-research.md # 7-Page PDF Teardown & Rubric Math
 │   ├── 05-srs.md                      # Authoritative Software Requirements Specification
-│   ├── 06-adr/                        # Architecture Decision Records (ADR-001 to ADR-012)
+│   ├── 06-adr/                        # Architecture Decision Records (ADR-001 to ADR-015)
 │   ├── 07-architecture-tradeoffs-and-faq.md # Tradeoff Matrices & Judge FAQ
 │   ├── 08-handshake-submission-package.md # Official Contest Submission Package
 │   ├── competition-rules-summary.md   # Official Contest Rules Teardown

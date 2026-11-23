@@ -1,4 +1,4 @@
-﻿# Level 5: Software Requirements Specification (SRS)
+# Level 5: Software Requirements Specification (SRS)
 
 **Document ID:** `DOC-05-SRS`  
 **Project:** `countdown-lockscreen-challenge`  
@@ -6,7 +6,8 @@
 **Author:** Piyush Makhija (Lead Systems Architect & Developer)  
 **Reviewer:** Architecture Review Board  
 **Status:** APPROVED  
-**Standard:** Level 2.2 Documentation Governance (ISO/IEC/IEEE 29148 Standard)
+**Standard:** Level 2.2 Documentation Governance (ISO/IEC/IEEE 29148 Standard)  
+**Version:** 2.3.0
 
 ---
 
@@ -20,7 +21,7 @@ The system is a dual-deliverable Progressive Web Application:
 
 ---
 
-## 2. Functional Requirements Specification (FR-01 to FR-24)
+## 2. Functional Requirements Specification (FR-01 to FR-30)
 
 Each functional requirement is formally specified with unique identifier, description, inputs, transformations, outputs, and verification method:
 
@@ -145,6 +146,36 @@ Each functional requirement is formally specified with unique identifier, descri
 - **Requirement:** Upon countdown expiration ($\Delta t \le 0$), the system shall request an exclusive lock via the Web Locks API (`navigator.locks.request('countdown_victory_alarm_lock', { ifAvailable: true })`) to ensure strictly one tab synthesizes celebratory audio, preventing double-amplitude acoustic clipping across duplicate tabs.
 - **Verification Method:** Test (`TC-POS-116`, `TC-NEG-16`, `TC-EDGE-28`).
 - **Governing ADR:** `ADR-012`.
+
+### FR-25: OpenType Tabular Numeral Chronometry Ticking
+- **Requirement:** The countdown chronometer shall enforce OpenType tabular figures (`font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1;`) across countdown digits, guaranteeing identical character advance widths ($\Delta W = 0$) and zero layout shift ($CLS = 0.000$) during 1Hz ticking.
+- **Verification Method:** Test (`TC-POS-117`).
+- **Governing ADR & Spec:** `ADR-013`, `DOC-UI-08`.
+
+### FR-26: Multi-Resolution Flagship Offscreen Canvas 2D Rasterization
+- **Requirement:** The system shall support offscreen canvas export across 5 pre-configured flagship device profiles (iPhone 16 Pro Max $1320\times 2868$, Galaxy S24 Ultra $1440\times 3120$, Pixel 9 Pro $1280\times 2856$, Pixel 9 Pro Fold Unfolded $2076\times 2152$, iPhone 16/15 Pro $1170\times 2532$) with subpixel half-pixel snapping ($\lfloor x \rfloor + 0.5$).
+- **Verification Method:** Test (`TC-POS-21`, `TC-POS-113`).
+- **Governing ADR & Spec:** `ADR-004`, `ADR-014`, `DOC-UI-09`.
+
+### FR-27: Dynamic Scrim & Ambient Luminance Normalization Engine
+- **Requirement:** When generating wallpapers over heterogeneous or user-uploaded backgrounds, the engine shall sample relative background luminance $\bar{Y}_{\text{bg}}$. If $\bar{Y}_{\text{bg}} > 0.35$, it shall automatically composite an adaptive gradient scrim ($\alpha = 0.45\text{--}0.75$), guaranteeing APCA $L^c \ge 75$ under direct solar illumination.
+- **Verification Method:** Test (`TC-POS-119`).
+- **Governing ADR & Spec:** `ADR-014`, `DOC-UI-09`, `DOC-UI-03`.
+
+### FR-28: Tri-Modal Sensory Synchronization Timeline
+- **Requirement:** The system shall coordinate visual spring animations ($m\ddot{x} + c\dot{x} + kx = 0$), procedural Web Audio ADSR harmonic chimes ($C_5 \to E_5 \to G_5$), and Navigator Vibration API tactile impulses with deterministic inter-sensory synchronization within $20\text{ms}$.
+- **Verification Method:** Test (`TC-POS-120`).
+- **Governing ADR & Spec:** `ADR-015`, `DOC-UI-06`, `DOC-UI-10`.
+
+### FR-29: Asynchronous Web Font Readiness Gate
+- **Requirement:** The canvas composition pipeline shall execute an asynchronous preloading gate via `document.fonts.load()`, blocking wallpaper drawing until all required typographic faces are decoded, preventing fallback font metric displacement and text clipping.
+- **Verification Method:** Test (`TC-POS-114`).
+- **Governing ADR & Spec:** `ADR-013`, `DOC-UI-08`.
+
+### FR-30: Closed-Form Hardware-Constrained Buffer Allocation Bounds
+- **Requirement:** The canvas buffer allocator shall dynamically enforce a closed-form dual-limit scale solver bounding canvas surface area strictly below $16,777,216\text{ pixels}$ ($2^{24}$) and maximum linear dimension below $4096\text{px}$ on iOS Safari WebKit.
+- **Verification Method:** Test (`TC-POS-22`, `TC-EDGE-01`).
+- **Governing ADR & Spec:** `ADR-004`, `ADR-014`, `DOC-LLD-08` (HR-01).
 
 ---
 

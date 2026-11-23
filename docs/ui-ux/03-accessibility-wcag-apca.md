@@ -1,4 +1,4 @@
-﻿# Level 3: Accessibility, WCAG 2.2 AAA & APCA Contrast Engineering
+# Level 3: Accessibility, WCAG 2.2 AAA & APCA Contrast Engineering
 
 **Document ID:** `DOC-UI-03-ACCESSIBILITY-APCA`  
 **Project:** `countdown-lockscreen-challenge`  

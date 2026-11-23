@@ -1,10 +1,14 @@
 # ADR-001: Client-Side Single Page Application (PWA) Runtime Architecture
 
+**Document ID:** `ADR-001`  
+**Project:** `countdown-lockscreen-challenge`  
+**Challenge:** Handshake AI Skills Studio X Google ("Your Deadline, Your Design: Create a Countdown Lock Screen")  
+**Author:** Piyush Makhija (Lead Systems Architect & Developer)  
+**Reviewer:** Architecture Review Board  
 **Status:** APPROVED  
 **Date:** 2026-11-22  
-**Author:** Piyush Makhija (Lead Systems Architect & Developer)  
-**Deciders:** System Architecture & Engineering Review Board  
-**Standard:** MADR 3.0 (Markdown Architectural Decision Records)
+**Standard:** Level 2.2 Documentation Governance / MADR 3.0  
+**Version:** 2.3.0
 
 ---
 

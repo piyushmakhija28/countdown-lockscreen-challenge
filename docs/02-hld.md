@@ -6,7 +6,8 @@
 **Author:** Piyush Makhija (Lead Systems Architect & Developer)  
 **Reviewer:** Architecture Review Board  
 **Status:** APPROVED  
-**Standard:** Level 2.2 Documentation Governance (ISO/IEC/IEEE 29148 Standard)
+**Standard:** Level 2.2 Documentation Governance (ISO/IEC/IEEE 29148 Standard)  
+**Version:** 2.3.0
 
 ---
 
@@ -255,8 +256,12 @@ $$\text{Total Time to Wallpaper (TTW)} = T_{\text{ingress}} + T_{\text{AI}} + T_
 | **Gemini 3.8 Flash Decomposition** | $850\text{ms}$      | $1800\text{ms}$   | Fallback to `HeuristicGenerator` if $> 4000\text{ms}$.|
 | **Heuristic Fallback Generation**  | $2\text{ms}$        | $5\text{ms}$      | Zero network dependency; local arithmetic slicing.|
 | **Dynamic Canvas Allocation**      | $8\text{ms}$        | $15\text{ms}$     | Cached WebGL texture dimension detection.         |
+| **Font Readiness Preload Gate**    | $35\text{ms}$       | $150\text{ms}$    | Asynchronous document.fonts.load() gate.          |
 | **Canvas 2D Rasterization**        | $35\text{ms}$       | $85\text{ms}$     | Single-pass GPU OffscreenCanvas buffer drawing.   |
+| **Dynamic Scrim Luminance Adapt**  | $4\text{ms}$        | $10\text{ms}$     | 256-pixel spatial histogram relative luminance.   |
 | **PNG Blob Encoding & Download**   | $110\text{ms}$      | $220\text{ms}$    | Asynchronous `canvas.toBlob()` execution.         |
+| **Web Share API Handoff**          | $15\text{ms}$       | $45\text{ms}$     | Direct navigator.share() wallpaper invocation.    |
+| **Tri-Modal Sensory Feedback Sync**| $1\text{ms}$        | $5\text{ms}$      | Deterministic Spring + Audio + Haptic dispatch.   |
 +------------------------------------+---------------------+-------------------+---------------------------------------------------+
 ```
 

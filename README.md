@@ -26,11 +26,12 @@ The system combines **Google Gemini 3.8 Flash** AI reasoning with mathematical s
 
 ## Enterprise Documentation Suite (Level 2.2 Standard)
 
-This project strictly adheres to Level 2.2 Documentation Governance, keeping only the canonical project management files at root while providing an exhaustive **89-document enterprise blueprint suite** (63 specifications in `docs/`, 13 Mermaid UML diagrams in `uml/`, and 13 Draw.io XML diagrams in `drawio/`):
+This project strictly adheres to Level 2.2 Documentation Governance, keeping only the canonical project management files at root while providing an exhaustive **92-document enterprise blueprint suite** (66 specifications in `docs/`, 13 Mermaid UML diagrams in `uml/`, and 13 Draw.io XML diagrams in `drawio/`):
 
 ```
 countdown-lockscreen-challenge/
-├── docs/                               # Level 2.2 Deep Architecture & Governance (63 Specs)
+├── SRS.md                              # Level 2.2 Canonical IEEE 29148 Software Requirements Specification
+├── docs/                               # Level 2.2 Deep Architecture & Governance (66 Specs)
 │   ├── 00-problem-statement.md         # Level 0: ISO/IEC/IEEE 29148 Problem Statement & Invariants
 │   ├── 01-prd.md                       # Level 1: PRD, Personas, Journey Maps & Mission Traceability
 │   ├── 02-hld.md                       # Level 2: High-Level Design, C4 Models & Dual-Engine Architecture
@@ -49,7 +50,10 @@ countdown-lockscreen-challenge/
 │   │   ├── ADR-009-procedural-web-audio-vs-prerecorded-media.md
 │   │   ├── ADR-010-leaky-bucket-history-guard-vs-synchronous-pushstate.md
 │   │   ├── ADR-011-cross-tab-state-synchronization.md
-│   │   └── ADR-012-web-locks-single-instance-alarm-mutex.md
+│   │   ├── ADR-012-web-locks-single-instance-alarm-mutex.md
+│   │   ├── ADR-013-tabular-numeral-typography-and-zero-cls.md
+│   │   ├── ADR-014-nine-stage-canvas-wallpaper-and-ambient-scrim.md
+│   │   └── ADR-015-tri-modal-sensory-synchronization.md
 │   ├── 07-architecture-tradeoffs-and-faq.md # Level 7: Tradeoff Matrices, Failure Modes & Judge FAQ
 │   ├── 08-handshake-submission-package.md # Level 8: Official Contest Deliverables & Walkthrough Script
 │   ├── 09-tech-stack-fundamentals-and-compliance-matrix.md # Level 9: Technical Fundamentals & Cross-Document Matrix

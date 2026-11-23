@@ -6,7 +6,8 @@
 **Author:** Piyush Makhija (Lead Systems Architect & Developer)  
 **Reviewer:** Architecture Review Board  
 **Status:** APPROVED  
-**Standard:** Level 2.2 Documentation Governance (Systematic Error Catalogue)
+**Standard:** Level 2.2 Documentation Governance (Systematic Error Catalogue)  
+**Version:** 2.3.0
 
 ---
 

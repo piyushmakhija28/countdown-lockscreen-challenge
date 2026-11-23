@@ -1,4 +1,4 @@
-﻿# Level 4: Low-Level Design — Concurrency & Threading Model
+# Level 4: Low-Level Design — Concurrency & Threading Model
 
 **Document ID:** `DOC-LLD-04-CONCURRENCY-MODEL`  
 **Project:** `countdown-lockscreen-challenge`  
@@ -6,7 +6,8 @@
 **Author:** Piyush Makhija (Lead Systems Architect & Developer)  
 **Reviewer:** Architecture Review Board  
 **Status:** APPROVED  
-**Standard:** Level 2.2 Documentation Governance (Browser Concurrency & Event Loop)
+**Standard:** Level 2.2 Documentation Governance (Browser Concurrency & Event Loop)  
+**Version:** 2.3.0
 
 ---
 

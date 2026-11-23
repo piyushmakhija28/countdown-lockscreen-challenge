@@ -1,4 +1,4 @@
-﻿# Level 3: UI/UX Design System & Design Tokens Specification
+# Level 3: UI/UX Design System & Design Tokens Specification
 
 **Document ID:** `DOC-UI-01-DESIGN-SYSTEM-TOKENS`  
 **Project:** `countdown-lockscreen-challenge`  

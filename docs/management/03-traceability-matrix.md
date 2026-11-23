@@ -6,7 +6,8 @@
 **Author:** Piyush Makhija (Lead Systems Architect & Developer)  
 **Reviewer:** Architecture Review Board  
 **Status:** APPROVED  
-**Standard:** Level 2.2 Documentation Governance (Bidirectional Traceability Standard)
+**Standard:** Level 2.2 Documentation Governance (Bidirectional Traceability Standard)  
+**Version:** 2.3.0
 
 ---
 
@@ -42,6 +43,12 @@
 | **FR-22**| F-05 Font Barrier  | FontService         | `js/services/FontService.js` | `TC-POS-20`, `TC-EDGE-24`, `TC-POS-114`|
 | **FR-23**| F-07 Multi-Tab Sync| BroadcastChannel    | `js/core/StateStore.js`      | `TC-POS-115`, `TC-NEG-15`, `TC-EDGE-27`, `ADR-011`|
 | **FR-24**| F-05 Alarm Mutex   | WebLocksMutex       | `js/services/AudioChimeService.js`| `TC-POS-116`, `TC-NEG-16`, `TC-EDGE-28`, `ADR-012`|
+| **FR-25**| F-05 Tabular CLS   | TabularFontEngine   | `js/canvas/CanvasRenderer.js`<br/>`src/css/tokens.css` | `TC-POS-117`, `ADR-013`, `DOC-UI-08`|
+| **FR-26**| F-05 Flagship Export| CanvasRenderer      | `js/canvas/CanvasRenderer.js`<br/>`js/canvas/AdaptiveBufferAllocator.js`| `TC-POS-21`, `ADR-014`, `DOC-UI-09`|
+| **FR-27**| F-05 Ambient Scrim | ScrimNormalizer     | `js/canvas/CanvasRenderer.js`| `TC-POS-119`, `ADR-014`, `DOC-UI-09`|
+| **FR-28**| F-05 Sensory Sync  | SensoryCoordinator  | `js/services/AudioChimeService.js`<br/>`js/services/HapticService.js`| `TC-POS-120`, `ADR-015`, `DOC-UI-10`|
+| **FR-29**| F-05 Font Gate     | FontService         | `js/services/FontService.js` | `TC-POS-114`, `ADR-013`, `DOC-UI-08`|
+| **FR-30**| F-05 Buffer Bounds | AdaptiveAllocator   | `js/canvas/AdaptiveBufferAllocator.js`| `TC-POS-22`, `TC-EDGE-01`, `ADR-014`|
 | **ROOT**  | Application Root   | Orchestrator Root   | `src/js/app.js` (`CountdownApp`)| `TC-POS-01` through `TC-POS-20` |
 +---------+--------------------+---------------------+----------------------+-----------------------------------+
 ```
@@ -130,12 +137,12 @@
 | Pillar  | Fundamental Title                 | Primary ADR        | Governed Req IDs   | Verification Evidence |
 +---------+-----------------------------------+--------------------+--------------------+-----------------------+
 | **P-01**| Vanilla ES2022+ ESM Zero-Build    | `ADR-001`          | `FR-01`, `FR-05`, `NFR-10` | `DOC-LLD-01`, `DOC-09`|
-| **P-02**| CSS3 Tokens & Specular Glass      | `ADR-005`          | `FR-13`, `NFR-10`  | `DOC-UI-01`, `DOC-UI-04`, `DOC-UI-07`, `DOC-UI-08`, `DOC-UI-10`, `DOC-09` |
-| **P-03**| High-DPI Canvas & Adaptive Buffer | `ADR-002`, `ADR-004`| `FR-11`, `FR-12`, `FR-15` | `DOC-LLD-09`, `DOC-UI-07`, `DOC-UI-09`, `DOC-09`|
-| **P-04**| Safe-Zone Ergonomics & Tri-Modal  | `ADR-002`          | `FR-09`, `FR-10`, `FR-20` | `DOC-UI-02`, `DOC-UI-05`, `DOC-UI-09`, `DOC-09` |
+| **P-02**| CSS3 Tokens & Specular Glass      | `ADR-005`, `ADR-013`, `ADR-015`| `FR-13`, `FR-25`, `FR-28`, `NFR-10` | `DOC-UI-01`, `DOC-UI-04`, `DOC-UI-07`, `DOC-UI-08`, `DOC-UI-10`, `DOC-09` |
+| **P-03**| High-DPI Canvas & Adaptive Buffer | `ADR-002`, `ADR-004`, `ADR-013`, `ADR-014`| `FR-11`, `FR-12`, `FR-15`, `FR-26`, `FR-29`, `FR-30` | `DOC-LLD-09`, `DOC-UI-07`, `DOC-UI-09`, `DOC-09`|
+| **P-04**| Safe-Zone Ergonomics & Tri-Modal  | `ADR-002`, `ADR-014`| `FR-09`, `FR-10`, `FR-20`, `FR-27` | `DOC-UI-02`, `DOC-UI-05`, `DOC-UI-09`, `DOC-09` |
 | **P-05**| DualClock Chronometry Engine      | `ADR-007`          | `FR-05`, `FR-06`   | `DOC-LLD-10`, `DOC-UI-06`, `DOC-09`|
 | **P-06**| Gemini 3.8 Flash Backward Plan    | `ADR-001`          | `FR-02`, `FR-03`, `FR-04` | `DOC-03`, `DOC-UI-05`, `DOC-09` |
-| **P-07**| Procedural Web Audio & Haptics    | `ADR-009`, `ADR-012`| `FR-16`, `FR-17`, `FR-24`| `DOC-RES-01`, `DOC-UI-06`, `DOC-UI-10`, `DOC-09`|
+| **P-07**| Procedural Web Audio & Haptics    | `ADR-009`, `ADR-012`, `ADR-015`| `FR-16`, `FR-17`, `FR-24`, `FR-28`| `DOC-RES-01`, `DOC-UI-06`, `DOC-UI-10`, `DOC-09`|
 | **P-08**| Float32Array Confetti Physics     | `ADR-002`          | `FR-21`            | `DOC-LLD-04`, `DOC-UI-06`, `DOC-09`|
 | **P-09**| TokenBucket History & State Codec | `ADR-003`, `ADR-010`, `ADR-011`| `FR-14`, `FR-18`, `FR-23`| `DOC-SEC-04`, `DOC-09`|
 | **P-10**| Zero-PII Security & PWA Offline   | `ADR-006`, `ADR-008`| `FR-19`, `NFR-06`, `NFR-11`| `DOC-SEC-02`, `DOC-09`|

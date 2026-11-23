@@ -6,7 +6,8 @@
 **Author:** Piyush Makhija (Lead Systems Architect & Developer)  
 **Reviewer:** Architecture Review Board  
 **Status:** APPROVED  
-**Standard:** Level 2.2 Documentation Governance (Fault Tolerance & Bulkhead Isolation)
+**Standard:** Level 2.2 Documentation Governance (Fault Tolerance & Bulkhead Isolation)  
+**Version:** 2.3.0
 
 ---
 

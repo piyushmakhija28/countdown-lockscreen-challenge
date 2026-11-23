@@ -6,7 +6,8 @@
 **Author:** Piyush Makhija (Lead Systems Architect & Developer)  
 **Reviewer:** Architecture Review Board  
 **Status:** APPROVED  
-**Standard:** Level 2.2 Documentation Governance (ISO/IEC/IEEE 29148 Standard)
+**Standard:** Level 2.2 Documentation Governance (ISO/IEC/IEEE 29148 Standard)  
+**Version:** 2.3.0
 
 ---
 
@@ -494,5 +495,94 @@ export interface IAlarmMutexService {
    * If held by another tab, immediately returns false without audio execution.
    */
   requestAlarmExecution(): Promise<boolean>;
+}
+```
+
+---
+
+## 8. `FontService` Component Contract (Asynchronous Font Gate)
+
+```typescript
+export interface IFontService {
+  /**
+   * Preloads all mandatory typography faces (Plus Jakarta Sans, JetBrains Mono, Inter).
+   *
+   * @returns Promise resolving true when all fonts are rasterization-ready.
+   * @throws Error if font decoding exceeds 3000ms timeout.
+   */
+  ensureFontsLoaded(): Promise<boolean>;
+
+  /**
+   * Checks if required fonts are decoded in memory.
+   */
+  readonly isReady: boolean;
+}
+```
+
+---
+
+## 9. `CanvasRenderer` 9-Stage Composition & Export Contract
+
+```typescript
+export interface DeviceExportProfile {
+  readonly id: 'iphone-16-pro' | 'iphone-16-pro-max' | 'galaxy-s24-ultra' | 'pixel-9-pro' | 'pixel-9-pro-fold';
+  readonly name: string;
+  readonly width: number;
+  readonly height: number;
+  readonly safeTopPercent: number;
+  readonly safeBottomPercent: number;
+}
+
+export interface ICanvasRenderer {
+  /**
+   * Executes 9-stage offscreen rasterization pipeline with ambient scrim adaptation.
+   *
+   * @param goal Current goal state snapshot.
+   * @param profile Target flagship device resolution profile.
+   * @param theme Active OKLCH color theme configuration.
+   * @returns Promise resolving to a lossless 100% quality PNG Blob.
+   */
+  renderToBlob(goal: CountdownGoal, profile: DeviceExportProfile, theme: ThemeConfig): Promise<Blob>;
+
+  /**
+   * Triggers mobile OS wallpaper handoff via Web Share API or download fallback.
+   *
+   * @param blob Lossless PNG Blob from renderToBlob.
+   * @param filename Target file name.
+   */
+  shareOrDownload(blob: Blob, filename: string): Promise<boolean>;
+}
+```
+
+---
+
+## 10. `AudioChimeService` & `HapticService` Tri-Modal Sensory Feedback Contract
+
+```typescript
+export interface IAudioChimeService {
+  /**
+   * Synthesizes procedural pentatonic harmonic chime (528Hz C5 -> E5 -> G5).
+   * Zero network latency, zero MP3 asset overhead.
+   */
+  playSuccessChime(): Promise<void>;
+
+  /**
+   * Synthesizes 4-note victory celebration fanfare chord upon deadline zero.
+   */
+  playVictoryFanfare(): Promise<void>;
+
+  /**
+   * Primes AudioContext via user interaction gesture.
+   */
+  primeAudio(): Promise<void>;
+}
+
+export interface IHapticService {
+  /**
+   * Emits tactile vibration impulse conforming to W3C Vibration API.
+   *
+   * @param pattern Millisecond duration array (e.g., [15] for tap, [180] for milestone).
+   */
+  vibrate(pattern: number | number[]): boolean;
 }
 ```

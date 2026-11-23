@@ -1,10 +1,14 @@
 # ADR-004: High-DPI Mobile Wallpaper Resolution & Adaptive Dual-Constraint Export Strategy
 
+**Document ID:** `ADR-004`  
+**Project:** `countdown-lockscreen-challenge`  
+**Challenge:** Handshake AI Skills Studio X Google ("Your Deadline, Your Design: Create a Countdown Lock Screen")  
+**Author:** Piyush Makhija (Lead Systems Architect & Developer)  
+**Reviewer:** Architecture Review Board  
 **Status:** APPROVED  
 **Date:** 2026-11-23  
-**Author:** Piyush Makhija (Lead Systems Architect & Developer)  
-**Deciders:** System Architecture & Engineering Review Board  
-**Standard:** MADR 3.0 / Level 2.2 Documentation Governance
+**Standard:** Level 2.2 Documentation Governance / MADR 3.0  
+**Version:** 2.3.0
 
 ---
 

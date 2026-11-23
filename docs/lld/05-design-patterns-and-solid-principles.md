@@ -1,4 +1,4 @@
-﻿# Level 4: Low-Level Design — Design Patterns & SOLID Principles
+# Level 4: Low-Level Design — Design Patterns & SOLID Principles
 
 **Document ID:** `DOC-LLD-05-SOLID-PATTERNS`  
 **Project:** `countdown-lockscreen-challenge`  
@@ -6,7 +6,8 @@
 **Author:** Piyush Makhija (Lead Systems Architect & Developer)  
 **Reviewer:** Architecture Review Board  
 **Status:** APPROVED  
-**Standard:** Level 2.2 Documentation Governance (Gang of Four & SOLID Conformance)
+**Standard:** Level 2.2 Documentation Governance (Gang of Four & SOLID Conformance)  
+**Version:** 2.3.0
 
 ---
 

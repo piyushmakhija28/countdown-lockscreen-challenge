@@ -1,4 +1,4 @@
-﻿# Level 4: Low-Level Design — Deep-Dive Design Patterns, Game Loops & Security Architecture
+# Level 4: Low-Level Design — Deep-Dive Design Patterns, Game Loops & Security Architecture
 
 **Document ID:** `DOC-LLD-11-PATTERNS-SECURITY`  
 **Project:** `countdown-lockscreen-challenge`  
@@ -6,7 +6,8 @@
 **Author:** Piyush Makhija (Lead Systems Architect & Developer)  
 **Reviewer:** Architecture Review Board  
 **Status:** APPROVED  
-**Standard:** Level 2.2 Documentation Governance (Gang of Four + OWASP ASVS Standard)
+**Standard:** Level 2.2 Documentation Governance (Gang of Four + OWASP ASVS Standard)  
+**Version:** 2.3.0
 
 ---
 

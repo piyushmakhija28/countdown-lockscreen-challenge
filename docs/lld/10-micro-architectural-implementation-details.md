@@ -1,4 +1,4 @@
-﻿# Level 4: Low-Level Design — Micro-Architectural Implementation Details & Edge-Case Hazards
+# Level 4: Low-Level Design — Micro-Architectural Implementation Details & Edge-Case Hazards
 ### (Granular 40-Hazard Engineering Catalog across 14 Specialized Architectural Domains)
 
 **Document ID:** `DOC-LLD-10-MICRO-IMPLEMENTATION-DETAILS`  
@@ -7,7 +7,8 @@
 **Author:** Piyush Makhija (Lead Systems Architect & Developer)  
 **Reviewer:** Architecture Review Board  
 **Status:** APPROVED  
-**Standard:** Level 2.2 Documentation Governance (Micro-Architectural Precision & Code-Level Robustness)
+**Standard:** Level 2.2 Documentation Governance (Micro-Architectural Precision & Code-Level Robustness)  
+**Version:** 2.3.0
 
 ---
 

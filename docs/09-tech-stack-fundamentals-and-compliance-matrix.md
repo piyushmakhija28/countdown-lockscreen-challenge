@@ -19,7 +19,7 @@ To achieve maximum reliability, zero runtime cost, and frictionless accessibilit
 
 This specification serves two primary functions:
 1. **Definitive Technical Reference:** Codifies the mathematical formulas, architectural invariants, code contracts, and runtime behaviors governing each pillar.
-2. **Comprehensive Cross-Document Compliance Matrix:** Verifies and certifies that all 89 documentation assets across the repository (63 specifications in `docs/`, 13 Mermaid UML diagrams in `uml/`, and 13 Draw.io diagrams in `drawio/`) faithfully embody, respect, and enforce these technical fundamentals without drift or ambiguity.
+2. **Comprehensive Cross-Document Compliance Matrix:** Verifies and certifies that all 92 documentation assets across the repository (66 specifications in `docs/`, 13 Mermaid UML diagrams in `uml/`, and 13 Draw.io diagrams in `drawio/`) faithfully embody, respect, and enforce these technical fundamentals without drift or ambiguity.
 
 ```
 +---------------------------------------------------------------------------------------------------+
@@ -296,6 +296,7 @@ The following comprehensive matrix verifies and certifies that every single spec
 | Document Path                                                     | Covered Technical Pillars         | Compliance |
 +-------------------------------------------------------------------+-----------------------------------+------------+
 | README.md                                                         | P-01, P-02, P-03, P-04, P-05, P-06| CERTIFIED  |
+| SRS.md                                                             | ALL PILLARS (P-01 through P-10)   | CERTIFIED  |
 | CLAUDE.md                                                         | P-01, P-02, P-03, P-06, P-10      | CERTIFIED  |
 | docs/00-problem-statement.md                                      | P-01, P-03, P-04, P-05, P-06, P-10| CERTIFIED  |
 | docs/01-prd.md                                                    | P-01, P-02, P-04, P-05, P-06, P-07| CERTIFIED  |
@@ -315,6 +316,9 @@ The following comprehensive matrix verifies and certifies that every single spec
 | docs/06-adr/ADR-010-leaky-bucket-history-guard.md                 | P-09                              | CERTIFIED  |
 | docs/06-adr/ADR-011-cross-tab-state-synchronization.md           | P-09, P-10                        | CERTIFIED  |
 | docs/06-adr/ADR-012-web-locks-single-instance-alarm-mutex.md     | P-07, P-10                        | CERTIFIED  |
+| docs/06-adr/ADR-013-tabular-numeral-typography-and-zero-cls.md    | P-02, P-03                        | CERTIFIED  |
+| docs/06-adr/ADR-014-nine-stage-canvas-wallpaper-and-ambient-scrim.md | P-03, P-04, P-10               | CERTIFIED  |
+| docs/06-adr/ADR-015-tri-modal-sensory-synchronization.md          | P-02, P-07, P-10                  | CERTIFIED  |
 | docs/07-architecture-tradeoffs-and-faq.md                         | ALL PILLARS (P-01 through P-10)   | CERTIFIED  |
 | docs/08-handshake-submission-package.md                           | P-01, P-02, P-03, P-04, P-06      | CERTIFIED  |
 | docs/09-tech-stack-fundamentals-and-compliance-matrix.md (THIS DOC)| ALL PILLARS (P-01 through P-10)   | CERTIFIED  |

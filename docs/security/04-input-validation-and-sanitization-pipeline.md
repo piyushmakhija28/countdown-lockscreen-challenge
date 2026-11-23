@@ -6,7 +6,8 @@
 **Author:** Piyush Makhija (Lead Systems Architect & Developer)  
 **Reviewer:** Architecture Review Board  
 **Status:** APPROVED  
-**Standard:** Level 2.2 Documentation Governance (Input Validation Pipeline)
+**Standard:** Level 2.2 Documentation Governance (Input Validation Pipeline)  
+**Version:** 2.3.0
 
 ---
 

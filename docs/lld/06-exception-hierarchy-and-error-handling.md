@@ -1,4 +1,4 @@
-﻿# Level 4: Low-Level Design — Exception Hierarchy & Error Handling
+# Level 4: Low-Level Design — Exception Hierarchy & Error Handling
 
 **Document ID:** `DOC-LLD-06-EXCEPTION-HIERARCHY`  
 **Project:** `countdown-lockscreen-challenge`  
@@ -6,7 +6,8 @@
 **Author:** Piyush Makhija (Lead Systems Architect & Developer)  
 **Reviewer:** Architecture Review Board  
 **Status:** APPROVED  
-**Standard:** Level 2.2 Documentation Governance (Robust Exception Hierarchy)
+**Standard:** Level 2.2 Documentation Governance (Robust Exception Hierarchy)  
+**Version:** 2.3.0
 
 ---
 
