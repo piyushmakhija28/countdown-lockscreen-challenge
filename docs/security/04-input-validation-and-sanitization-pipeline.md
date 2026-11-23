@@ -44,3 +44,12 @@ graph LR
 To prevent visual spoofing and terminal control injection:
 - All ASCII control characters ($0x00\text{--}0x1F, 0x7F$) are stripped immediately.
 - Unicode strings are normalized using canonical decomposition followed by canonical composition (`string.normalize('NFKC')`).
+
+---
+
+## 4. Prototype Pollution & JSON Injection Sanitization
+
+During deserialization of the `#v1=` URL hash payload:
+1. The JSON parser traverses all object keys recursively.
+2. Any key matching `__proto__`, `constructor`, or `prototype` is discarded immediately before object hydration.
+3. Deserialized objects are hydrated into clean dictionary maps created with `Object.create(null)` to eliminate inherited prototype vulnerabilities.

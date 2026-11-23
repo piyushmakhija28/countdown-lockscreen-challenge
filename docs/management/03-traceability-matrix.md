@@ -33,5 +33,9 @@
 | FR-13   | F-06 Themes        | ThemeController     | ThemeConfig.ts       | TC-POS-11, TC-POS-12      |
 | FR-14   | F-07 URL Hash      | UrlSerializer       | UrlStateService.ts   | TC-POS-13, TC-POS-14      |
 | FR-15   | F-05 Download      | BlobExporter        | CanvasRenderer.ts    | TC-POS-10                 |
+| FR-16   | F-05 Audio Chime   | AudioService        | AudioChimeService.ts | TC-POS-16                 |
+| FR-17   | F-05 Haptics       | HapticService       | HapticService.ts     | TC-POS-17                 |
+| FR-18   | F-07 History Guard | HistoryGuard        | HistoryQuotaGuard.ts | TC-EDGE-11                |
+| FR-19   | F-05 Web Share     | ShareService        | CanvasRenderer.ts    | TC-NEG-11                 |
 +---------+--------------------+---------------------+----------------------+---------------------------+
 ```

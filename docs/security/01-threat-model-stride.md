@@ -53,5 +53,11 @@ Where:
 
 ## 2. Threat Mitigation Architecture
 
-- **Tampering (XSS) Defense:** All user-supplied goal titles, milestone descriptions, and affirmations are passed through HTML entity encoding before DOM insertion. The Canvas 2D engine draws text using `fillText()`, which treats input strictly as raw character sequences, completely immune to DOM injection.
-- **Denial of Service (OOM) Defense:** Memory allocation is hard-capped. Milestone count is strictly bounded ($3 \le N \le 5$). Canvas buffer dimensions are fixed to $2340 \times 5064\text{ pixels}$.
+- **Tampering (XSS & Prototype Pollution) Defense:** 
+  1. All user-supplied goal titles, milestone descriptions, and affirmations are passed through HTML entity encoding before DOM insertion. The Canvas 2D engine draws text using `fillText()`, which treats input strictly as raw character sequences, completely immune to DOM injection.
+  2. URL hash JSON parsing strips `__proto__`, `constructor`, and `prototype` keys recursively, storing state in `Object.create(null)` dictionaries to prevent prototype pollution.
+- **Information Disclosure (API Key Zero-Leakage Invariant):** 
+  User-supplied Google Gemini API keys are held exclusively within private lexical closures. They are strictly prohibited from being serialized into `window.location.hash`, written to `localStorage`, or emitted in diagnostic logs.
+- **Denial of Service (OOM & Quota Crash) Defense:** 
+  1. Memory allocation is hard-capped: milestone count is bounded ($3 \le N \le 5$) and canvas buffer dimensions are fixed to $2340 \times 5064\text{ pixels}$.
+  2. WebKit `history.replaceState` 100-call quota DoS is mitigated via `HistoryQuotaGuard` enforcing a trailing-edge 300ms leaky bucket ($f_{\max} \le 3.33\text{ Hz} < 100 / 30\text{s}$).

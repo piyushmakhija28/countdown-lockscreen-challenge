@@ -28,12 +28,12 @@ To ensure that failure in one component never cascades into an application crash
 |                     +-----------------------+  +-------------------------+                        |
 |                                             |  |                                                  |
 |                                             v  v                                                  |
-|                              +-------------------------------+                                    |
-|                              |    CORE CHRONOMETER BULKHEAD  |                                    |
-|                              |  - High-priority RAF loop     |                                    |
-|                              |  - Immune to network status   |                                    |
-|                              |  - Guaranteed 60 FPS delivery |                                    |
-|                              +-------------------------------+                                    |
+|   +------------------------------------+  +--------------------------+  +---------------------+   |
+|   |      SENSORY IMMERSION BULKHEAD    |  | CORE CHRONOMETER BULKHEAD|  |  STATE SYNC BULKHEAD|   |
+|   |  - Web Audio uncollected guard     |  | - High-priority RAF loop |  | - 300ms leaky bucket|   |
+|   |  - Autoplay block silent catch     |  | - Immune to network state|  | - Safari quota safe |   |
+|   |  - navigator.vibrate fallback      |  | - Guaranteed 60 FPS tick |  | - Flush on unmount  |   |
+|   +------------------------------------+  +--------------------------+  +---------------------+   |
 +---------------------------------------------------------------------------------------------------+
 ```
 

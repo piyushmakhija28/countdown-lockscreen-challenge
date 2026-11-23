@@ -30,7 +30,12 @@ All runtime diagnostic events conform to structured JSON schema formatting:
         "AI_DECOMPOSITION",
         "CANVAS_RASTERIZATION",
         "WALLPAPER_DOWNLOAD",
-        "URL_HASH_SERIALIZE"
+        "URL_HASH_SERIALIZE",
+        "COUNTDOWN_EXPIRED",
+        "AUDIO_CHIME_PLAYED",
+        "HAPTIC_TRIGGERED",
+        "WEB_SHARE_INITIATED",
+        "HISTORY_THROTTLE_TRIPPED"
       ] 
     },
     "duration_ms": { "type": "number", "minimum": 0 },

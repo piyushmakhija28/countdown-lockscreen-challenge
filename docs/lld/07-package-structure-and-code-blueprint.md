@@ -24,10 +24,11 @@ countdown-lockscreen-challenge/
 │   ├── 03-api-contract.md
 │   ├── 04-competition-and-platform-research.md
 │   ├── 05-srs.md
-│   ├── 06-adr/                        # ADR-001 through ADR-008 (MADR 3.0)
+│   ├── 06-adr/                        # ADR-001 through ADR-010 (MADR 3.0)
 │   ├── 07-architecture-tradeoffs-and-faq.md
+│   ├── 08-handshake-submission-package.md # Official Contest Submission Deliverables
 │   ├── ui-ux/                         # Design tokens, ergonomics, a11y
-│   ├── lld/                           # Low-level design 01-10 (Classes, Sequences, Audit, Math Blueprint, Micro-Architecture)
+│   ├── lld/                           # Low-level design 01-11 (Classes, Sequences, Patterns, Security, Math, Micro-Arch)
 │   ├── devops/                        # Docker, CI/CD, hosting specs
 │   ├── security/                      # STRIDE, OWASP, input sanitization
 │   ├── resilience/                    # Bulkhead, retry, error catalog
