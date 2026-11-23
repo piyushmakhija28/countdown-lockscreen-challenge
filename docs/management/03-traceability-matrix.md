@@ -29,14 +29,17 @@
 | **FR-09**| F-04 Safe Zone     | SimulatorOverlay    | `js/canvas/SafeZoneOverlay.js`| `TC-POS-08`                    |
 | **FR-10**| F-04 28% Margin    | LayoutEngine        | `js/canvas/ResponsiveLayoutEngine.js`| `TC-POS-08`             |
 | **FR-11**| F-05 High-DPI      | AdaptiveAllocator   | `js/canvas/AdaptiveBufferAllocator.js`| `TC-POS-09`             |
-| **FR-12**| F-05 Supersampling | AdaptiveAllocator   | `js/canvas/AdaptiveBufferAllocator.js`| `TC-POS-09`, `TC-EDGE-03`|
+| **FR-12**| F-05 Adaptive Scale| AdaptiveAllocator   | `js/canvas/AdaptiveBufferAllocator.js`| `TC-POS-09`, `TC-EDGE-03`|
 | **FR-13**| F-06 Themes        | ThemeController     | `js/config/themes.js`      | `TC-POS-11`, `TC-POS-12`          |
 | **FR-14**| F-07 URL Hash      | StateSerializer     | `js/core/UrlStateService.js`| `TC-POS-13`, `TC-POS-14`          |
 | **FR-15**| F-05 Download      | BlobExporter        | `js/canvas/CanvasRenderer.js`| `TC-POS-10`                     |
-| **FR-16**| F-05 Sensory Audio | AudioService   | `js/services/AudioService.js`| `TC-POS-16`, `TC-NEG-10`   |
-| **FR-17**| F-05 Sensory Haptic| HapticService       | `js/services/HapticService.js`| `TC-POS-17`                    |
+| **FR-16**| F-05 Audio FSM     | AudioService        | `js/services/AudioService.js`| `TC-POS-16`, `TC-NEG-10`         |
+| **FR-17**| F-05 Haptics       | HapticService       | `js/services/HapticService.js`| `TC-POS-17`                     |
 | **FR-18**| F-07 History Guard | TokenBucketGuard    | `js/core/TokenBucketHistoryGuard.js`| `TC-NEG-11`, `TC-EDGE-10`|
 | **FR-19**| F-05 Web Share     | ShareService        | `js/canvas/CanvasRenderer.js`| `TC-NEG-11`                     |
+| **FR-20**| F-04 Safe Zones/VP | LayoutEngine        | `js/canvas/ResponsiveLayoutEngine.js`| `TC-POS-08`, `TC-POS-18` |
+| **FR-21**| F-05 Confetti SoA  | ParticleEngine      | `js/canvas/ParticleEngine.js`| `TC-POS-19`                     |
+| **FR-22**| F-05 Font Barrier  | FontService         | `js/services/FontService.js` | `TC-POS-20`                     |
 +---------+--------------------+---------------------+----------------------+-----------------------------------+
 ```
 
@@ -108,4 +111,27 @@
 |                          |        | - Tri-Modal responsive layout.      | Zero visual overlap on Dynamic Island;      |
 |                          |        | - APCA AAA contrast & OLED themes.  | Crisp glanceability under direct sunlight.  |
 +--------------------------+--------+-------------------------------------+---------------------------------------------+
+```
+
+---
+
+## 5. The 10 Technical Fundamental Pillars Traceability Matrix
+
+```
++---------------------------------------------------------------------------------------------------------------+
+|                                    10 TECHNICAL FUNDAMENTAL PILLARS MATRIX                                    |
++---------+-----------------------------------+--------------------+--------------------+-----------------------+
+| Pillar  | Fundamental Title                 | Primary ADR        | Governed Req IDs   | Verification Evidence |
++---------+-----------------------------------+--------------------+--------------------+-----------------------+
+| **P-01**| Vanilla ES2022+ ESM Zero-Build    | `ADR-001`          | `FR-01`, `FR-05`   | `DOC-LLD-01`, `DOC-09`|
+| **P-02**| CSS3 Tokens & Specular Glass      | `ADR-005`          | `FR-13`, `NFR-10`  | `DOC-UI-01`, `DOC-09` |
+| **P-03**| High-DPI Canvas & Adaptive Buffer | `ADR-002`, `ADR-004`| `FR-11`, `FR-12`  | `DOC-LLD-09`, `DOC-09`|
+| **P-04**| Safe-Zone Ergonomics & Tri-Modal  | `ADR-002`          | `FR-09`, `FR-20`   | `DOC-UI-02`, `DOC-09` |
+| **P-05**| DualClock Chronometry Engine      | `ADR-007`          | `FR-05`, `FR-06`   | `DOC-LLD-10`, `DOC-09`|
+| **P-06**| Gemini 3.8 Flash Backward Plan    | `ADR-001`          | `FR-02`, `FR-04`   | `DOC-03`, `DOC-09`    |
+| **P-07**| Procedural Web Audio & Haptics    | `ADR-009`          | `FR-16`, `FR-17`   | `DOC-RES-01`, `DOC-09`|
+| **P-08**| Float32Array Confetti Physics     | `ADR-002`          | `FR-21`            | `DOC-LLD-04`, `DOC-09`|
+| **P-09**| TokenBucket History & State Codec | `ADR-003`, `ADR-010`| `FR-14`, `FR-18`  | `DOC-SEC-04`, `DOC-09`|
+| **P-10**| Zero-PII Security & PWA Offline   | `ADR-006`, `ADR-008`| `FR-19`, `NFR-06`  | `DOC-SEC-02`, `DOC-09`|
++---------+-----------------------------------+--------------------+--------------------+-----------------------+
 ```

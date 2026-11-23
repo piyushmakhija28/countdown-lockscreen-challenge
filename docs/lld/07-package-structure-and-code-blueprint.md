@@ -129,14 +129,15 @@ countdown-lockscreen-challenge/
 │       │   ├── ParticleEngine.js      # Float32Array celebration physics
 │       │   └── SafeZoneOverlay.js     # Lock screen simulator overlay
 │       ├── services/
-│       │   ├── AudioService.js   # Autoplay-primed procedural Web Audio
+│       │   ├── AudioService.js        # Autoplay-primed procedural Web Audio
+│       │   ├── FontService.js         # Canvas font readiness barrier & FOIT gate
 │       │   └── HapticService.js       # Vibration API tactile patterns
 │       └── app.js                     # Root view controller & event bindings
 ├── tests/                             # Target Test Suite (Sprint 3 Delivery)
 │   ├── unit/                          # Unit tests
 │   └── integration/                   # Integration tests
 ├── .gitignore                         # Level 2.2 strict doc exclusions
-├── VERSION                            # Single source of truth version string (1.1.0)
+├── VERSION                            # Single source of truth version string (1.3.0)
 ├── CHANGELOG.md                       # Keep a Changelog release history
 ├── CLAUDE.md                          # Claude Code developer instructions
 └── README.md                          # Master project playbook

@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] - 2026-11-23
+
+### Added
+- **Technical Stack Fundamentals & Compliance Matrix (`DOC-09-TECH-STACK-FUNDAMENTALS`):** Created master specification defining the 10 Technical Fundamental Pillars, 50-point technical checklist, and exhaustive cross-document compliance matrix certifying all 67 files across `docs/` and `uml/`.
+- **Requirements Expansion (`DOC-05-SRS` & `DOC-MGT-03`):** Formalized requirements up to `FR-22`:
+  - `FR-12`: Adaptive Dual-Constraint Scale Solver (`AdaptiveBufferAllocator`).
+  - `FR-16`: Procedural Web Audio 4-State Lifecycle & DynamicsCompressor Limiter (`AudioService`).
+  - `FR-17`: Tactile Haptic Vibration Feedback (`HapticService`).
+  - `FR-18`: Leaky Token Bucket History Synchronization ($B=30, r=2/\text{s}$) & 32KB Decompression Shield (`TokenBucketHistoryGuard`, `UrlStateService`).
+  - `FR-19`: Native Web Share & Standalone PWA Modal Exporter (`CanvasRenderer`).
+  - `FR-20`: Hardware Safe-Zone Geometric Benchmarking & Soft Keyboard Adaptation (`ResponsiveLayoutEngine`).
+  - `FR-21`: Float32Array Confetti Physics Engine with Aerodynamic Drag & Reduced Motion (`ParticleEngine`).
+  - `FR-22`: WOFF2 Asynchronous Preloading Gate & Canvas FOIT Elimination (`FontService`).
+- **Comprehensive Lifecycle State Machines (`DOC-LLD-03`):** Added formal FSM specifications and transition tables for Web Audio 4-state lifecycle (`LOCKED`, `UNLOCKED`, `INTERRUPTED`, `DEGRADED`), Tri-Modal Layout Regime (`WIDE_FOLDABLE`, `STANDARD_PORTRAIT`, `ULTRA_TALL`), and Mobile OS visibility synchronization.
+- **Service Blueprint Alignment (`DOC-LLD-07`):** Added `FontService.js` to target file tree under `src/js/services/` and bumped version to `1.3.0`.
+
 ## [1.2.0] - 2026-11-23
 
 ### Fixed

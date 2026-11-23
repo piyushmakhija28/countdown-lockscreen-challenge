@@ -92,8 +92,8 @@ Each functional requirement is formally specified with unique identifier, descri
 - **Requirement:** The system shall render a pixel-perfect $1170 \times 2532$ portrait wallpaper using an HTML5 Canvas 2D context.
 - **Verification Method:** Test (`TC-POS-09`).
 
-### FR-12: 2x Canvas Supersampling
-- **Requirement:** The canvas rendering engine shall execute at $2\times$ scale ($2340 \times 5064\text{px}$) and downsample to $1170 \times 2532\text{px}$ to eliminate sub-pixel font rasterization artifacts.
+### FR-12: Adaptive Dual-Constraint Scale Solver
+- **Requirement:** The canvas rendering engine shall dynamically determine the rasterization buffer scale $S$ via `AdaptiveBufferAllocator` to respect GPU hardware boundaries ($\text{MAX\_EDGE} \le 4096\text{px}$ and $\text{MAX\_AREA} \le 16.7\text{MP}$ on iOS Safari, $\text{MAX\_EDGE} \le 8192\text{px}$ and $\text{MAX\_AREA} \le 67.1\text{MP}$ on Desktop/Android), eliminating memory crashes while maximizing visual sharpness.
 - **Verification Method:** Test (`TC-POS-09`, `TC-EDGE-03`).
 
 ### FR-13: Thematic Preset Selector
@@ -105,24 +105,36 @@ Each functional requirement is formally specified with unique identifier, descri
 - **Verification Method:** Test (`TC-POS-13`, `TC-POS-14`).
 
 ### FR-15: Direct 1-Click Binary Image Export
-- **Requirement:** The system shall provide an instant 1-click download button exporting the generated lock screen as a standard PNG or JPEG image blob.
+- **Requirement:** The system shall provide an instant 1-click download button exporting the generated lock screen as a standard PNG image blob via `canvas.toBlob()`.
 - **Verification Method:** Demonstration (`TC-POS-10`).
 
-### FR-16: Procedural Web Audio Victory Chime
-- **Requirement:** Upon countdown expiration ($\Delta t \le 0\text{ms}$), the system shall synthesize an in-browser major chord chime (C5-E5-G5-C6) using procedural Web Audio oscillators, with dynamic `sampleRate` adaptation and immediate node disconnection on `ended` to prevent memory leaks.
-- **Verification Method:** Test (`TC-POS-16`).
+### FR-16: Procedural Web Audio 4-State Lifecycle & Peak Limiting
+- **Requirement:** Upon countdown expiration ($\Delta t \le 0\text{ms}$), the system shall synthesize an in-browser major chord chime (C5-E5-G5-C6) using procedural Web Audio oscillators, governed by a 4-state lifecycle FSM (`LOCKED`, `UNLOCKED`, `INTERRUPTED`, `DEGRADED`), user-gesture priming via a 1-sample silent buffer, and a `DynamicsCompressorNode` peak limiter preventing digital distortion.
+- **Verification Method:** Test (`TC-POS-16`, `TC-NEG-10`).
 
 ### FR-17: Tactile Haptic Vibration Feedback
-- **Requirement:** The system shall trigger native haptic tactile feedback patterns (`navigator.vibrate`) on milestone interaction toggles (15ms light pulse) and upon countdown victory celebration (`[100, 50, 100, 50, 250]`), with runtime feature detection and silent degradation.
+- **Requirement:** The system shall trigger native haptic tactile feedback patterns (`navigator.vibrate`) on milestone interaction toggles (30ms light pulse) and upon countdown victory celebration (`[200, 100, 200]`), with runtime feature detection and silent degradation on unsupported hardware.
 - **Verification Method:** Test (`TC-POS-17`).
 
-### FR-18: Debounced URL History Synchronization
-- **Requirement:** During rapid user typing or slider scrubbing, the system shall rate-limit `history.replaceState` calls using a 300ms trailing-edge leaky bucket, bounding frequency to $\le 3.33\text{ Hz}$ to prevent Safari WebKit 100-call / 30s security exceptions.
-- **Verification Method:** Test (`TC-EDGE-11`).
+### FR-18: Leaky Token Bucket History Rate Limiting & 32KB Decompression Shield
+- **Requirement:** During rapid user input or state updates, the system shall throttle `history.replaceState` invocations using `TokenBucketHistoryGuard` (burst capacity $B = 30$ tokens, refill rate $r = 2\text{ tokens/s}$) backed by instant synchronous `sessionStorage` mirroring, and reject uncompressed state streams exceeding 32 KB (`ERR_DECOMPRESSION_BOMB`).
+- **Verification Method:** Test (`TC-NEG-11`, `TC-EDGE-10`).
 
 ### FR-19: Native Web Share & Standalone PWA Modal Exporter
 - **Requirement:** The system shall route mobile export requests through native Web Share API Level 2 (`navigator.share({ files })`), gracefully falling back to an in-app "Press & Hold to Save" image modal on standalone iOS PWA installations.
 - **Verification Method:** Test (`TC-NEG-11`).
+
+### FR-20: Hardware Safe-Zone Geometric Benchmarking & Soft Keyboard Viewport Adaptation
+- **Requirement:** The system shall maintain at least a 28% vertical top safe margin ($Y \ge 708\text{px}$) and 18% bottom safe margin ($Y \le 2075\text{px}$), compute closed-form progress ring radii ($r_{\text{ring}} \le \min(0.32W, 0.38H) \le 220\text{px}$) preventing visual collisions, support Tri-Modal Layout regimes (ultra-tall, standard, foldable split), and adapt dynamically to software keyboards via `visualViewport` height synchronization.
+- **Verification Method:** Test (`TC-POS-08`, `TC-POS-18`).
+
+### FR-21: Float32Array Confetti Physics Engine with Aerodynamic Drag & Reduced Motion
+- **Requirement:** Upon countdown expiration, the system shall simulate celebratory particles using a contiguous `Float32Array` Structure-of-Arrays (SoA) buffer, applying aerodynamic drag damping ($v(t+\Delta t) = v(t) \times (1 - c_d \Delta t)$), linear alpha decay terminating at exactly $3000\text{ms}$ (180 frames at 60fps), and honoring `prefers-reduced-motion` media queries by substituting static celebratory badges.
+- **Verification Method:** Test (`TC-POS-19`).
+
+### FR-22: WOFF2 Asynchronous Preloading Gate & Canvas FOIT Elimination
+- **Requirement:** The canvas rendering engine shall verify web font readiness via `FontService` utilizing `document.fonts.load()` prior to drawing text, completely eliminating Flash of Invisible/Unstyled Text (FOIT/FOUT) during wallpaper rasterization.
+- **Verification Method:** Test (`TC-POS-20`).
 
 ---
 
@@ -162,14 +174,17 @@ Each functional requirement is formally specified with unique identifier, descri
 | FR-09   | F-04 Safe Zone     | SimulatorOverlay    | js/canvas/SafeZoneOverlay.js| TC-POS-08          |
 | FR-10   | F-04 28% Margin    | LayoutEngine        | js/canvas/ResponsiveLayoutEngine.js| TC-POS-08   |
 | FR-11   | F-05 1170x2532     | AdaptiveAllocator   | js/canvas/AdaptiveBufferAllocator.js| TC-POS-09 |
-| FR-12   | F-05 2x Supersample| AdaptiveAllocator   | js/canvas/AdaptiveBufferAllocator.js| TC-POS-09, TC-EDGE-03|
+| FR-12   | F-05 Adaptive Scale| AdaptiveAllocator   | js/canvas/AdaptiveBufferAllocator.js| TC-POS-09, TC-EDGE-03|
 | FR-13   | F-06 Themes        | ThemeController     | js/config/themes.js       | TC-POS-11, TC-POS-12 |
 | FR-14   | F-07 URL Hash      | StateSerializer     | js/core/UrlStateService.js | TC-POS-13, TC-POS-14 |
 | FR-15   | F-05 Download      | BlobExporter        | js/canvas/CanvasRenderer.js| TC-POS-10           |
-| FR-16   | F-05 Audio Chime   | AudioService        | js/services/AudioService.js| TC-POS-16, TC-NEG-10|
+| FR-16   | F-05 Audio FSM     | AudioService        | js/services/AudioService.js| TC-POS-16, TC-NEG-10|
 | FR-17   | F-05 Haptics       | HapticService       | js/services/HapticService.js| TC-POS-17          |
 | FR-18   | F-07 History Guard | TokenBucketGuard    | js/core/TokenBucketHistoryGuard.js| TC-NEG-11, TC-EDGE-10|
 | FR-19   | F-05 Web Share     | ShareService        | js/canvas/CanvasRenderer.js| TC-NEG-11           |
+| FR-20   | F-04 Safe Zones/VP | LayoutEngine        | js/canvas/ResponsiveLayoutEngine.js| TC-POS-08, TC-POS-18 |
+| FR-21   | F-05 Confetti SoA  | ParticleEngine      | js/canvas/ParticleEngine.js| TC-POS-19           |
+| FR-22   | F-05 Font Barrier  | FontService         | js/services/FontService.js | TC-POS-20           |
 +---------+--------------------+---------------------+----------------------+---------------------------+
 ```
 

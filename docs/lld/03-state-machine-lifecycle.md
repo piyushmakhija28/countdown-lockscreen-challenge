@@ -88,3 +88,92 @@ stateDiagram-v2
     IDLE --> ERROR : INVALID_DATE_INPUT
     ERROR --> IDLE : USER_CORRECTS_INPUT
 ```
+
+---
+
+## 4. Web Audio 4-State Lifecycle FSM
+
+To guarantee reliable in-browser procedural audio synthesis without unhandled promise rejections on mobile WebKit and Blink, `AudioService` is modeled as a 4-state sub-lifecycle FSM:
+
+```mermaid
+stateDiagram-v2
+    [*] --> LOCKED : CONTEXT_INITIALIZED
+    
+    LOCKED --> UNLOCKED : USER_GESTURE_PRIMING (First Touch / Click)
+    LOCKED --> DEGRADED : AUTOPLAY_REJECTED / POLICY_RESTRICTION
+    
+    UNLOCKED --> INTERRUPTED : OS_BACKGROUND / PHONE_CALL (state: suspended)
+    INTERRUPTED --> UNLOCKED : OS_FOREGROUND (document.visibilityState: visible)
+    
+    UNLOCKED --> DEGRADED : HARDWARE_FAILURE / OUTPUT_REVOKED
+    DEGRADED --> UNLOCKED : RE_ACQUIRE_CONTEXT (Manual User Action)
+```
+
+```
++-------------------------------------------------------------------------------------------------------------------+
+|                                            WEB AUDIO 4-STATE TRANSITION TABLE                                     |
++-----------------------+--------------------------+-----------------------+----------------------------------------+
+| Current State         | Event                    | Next State            | Behavior / Action                      |
++-----------------------+--------------------------+-----------------------+----------------------------------------+
+| `LOCKED`              | `USER_TOUCH_OR_CLICK`    | `UNLOCKED`            | Play 1-sample silent PCM buffer        |
+| `LOCKED`              | `AUTOPLAY_PROMISE_REJECT`| `DEGRADED`            | Fallback to Haptic vibration & toast   |
+| `UNLOCKED`            | `VISIBILITY_HIDDEN`      | `INTERRUPTED`         | Suspend AudioContext to conserve power |
+| `INTERRUPTED`         | `VISIBILITY_VISIBLE`     | `UNLOCKED`            | Resume AudioContext                    |
+| `UNLOCKED`            | `DEVICE_DISCONNECTED`    | `DEGRADED`            | Fallback to visual feedback            |
+| `DEGRADED`            | `USER_RETRY`             | `UNLOCKED`            | Instantiate new AudioContext instance  |
++-----------------------+--------------------------+-----------------------+----------------------------------------+
+```
+
+---
+
+## 5. Responsive Layout Tri-Modal Regime FSM
+
+`ResponsiveLayoutEngine` evaluates the viewport aspect ratio $\mathcal{R} = \frac{W}{H}$ and transitions through three deterministic geometric regimes:
+
+```mermaid
+stateDiagram-v2
+    [*] --> EVALUATE_VIEWPORT
+    
+    EVALUATE_VIEWPORT --> ULTRA_TALL : Ratio >= 2.15 (Xperia, Fold Outer)
+    EVALUATE_VIEWPORT --> STANDARD_PORTRAIT : 1.70 <= Ratio < 2.15 (iPhone, Pixel)
+    EVALUATE_VIEWPORT --> WIDE_FOLDABLE : Ratio < 1.70 (iPad, Fold Inner, Desktop)
+    
+    ULTRA_TALL --> STANDARD_PORTRAIT : VIEWPORT_RESIZE
+    ULTRA_TALL --> WIDE_FOLDABLE : ORIENTATION_CHANGE
+    
+    STANDARD_PORTRAIT --> ULTRA_TALL : VIEWPORT_RESIZE
+    STANDARD_PORTRAIT --> WIDE_FOLDABLE : ORIENTATION_CHANGE
+    
+    WIDE_FOLDABLE --> STANDARD_PORTRAIT : ORIENTATION_CHANGE
+    WIDE_FOLDABLE --> ULTRA_TALL : VIEWPORT_RESIZE
+```
+
+```
++-------------------------------------------------------------------------------------------------------------------+
+|                                          TRI-MODAL LAYOUT REGIME SPECIFICATION                                    |
++---------------------+-------------------+-----------------------------------+-------------------------------------+
+| Layout Regime       | Aspect Ratio      | Layout Geometry                   | Progress Ring Bound                 |
++---------------------+-------------------+-----------------------------------+-------------------------------------+
+| `ULTRA_TALL`        | $\mathcal{R} \ge 2.15$ | Single-column, expanded milestones| $r_{\text{ring}} \le 220\text{px}$  |
+| `STANDARD_PORTRAIT` | $1.70 \le \mathcal{R} < 2.15$ | Standard single-column hero stack  | $r_{\text{ring}} \le 200\text{px}$  |
+| `WIDE_FOLDABLE`     | $\mathcal{R} < 1.70$ | Split dual-column (Hero / Sprints)| $r_{\text{ring}} \le 180\text{px}$  |
++---------------------+-------------------+-----------------------------------+-------------------------------------+
+```
+
+---
+
+## 6. Mobile OS Lifecycle & Visibility Synchronization
+
+When the host mobile device locks, sleeps, or switches apps, the timer ticker switches execution tiers to eliminate battery drain while guaranteeing zero cumulative clock drift:
+
+```mermaid
+stateDiagram-v2
+    [*] --> FOREGROUND_ACTIVE
+    
+    FOREGROUND_ACTIVE --> BACKGROUND_SUSPENDED : pagehide / visibilitychange: hidden
+    BACKGROUND_SUSPENDED --> FOREGROUND_ACTIVE : pageshow / visibilitychange: visible (Drift Catch-Up)
+    
+    BACKGROUND_SUSPENDED --> WORKER_TICKING : Service Worker / Timer Fallback
+    WORKER_TICKING --> FOREGROUND_ACTIVE : RESUME_UI
+```
+
