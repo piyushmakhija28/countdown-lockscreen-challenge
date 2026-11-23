@@ -63,3 +63,9 @@ When the user edits the target deadline or switches goals, `DualClockTimeEngine.
 $$\text{if } (\text{activeTargetEpoch} \neq \text{newTargetEpoch}) \implies \begin{cases} \text{cancelAnimationFrame}(\text{currentHandle}) \\ \text{reset isExpired} \leftarrow \text{false} \\ \text{recalibrate epoch baseline against } performance.now() \\ \text{restart RAF loop with newTargetEpoch} \end{cases}$$
 
 This invariant guarantees that changing a deadline from a past epoch to a future epoch immediately cancels completion state, halts audio/haptic victory triggers, and restarts live countdown rendering without requiring a browser page refresh.
+
+### 5.3 Hybrid Dual-Scheduler Architecture Evolution (v1.7.0 / v1.8.0 / v1.9.0)
+To reconcile zero battery burn with background mobile throttling immunity, the system evolved into a **Clean Architecture Hybrid Dual-Scheduler**:
+1. **Foreground Operational Mode (60Hz V-Sync):** While `document.visibilityState === 'visible'`, `DualClockTimeEngine` drives fluid 60 FPS animation via native `requestAnimationFrame` anchored to `performance.now()`.
+2. **Background Operational Mode (1Hz Chronometry):** Upon `visibilitychange` to `'hidden'`, the engine transitions scheduling to `WorkerTickerAdapter`, an unthrottled inline Blob Web Worker (`URL.createObjectURL(new Blob([...]))`) implementing the `ITickScheduler` port interface.
+3. **Synthesis:** This hybrid pattern completely eliminates the battery consumption of background RAF loops while guaranteeing that chronometer ticks and alarms never freeze on mobile Safari or background desktop tabs.

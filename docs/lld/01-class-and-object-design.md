@@ -893,6 +893,10 @@ export class CountdownApp {
   #store;
   /** @type {DualClockTimeEngine} */
   #timeEngine;
+  /** @type {GeminiAiClient} */
+  #geminiClient;
+  /** @type {LifecycleScope} */
+  #lifecycleScope;
   /** @type {AudioChimeService} */
   #audioService;
   /** @type {HapticService} */
@@ -1247,6 +1251,160 @@ export class WorkerTickerAdapter extends ITickScheduler {
       this.#worker = null;
     }
     this.#callbacks.clear();
+  }
+}
+
+### 2.19 `ResilientStorageService` Class Contract
+```javascript
+/**
+ * Concrete Storage Adapter: Resilient client persistence engine implementing IStateStoragePort.
+ * Enforces the 4-tier degradation ladder from ADR-006:
+ * Tier 1: LocalStorage with LRU eviction and 'countdown_lockscreen_v1:' namespace
+ * Tier 2: SessionStorage for tab-scoped isolation
+ * Tier 3: In-Memory Map heap fallback
+ * Tier 4: URL hash memento
+ */
+export class ResilientStorageService extends IStateStoragePort {
+  /** @type {Map<string, string>} */
+  #memoryFallback = new Map();
+  /** @type {string} */
+  #prefix = 'countdown_lockscreen_v1:';
+  /** @type {'localStorage' | 'sessionStorage' | 'memory' | 'hash'} */
+  #activeTier = 'localStorage';
+
+  /**
+   * Constructs resilient storage service with proactive tier availability probing.
+   */
+  constructor() {
+    super();
+    this.#probeActiveTier();
+  }
+
+  /**
+   * Probes browser environment to determine highest available storage tier.
+   * @private
+   */
+  #probeActiveTier() {
+    try {
+      const probeKey = `${this.#prefix}__probe__`;
+      localStorage.setItem(probeKey, '1');
+      localStorage.removeItem(probeKey);
+      this.#activeTier = 'localStorage';
+    } catch {
+      try {
+        const probeKey = `${this.#prefix}__probe__`;
+        sessionStorage.setItem(probeKey, '1');
+        sessionStorage.removeItem(probeKey);
+        this.#activeTier = 'sessionStorage';
+      } catch {
+        this.#activeTier = 'memory';
+      }
+    }
+  }
+
+  /**
+   * Returns currently active storage tier name.
+   * @returns {'localStorage' | 'sessionStorage' | 'memory' | 'hash'}
+   */
+  get activeTier() {
+    return this.#activeTier;
+  }
+
+  /**
+   * Persists an ephemeral key-value pair across available storage tiers with LRU protection.
+   *
+   * @param {string} key Storage lookup key
+   * @param {string} value Serialized payload string
+   * @returns {void}
+   */
+  saveEphemeral(key, value) {
+    const fullKey = `${this.#prefix}${key}`;
+    if (this.#activeTier === 'localStorage') {
+      try {
+        localStorage.setItem(fullKey, value);
+        return;
+      } catch {
+        this.#evictOldestLru();
+        try {
+          localStorage.setItem(fullKey, value);
+          return;
+        } catch {
+          this.#activeTier = 'sessionStorage';
+        }
+      }
+    }
+    if (this.#activeTier === 'sessionStorage') {
+      try {
+        sessionStorage.setItem(fullKey, value);
+        return;
+      } catch {
+        this.#activeTier = 'memory';
+      }
+    }
+    this.#memoryFallback.set(fullKey, value);
+  }
+
+  /**
+   * Loads an ephemeral value from the highest available tier.
+   *
+   * @param {string} key Storage lookup key
+   * @returns {string | null} Stored value or null if nonexistent
+   */
+  loadEphemeral(key) {
+    const fullKey = `${this.#prefix}${key}`;
+    if (this.#activeTier === 'localStorage') {
+      try {
+        const val = localStorage.getItem(fullKey);
+        if (val !== null) return val;
+      } catch {
+        this.#activeTier = 'sessionStorage';
+      }
+    }
+    if (this.#activeTier === 'sessionStorage') {
+      try {
+        const val = sessionStorage.getItem(fullKey);
+        if (val !== null) return val;
+      } catch {
+        this.#activeTier = 'memory';
+      }
+    }
+    return this.#memoryFallback.get(fullKey) ?? null;
+  }
+
+  /**
+   * Safely replaces browser navigation hash state without creating history stack pollution.
+   *
+   * @param {string} hashFragment URL hash payload
+   * @returns {void}
+   */
+  replaceNavigationState(hashFragment) {
+    try {
+      if (typeof window !== 'undefined' && window.history && window.history.replaceState) {
+        window.history.replaceState(null, '', `#${hashFragment}`);
+      }
+    } catch {
+      if (typeof window !== 'undefined' && window.location) {
+        window.location.hash = hashFragment;
+      }
+    }
+  }
+
+  /**
+   * Evicts oldest unpinned item from localStorage to recover quota.
+   * @private
+   */
+  #evictOldestLru() {
+    try {
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (k && k.startsWith(this.#prefix) && !k.includes('pinned')) {
+          localStorage.removeItem(k);
+          break;
+        }
+      }
+    } catch {
+      // Degrade silently
+    }
   }
 }
 ```

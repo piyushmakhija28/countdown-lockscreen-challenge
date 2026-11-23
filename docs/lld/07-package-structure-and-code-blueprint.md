@@ -84,7 +84,21 @@ countdown-lockscreen-challenge/
 │       ├── 01-wbs-and-sprint-backlog.md
 │       ├── 02-service-orchestration-dag.md
 │       └── 03-traceability-matrix.md
-├── uml/                               # The 13 Canonical Mermaid UML Diagrams
+├── drawio/                             # The 13 Canonical Draw.io XML Diagrams (Rule 45 Parity)
+│   ├── activity_diagram.drawio
+│   ├── call_graph_diagram.drawio
+│   ├── class_diagram.drawio
+│   ├── communication_diagram.drawio
+│   ├── component_diagram.drawio
+│   ├── composite_diagram.drawio
+│   ├── deployment_diagram.drawio
+│   ├── interaction_diagram.drawio
+│   ├── object_diagram.drawio
+│   ├── package_diagram.drawio
+│   ├── sequence_diagram.drawio
+│   ├── state_diagram.drawio
+│   └── usecase_diagram.drawio
+├── uml/                                # The 13 Canonical Mermaid UML Diagrams
 │   ├── activity_diagram.md
 │   ├── call_graph_diagram.md
 │   ├── class_diagram.md
@@ -167,6 +181,7 @@ To maintain strict acyclic dependencies ($D \le 0.15$):
 +------------------------------+------------------------------------+-------------------------------------------+
 | Source File                  | Exported Symbols                   | Direct Imported Modules                   |
 +------------------------------+------------------------------------+-------------------------------------------+
+| `config/themes.js`           | `THEMES`, `ThemeId`, `getTheme`    | (None - Constant Palettes & CSS Tokens)   |
 | `core/ports.js`              | `ITickScheduler`, `IMilestonePlan` | (None - Pure Domain Contracts)            |
 |                              | `IRenderTarget`, `IWallpaperRend`  |                                           |
 |                              | `IStateStoragePort`, `ILifecycle`  |                                           |
@@ -181,13 +196,17 @@ To maintain strict acyclic dependencies ($D \le 0.15$):
 | `ai/GeminiAiClient.js`        | `GeminiAiClient`                   | `core/ports.js`, `ai/GeminiRateLimiter.js`|
 | `ai/GeminiRateLimiter.js`    | `GeminiRateLimiter`                | (None - LocalStorage Token Bucket)        |
 | `ai/HeuristicGenerator.js`   | `HeuristicGenerator`               | `core/ports.js`                           |
+| `canvas/AdaptiveBufferAllocator.js`| `AdaptiveBufferAllocator`     | (None - GPU Constraint Closed-Form Solver)|
+| `canvas/ResponsiveLayoutEngine.js` | `ResponsiveLayoutEngine`      | `config/themes.js`                        |
 | `canvas/CanvasRenderer.js`   | `CanvasRenderer`                   | `core/ports.js`, `canvas/Adaptive...`,    |
+|                              |                                    | `canvas/ResponsiveLayoutEngine.js`,        |
 |                              |                                    | `canvas/CanvasTextWrapper.js`,            |
 |                              |                                    | `canvas/SafeZoneOverlay.js`, `FontService`|
 | `canvas/CanvasTextWrapper.js`| `CanvasTextWrapper`                | (None - Intl.Segmenter API)               |
 | `canvas/SafeZoneOverlay.js`  | `SafeZoneOverlay`                  | (None - Canvas 2D Stroke)                 |
 | `canvas/ParticleEngine.js`   | `ParticleEngine`                   | (None - Float32Array Buffers)             |
 | `services/WorkerTickerAdapter.js`| `WorkerTickerAdapter`           | `core/ports.js`                           |
+| `services/ResilientStorageService.js`| `ResilientStorageService`   | `core/ports.js`                           |
 | `services/AudioChimeService.js`| `AudioChimeService`              | (None - Web Audio API AudioContext)       |
 | `services/FontService.js`    | `FontService`                      | (None - document.fonts FontFaceSet)       |
 | `services/HapticService.js`  | `HapticService`                    | (None - navigator.vibrate)                |

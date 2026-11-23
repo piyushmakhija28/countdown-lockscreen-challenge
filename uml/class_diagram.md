@@ -171,6 +171,15 @@ classDiagram
         +exportBlob(): Promise~Blob~
     }
 
+    class ResilientStorageService {
+        -memoryFallback: Map
+        -prefix: string
+        -activeTier: string
+        +saveEphemeral(key: string, value: string): void
+        +loadEphemeral(key: string): string
+        +replaceNavigationState(hashFragment: string): void
+    }
+
     class IStateStoragePort {
         <<interface>>
         +saveEphemeral(key: string, value: string): void
@@ -202,6 +211,8 @@ classDiagram
     IMilestonePlanner <|.. GeminiAiClient
     IMilestonePlanner <|.. HeuristicGenerator
     IWallpaperRenderer <|.. CanvasRenderer
+    IStateStoragePort <|.. ResilientStorageService
+    CountdownApp --> ResilientStorageService
 
     CountdownApp --> StateStore
     CountdownApp --> DualClockTimeEngine

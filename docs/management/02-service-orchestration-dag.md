@@ -82,54 +82,72 @@ The client-side runtime adheres to a strict Directed Acyclic Graph (DAG) with ze
 graph TD
     App[CountdownApp: Root Orchestrator]
 
-    subgraph CoreDomain [Tier 1: Core Domain & State]
-        Time[DualClockTimeEngine]
-        MM[MilestoneManager]
-        Sanitizer[InputSanitizer]
-        State[UrlStateService]
-        Guard[TokenBucketHistoryGuard]
+    subgraph CoreDomain [Tier 1: Core Domain & State Architecture]
+        Store[StateStore: Trampoline Dispatch & Tab Sync]
+        Time[DualClockTimeEngine: Hybrid Chronometer]
+        MM[MilestoneManager: Checkpoint Logic]
+        Sanitizer[InputSanitizer: Unicode NFKC Shield]
+        State[UrlStateService: Base64URL Codec]
+        Guard[TokenBucketHistoryGuard: Rate Limiter]
+        Scope[LifecycleScope: RAII Signal Binding]
+        Storage[ResilientStorageService: 4-Tier Ladder]
+        Ports[CleanArchitecturePorts: Abstract Interfaces]
     end
 
     subgraph AIService [Tier 2: AI Intelligence & Offline Fallback]
-        Gemini[GeminiAiClient]
-        Heuristic[HeuristicGenerator]
+        Gemini[GeminiAiClient: 3.8 Flash SDK Client]
+        Limiter[GeminiRateLimiter: 15 RPM Token Bucket]
+        Heuristic[HeuristicGenerator: Quarter Partition Fallback]
     end
 
     subgraph PlatformServices [Tier 3: Platform & Sensory Services]
-        Audio[AudioChimeService]
-        Haptic[HapticService]
-        Font[FontService]
+        Worker[WorkerTickerAdapter: Inline Blob 1Hz Ticker]
+        Audio[AudioChimeService: Procedural Web Audio FSM]
+        Haptic[HapticService: Vibration API Patterns]
+        Font[FontService: Canvas FOIT Barrier Gate]
     end
 
     subgraph CanvasPipeline [Tier 4: Canvas 2D Graphics Pipeline]
-        Alloc[AdaptiveBufferAllocator]
-        Layout[ResponsiveLayoutEngine]
-        Text[CanvasTextWrapper]
-        Overlay[SafeZoneOverlay]
-        Particles[ParticleEngine]
-        Renderer[CanvasRenderer]
+        Themes[themes.js: Curated Design Tokens]
+        Alloc[AdaptiveBufferAllocator: Dual-Constraint Solver]
+        Layout[ResponsiveLayoutEngine: Tri-Modal Geometry]
+        Text[CanvasTextWrapper: Intl.Segmenter Wrapper]
+        Overlay[SafeZoneOverlay: Safe Zone Guides]
+        Particles[ParticleEngine: Float32Array Drag Physics]
+        Renderer[CanvasRenderer: Master 2D Rasterizer]
     end
 
+    App --> Store
+    App --> Scope
+    App --> Storage
+    App --> Time
     App --> Sanitizer
     App --> State
     App --> Guard
-    App --> Time
-    App --> MM
     App --> Audio
     App --> Haptic
     App --> Font
     App --> Renderer
 
+    Store --> MM
+    Time --> Worker
+    Time --> Ports
+    Guard --> Storage
+    Guard --> Scope
+
     MM --> Gemini
     MM --> Heuristic
-
-    State --> Guard
+    Gemini --> Limiter
+    Gemini --> Ports
+    Heuristic --> Ports
 
     Renderer --> Alloc
     Renderer --> Layout
     Renderer --> Text
     Renderer --> Overlay
     Renderer --> Font
+    Renderer --> Themes
+    Renderer --> Ports
 
     Time -.-> Renderer
     Particles -.-> Renderer

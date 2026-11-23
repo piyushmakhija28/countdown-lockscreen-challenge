@@ -405,42 +405,42 @@ To guarantee that the countdown lock screen web application executes flawlessly 
 | 01| **LLD-EV-01: Passive Touch**| { passive: false } + touch-action | `app.js` & `tokens.css`                 |
 | 02| **LLD-EV-02: 300ms Delay**  | touch-action: manipulation        | `tokens.css` & `index.html`             |
 | 03| **LLD-EV-03: Pointer Cancel| Unified pointerup/cancel listener | `app.js` & `src/canvas/`                |
-| 04| **LLD-CV-01: Save/Restore** | withCanvasContext() RAII helper   | `src/canvas/` & `TC-POS-83`             |
-| 05| **LLD-CV-02: Clip Bleed**   | Offscreen destination-in composite| `src/canvas/` & `TC-POS-84`             |
-| 06| **LLD-CV-03: Text Metrics** | Safe actualBoundingBox fallback   | `src/canvas/` & `TC-POS-85`             |
-| 07| **LLD-CV-04: Safari Bitmap**| Pre-transfer dimension assertion  | `src/canvas/` & `TC-POS-86`             |
-| 08| **LLD-TM-01: Leap Seconds** | Target-bound monotonic clamp      | `DualClockTimeEngine.js` & `TC-EDGE-25` |
-| 09| **LLD-TM-02: Millis Under** | Celebration strict delta <= 0     | `DualClockTimeEngine.js` & `TC-EDGE-26` |
-| 10| **LLD-TM-03: String Churn** | Static LUT with bitwise integer n | `DualClockTimeEngine.js` & `TC-POS-87`  |
-| 11| **LLD-AI-01: HTTP 429 Breaker| Fail-fast circuit breaker         | `GeminiAiClient.js` & `TC-POS-88`       |
+| 04| **LLD-CV-01: Save/Restore** | withCanvasContext() RAII helper   | `src/canvas/` & `TC-POS-21`             |
+| 05| **LLD-CV-02: Clip Bleed**   | Offscreen destination-in composite| `src/canvas/` & `TC-POS-113`            |
+| 06| **LLD-CV-03: Text Metrics** | Safe actualBoundingBox fallback   | `src/canvas/` & `TC-POS-23`             |
+| 07| **LLD-CV-04: Safari Bitmap**| Pre-transfer dimension assertion  | `src/canvas/` & `TC-POS-09`             |
+| 08| **LLD-TM-01: Leap Seconds** | Target-bound monotonic reset      | `DualClockTimeEngine.js` & `TC-POS-100` |
+| 09| **LLD-TM-02: Millis Under** | Celebration strict delta <= 0     | `DualClockTimeEngine.js` & `TC-POS-101` |
+| 10| **LLD-TM-03: String Churn** | Static LUT with bitwise integer n | `DualClockTimeEngine.js` & `TC-POS-102` |
+| 11| **LLD-AI-01: HTTP 429 Breaker| Fail-fast circuit breaker         | `GeminiAiClient.js` & `TC-POS-103`      |
 | 12| **LLD-AI-02: XML Escaping** | escapeXmlEntities() pre-prompt    | `GeminiAiClient.js` & `TC-NEG-14`       |
-| 13| **LLD-ST-01: Safari Incog** | isStorageAvailable() startup probe| `TokenBucketHistoryGuard.js`            |
-| 14| **LLD-ST-02: Schema Drift** | StateMigrator forward versioning  | `UrlStateService.js` & `TC-POS-89`      |
-| 15| **LLD-ST-03: SW HTTP Cache**| Cache-Control: no-cache headers   | `sw.js` & `devops/03`                   |
-| 16| **LLD-AU-01: Audio Desync** | onstatechange auto-resume handler | `AudioChimeService.js` & `TC-POS-90`    |
-| 17| **LLD-UI-01: DPI CSS Blur** | Synchronized width/style.width    | `src/canvas/` & `TC-POS-91`             |
-| 18| **LLD-FS-01: Safari Download| Web Share API + fallback modal    | `src/canvas/` & `TC-POS-92`             |
-| 19| **LLD-FS-02: URL Object Leak| Single-slot tracked blob URL mgr   | `src/canvas/` & `TC-POS-93`             |
+| 13| **LLD-ST-01: Safari Incog** | isStorageAvailable() startup probe| `ResilientStorageService.js`            |
+| 14| **LLD-ST-02: Schema Drift** | Tuple Codec + Base64URL padding   | `UrlStateService.js` & `TC-POS-104..105`|
+| 15| **LLD-ST-03: SW HTTP Cache**| Scoped cache key v1.8.0 / v1.9.0  | `sw.js` & `ADR-008` (NFR-11)            |
+| 16| **LLD-AU-01: Audio Desync** | Dynamic sample rate silent buffer | `AudioChimeService.js` & `TC-POS-108`   |
+| 17| **LLD-UI-01: DPI CSS Blur** | Synchronized width/style.width    | `src/canvas/` & `TC-POS-09`             |
+| 18| **LLD-FS-01: Safari Download| Web Share API + fallback modal    | `src/canvas/` & `TC-POS-10`             |
+| 19| **LLD-FS-02: URL Object Leak| Single-slot tracked blob URL mgr   | `src/canvas/` & `TC-POS-15`             |
 | 20| **LLD-UX-01: Notch Rotation| Orientation change recalculation  | `ResponsiveLayoutEngine.js`             |
-| 21| **LLD-V8-01: Hidden Shapes**| Monomorphic constructor property  | `DualClockTimeEngine.js` & `TC-POS-95`  |
-| 22| **LLD-V8-02: Array Holes**  | Packed splice() / slice() invariant| `MilestoneManager.js` & `TC-POS-96`     |
-| 23| **LLD-V8-03: Buffer Retain**| Explicit detachment via new Uint8A | `src/canvas/` & `TC-POS-97`             |
-| 24| **LLD-CS-01: GPU Layer Expl| Single consolidated parent blur   | `glassmorphism.css` & `TC-POS-98`       |
-| 25| **LLD-CS-02: Hairline Border| max(0.5px, 1px/dpr) calculation  | `tokens.css` & `TC-POS-99`              |
-| 26| **LLD-CS-03: Blend Stacking| Stacking context DOM separation   | `glassmorphism.css` & `TC-POS-100`      |
-| 27| **LLD-AS-01: Microtask Freez| RAF for render, RIC for compute   | `app.js` & `TC-POS-101`                 |
-| 28| **LLD-AS-02: Abort Silence**| Filter error.name === 'AbortError'| `GeminiAiClient.js` & `TC-POS-102`      |
-| 29| **LLD-AS-03: Upload Race**  | Monotonic activeUploadId sequence | `app.js` & `TC-POS-103`                 |
-| 30| **LLD-CP-01: beginPath Leak| Mandatory beginPath() at draw start| `src/canvas/` & `TC-POS-104`            |
-| 31| **LLD-CP-02: Zero Vector NaN| Epsilon guarded vector normalizat | `src/canvas/` & `TC-POS-105`            |
-| 32| **LLD-CP-03: Font Fit Loop**| Min font floor + word truncation  | `src/canvas/` & `TC-POS-106`            |
-| 33| **LLD-SH-01: Unfocused Copy| Dual clipboard with textarea fallb| `app.js` & `TC-POS-107`                 |
-| 34| **LLD-SH-02: Share Dismiss**| Silence AbortError on share cancel| `app.js` & `TC-POS-108`                 |
-| 35| **LLD-SH-03: PWA Trap Nav** | target=_blank + rel=noopener      | `index.html` & `TC-POS-109`             |
-| 36| **LLD-IN-01: Virtual Keybd**| Enter key listener input.blur()   | `app.js` & `TC-POS-110`                 |
-| 37| **LLD-IN-02: Zero-Width Str| Unicode NFKC + regex strip        | `UrlStateService.js` & `TC-POS-111`     |
-| 38| **LLD-IN-03: Datetime Min** | Dynamic min ISO anchor attribute  | `app.js` & `TC-POS-112`                 |
-| 39| **LLD-AU-02: Audio Node Leak| Mandatory onended disconnect()    | `AudioChimeService.js` & `TC-POS-113`   |
-| 40| **LLD-AU-03: Sample Rate Dis| Parametric realtime synthesis     | `AudioChimeService.js` & `TC-POS-114`   |
+| 21| **LLD-V8-01: Hidden Shapes**| Monomorphic constructor property  | `DualClockTimeEngine.js` & `TC-POS-05`  |
+| 22| **LLD-V8-02: Array Holes**  | Packed splice() / slice() invariant| `MilestoneManager.js` & `TC-POS-06`    |
+| 23| **LLD-V8-03: Buffer Retain**| Explicit detachment via new Uint8A | `src/canvas/` & `TC-POS-19`             |
+| 24| **LLD-CS-01: GPU Layer Expl| Single consolidated parent blur   | `glassmorphism.css` & `TC-POS-11`       |
+| 25| **LLD-CS-02: Hairline Border| max(0.5px, 1px/dpr) calculation  | `tokens.css` & `TC-EDGE-07`             |
+| 26| **LLD-CS-03: Blend Stacking| Stacking context DOM separation   | `glassmorphism.css` & `TC-POS-12`       |
+| 27| **LLD-AS-01: Microtask Freez| Trampoline dispatch batch queue   | `StateStore.js` & `TC-POS-115`          |
+| 28| **LLD-AS-02: Abort Silence**| Filter error.name === 'AbortError'| `GeminiAiClient.js` & `TC-POS-02`       |
+| 29| **LLD-AS-03: Upload Race**  | Monotonic activeUploadId sequence | `app.js` & `TC-POS-13`                  |
+| 30| **LLD-CP-01: beginPath Leak| Mandatory beginPath() at draw start| `src/canvas/` & `TC-POS-09`             |
+| 31| **LLD-CP-02: Zero Vector NaN| Epsilon guarded vector normalizat | `src/canvas/` & `TC-POS-19`             |
+| 32| **LLD-CP-03: Font Fit Loop**| FontService readiness gate        | `src/canvas/` & `TC-POS-114`            |
+| 33| **LLD-SH-01: Unfocused Copy| Dual clipboard with textarea fallb| `app.js` & `TC-POS-14`                  |
+| 34| **LLD-SH-02: Share Dismiss**| Silence AbortError on share cancel| `app.js` & `TC-POS-15`                  |
+| 35| **LLD-SH-03: PWA Trap Nav** | target=_blank + rel=noopener      | `index.html` & `NFR-09`                 |
+| 36| **LLD-IN-01: Virtual Keybd**| visualViewport height adaptation  | `app.js` & `TC-POS-112`                 |
+| 37| **LLD-IN-02: Zero-Width Str| Unicode Combining Mark Whitelist  | `UrlStateService.js` & `TC-POS-107`     |
+| 38| **LLD-IN-03: Datetime Min** | Dynamic min ISO anchor attribute  | `app.js` & `TC-POS-01`                  |
+| 39| **LLD-AU-02: Audio Node Leak| DynamicsCompressorNode limiter    | `AudioChimeService.js` & `TC-POS-109`   |
+| 40| **LLD-AU-03: Multi-Tab Audio| Web Locks single-instance mutex   | `AudioChimeService.js` & `TC-POS-116`   |
 +---+-----------------------------+-----------------------------------+-----------------------------------------+
 ```

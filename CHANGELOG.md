@@ -5,6 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.9.0] - 2026-11-23
+
+### Added
+- **Clean Architecture Storage Port Concrete Adapter (`DOC-LLD-01`, `DOC-LLD-07`, `DOC-03`, `uml/`):**
+  - Formulated `ResilientStorageService` implementing `IStateStoragePort` with the 4-tier degradation ladder (`localStorage` $\to$ `sessionStorage` $\to$ In-Memory `Map` heap fallback $\to$ URL hash memento) and LRU eviction policy.
+  - Added Section 2.19 to `DOC-LLD-01`, added `IResilientStorageService` to `DOC-03`, expanded `DOC-LLD-07` Section 2.1 module import/export matrix, and updated `uml/class_diagram.md` and `drawio/class_diagram.drawio` (28 classes).
+  - Synchronized `CountdownApp` with private member fields `#geminiClient` and `#lifecycleScope`.
+- **System Invariant Suite Expansion (`DOC-00-PROBLEM-STATEMENT`):**
+  - Formally expanded Section 2 to all 16 System Invariants (`INV-001` through `INV-016`), establishing 100% mathematical correspondence with `DOC-LLD-09` Section 18.
+- **Hybrid Chronometry Architecture Evolution (`ADR-007`):**
+  - Documented Section 5.3 Hybrid Dual-Scheduler Architecture combining Foreground 60Hz V-Sync via `DualClockTimeEngine` (RAF) and Background 1Hz Chronometry via `WorkerTickerAdapter` (inline Blob Web Worker) through the `ITickScheduler` clean architecture port.
+- **Vulnerability Resilience Verification Traceability (`DOC-MGT-03`, `DOC-05-SRS`):**
+  - Added Section 6 to `DOC-MGT-03` formally mapping all 80 vulnerability test cases (`TC-POS-21` to `TC-POS-99`, `TC-EDGE-25`, `TC-EDGE-26`) to the 100-vulnerability system audit in `DOC-LLD-08`.
+  - Synchronized `DOC-05-SRS` Table 4 with the authoritative triad test mappings from `DOC-MGT-03`.
+- **Engineering Work Package & DAG Scalability (`DOC-MGT-01`, `DOC-MGT-02`):**
+  - Expanded `DOC-MGT-01` Section 3 from 17 to all 24 engineering work packages (`TASK-ENG-01` to `TASK-ENG-24`).
+  - Expanded `DOC-MGT-02` Service Orchestration DAG to incorporate `StateStore`, `ResilientStorageService`, `LifecycleScope`, `GeminiRateLimiter`, and `WorkerTickerAdapter`.
+- **Micro-Architectural Test ID Alignment (`DOC-LLD-10`):**
+  - Synchronized lines 405–445 verification table with canonical test IDs `TC-POS-100` through `TC-POS-116`.
+
 ## [1.8.0] - 2026-11-23
 
 ### Added

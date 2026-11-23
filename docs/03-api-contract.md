@@ -293,6 +293,12 @@ export interface IStateStoragePort {
   replaceNavigationState(hashFragment: string): void;
 }
 
+export interface IResilientStorageService extends IStateStoragePort {
+  readonly activeTier: 'localStorage' | 'sessionStorage' | 'memory' | 'hash';
+  clearEphemeral(key: string): void;
+  getStorageQuotaStats(): { usedBytes: number; quotaBytes: number };
+}
+
 export interface IDisposable {
   dispose(): void;
 }

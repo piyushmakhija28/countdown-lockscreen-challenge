@@ -49,7 +49,7 @@
 
 ---
 
-## 3. Concrete Engineering Work Package Mapping (All 17 Classes)
+## 3. Concrete Engineering Work Package Mapping (All 24 Work Packages)
 
 ```
 +---------------+-------------------------------+-----------------------+-----------------------+
@@ -64,7 +64,7 @@
 | `TASK-ENG-07` | `src/js/canvas/CanvasTextWrapper.js` | Bidi isolation & text wrap    | `FR-20`             |
 | `TASK-ENG-08` | `src/js/canvas/ParticleEngine.js`    | Float32Array confetti physics | `FR-21`             |
 | `TASK-ENG-09` | `src/js/canvas/SafeZoneOverlay.js`   | Lockscreen simulator overlay  | `FR-09`             |
-| `TASK-ENG-10` | `src/js/services/AudioChimeService.js`| 4-state procedural Web Audio  | `FR-16`             |
+| `TASK-ENG-10` | `src/js/services/AudioChimeService.js`| 4-state procedural Web Audio  | `FR-16`, `FR-24`    |
 | `TASK-ENG-11` | `src/js/services/HapticService.js`   | Tactile vibration patterns    | `FR-17`             |
 | `TASK-ENG-12` | `src/js/services/FontService.js`     | Web font loading barrier gate | `FR-22`             |
 | `TASK-ENG-13` | `src/js/core/TokenBucketHistoryGuard.js`| Leaky token bucket rate limiter| `FR-18`          |
@@ -72,6 +72,13 @@
 | `TASK-ENG-15` | `src/js/core/UrlStateService.js`     | Base64URL hash state codec    | `FR-14`             |
 | `TASK-ENG-16` | `src/js/canvas/CanvasRenderer.js`    | 2D wallpaper rasterizer       | `FR-15`, `FR-19`    |
 | `TASK-ENG-17` | `src/js/app.js`                      | Root orchestrator & view wire | ALL REQUIREMENTS    |
+| `TASK-ENG-18` | `src/js/core/StateStore.js`          | Trampoline dispatch & tab sync| `FR-23`             |
+| `TASK-ENG-19` | `src/js/ai/GeminiRateLimiter.js`     | 15 RPM client token bucket    | `FR-02`             |
+| `TASK-ENG-20` | `src/js/services/WorkerTickerAdapter.js`| 1Hz background inline Worker | `FR-06`             |
+| `TASK-ENG-21` | `src/js/core/LifecycleScope.js`      | RAII AbortController scope    | `NFR-08`            |
+| `TASK-ENG-22` | `src/js/services/ResilientStorageService.js`| 4-tier storage degradation ladder| `FR-14`, `INV-007`|
+| `TASK-ENG-23` | `src/js/config/themes.js`            | 3 Curated glassmorphic palettes| `FR-13`             |
+| `TASK-ENG-24` | `src/js/core/ports.js`               | Clean Architecture abstract ports| ALL ARCHITECTURE  |
 +---------------+-------------------------------+-----------------------+-----------------------+
 ```
 

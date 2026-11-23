@@ -140,3 +140,25 @@
 +---------+-----------------------------------+--------------------+--------------------+-----------------------+
 ```
 ```
+---
+
+## 6. Vulnerability Resilience Verification Traceability Matrix (TC-POS-21 to TC-POS-99, TC-EDGE-25 to TC-EDGE-26)
+
+```
++---------------------------------------------------------------------------------------------------------------+
+|                                VULNERABILITY AUDIT VERIFICATION TRACEABILITY MATRIX                           |
++--------------------------+-----------------------+------------------------+-----------------------------------+
+| Test ID Range            | Audit Dimension       | Governing Spec         | Verification Objective            |
++--------------------------+-----------------------+------------------------+-----------------------------------+
+| **TC-POS-21 - TC-POS-30**| Canvas & Graphics     | `DOC-LLD-08` (HR-01..10)| GPU memory limits, P3 gamut, FOIT |
+| **TC-POS-31 - TC-POS-40**| Mobile Ergonomics     | `DOC-LLD-08` (ME-01..10)| Notch, keyboard, safe zones, FSM  |
+| **TC-POS-41 - TC-POS-50**| Chronometry & Clocks  | `DOC-LLD-08` (CC-01..10)| 0-drift, sleep wake, leap seconds |
+| **TC-POS-51 - TC-POS-60**| AI Gateway Resilience | `DOC-LLD-08` (AI-01..10)| 429 backoff, schema, prompt inject|
+| **TC-POS-61 - TC-POS-70**| Web Audio & Haptics   | `DOC-LLD-08` (AU-01..10)| AudioContext FSM, limiter, vibrate|
+| **TC-POS-71 - TC-POS-80**| State Codec & URL     | `DOC-LLD-08` (SC-01..10)| 32KB bomb, token bucket, Base64   |
+| **TC-POS-81 - TC-POS-90**| AppSec & CSP Level 3  | `DOC-LLD-08` (SE-01..10)| XSS, Trojan Source, prototype pol.|
+| **TC-POS-91 - TC-POS-99**| Offline PWA & Edge    | `DOC-LLD-08` (PW-01..10)| SW cache, font barrier, Anycast   |
+| **TC-EDGE-25**           | Micro-orbital OLED    | `DOC-LLD-08` (CR-01)   | Burn-in prevention orbit shift    |
+| **TC-EDGE-26**           | Double-Precision IEEE | `DOC-LLD-08` (MA-01)   | Sub-millisecond chronometer math  |
++--------------------------+-----------------------+------------------------+-----------------------------------+
+```
