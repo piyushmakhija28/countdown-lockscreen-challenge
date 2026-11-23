@@ -28,10 +28,10 @@
 +--------------------------+--------+---------------------------------------------------------------+
 | Judging Pillar           | Weight | How Our Submission Guarantees Maximum Score                   |
 +--------------------------+--------+---------------------------------------------------------------+
-| **Execution**            | 25%    | Native 1170x2532 smartphone resolution; zero drift chronometer|
-| **Creativity**           | 25%    | Google Gemini 3.8 Flash backward planning; custom affirmations|
-| **Usefulness**           | 25%    | 96 lock screen glances/day ambient habit loop; actionable steps|
-| **Polish**               | 25%    | 28% top & 18% bottom safe zones; APCA AAA contrast; glass UI  |
+| **Execution**            | 25%    | Native 1170x2532 resolution; zero drift chronometer; AdaptiveBufferAllocator dynamic scaling |
+| **Creativity**           | 25%    | Google Gemini 3.8 Flash backward planning; retrograde milestone decomposition; affirmations  |
+| **Usefulness**           | 25%    | 96 lock screen glances/day ambient habit loop; actionable steps; viral stateless URL sharing |
+| **Polish**               | 25%    | Tri-Modal safe-zone layout engine (28% top & 18% bottom); APCA AAA contrast; glass UI        |
 +--------------------------+--------+---------------------------------------------------------------+
 ```
 
@@ -41,5 +41,5 @@
 
 1. **Title:** `Countdown Studio — AI Lock Screen & Milestone Engine`
 2. **Cover Image:** High-resolution split-screen showcase rendering the Cyber Obsidian, Deep Focus Zen, and Aurora Botanical wallpapers on an iPhone 16 Pro mockup frame.
-3. **Description:** Clear problem-solution overview, Gemini AI integration, safe-zone simulator, and tech stack details.
+3. **Description:** Clear problem-solution overview, Google Gemini 3.8 Flash backward milestone planning, Tri-Modal safe-zone layout engine, and zero-build Vanilla ES2022 tech stack details.
 4. **Public Project URL:** Hosted on GitHub Pages (`https://piyushmakhija28.github.io/countdown-lockscreen-challenge/`).

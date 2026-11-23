@@ -49,6 +49,11 @@ To ensure pixel-perfect compatibility across actual flagship hardware, safe zone
 +--------------------------+---------------------+-------------------+------------------+-----------------------+
 ```
 
+### 2.1 Software Architectural Mapping (`SafeZoneOverlay` & `ResponsiveLayoutEngine`)
+The Hardware Safe-Zone Geometric Benchmark Matrix is directly mapped into executable code:
+- **Guide Projection:** The `SafeZoneOverlay` class (`src/js/canvas/SafeZoneOverlay.js`) project translucent Dynamic Island, clock exclusion, and home bar guides in the interactive simulator so users can visually verify layout clearances.
+- **Dynamic Occlusion Avoidance:** The `ResponsiveLayoutEngine` class (`src/js/canvas/ResponsiveLayoutEngine.js`) consumes these hardware boundaries as hard layout constraints, dynamically scaling and clamping component bounding boxes to guarantee $0\text{px}$ visual collision on any smartphone display.
+
 ---
 
 ## 3. Tri-Modal Responsive Layout Engine (Foldables, Tablets & Ultra-Tall Displays)

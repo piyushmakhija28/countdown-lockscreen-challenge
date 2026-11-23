@@ -13,26 +13,32 @@ graph TD
 
         subgraph CoreEngineLayer [Core Logic & Chronometry Layer]
             StateMgr[Unidirectional State Manager]
-            TimeEng[Drift-Compensated Time Engine]
-            UrlCodec[Base64 URL Hash Serializer]
+            TimeEng[DualClockTimeEngine: Drift-Compensated RAF Ticker]
+            UrlCodec[UrlStateService: Base64 URL Hash Codec]
             HistoryGuard[TokenBucketHistoryGuard: 300ms Leaky Bucket]
+            Sanitizer[InputSanitizer: Unicode NFKC & Whitelist Pipeline]
+            MilestoneMgr[MilestoneManager: Backward Planning Tracker]
         end
 
         subgraph RenderingLayer [High-DPI Wallpaper Rendering Engine]
-            CanvasEng[OffscreenCanvas 2D Supersampled Renderer]
+            CanvasEng[CanvasRenderer: 1170x2532 2D Offscreen Pipeline]
+            Alloc[AdaptiveBufferAllocator: Dynamic Hardware Scale Solver]
+            LayoutEng[ResponsiveLayoutEngine: Tri-Modal Aspect Ratio Solver]
+            FontSvc[FontService: Web Font FontFace Set Preloader]
             TextWrapper[CanvasTextWrapper: Greedy Wrap & Font Fit]
             ParticleEng[ParticleEngine: Float32Array Confetti Physics]
+            SafeOverlay[SafeZoneOverlay: Biomechanical Occlusion Guides]
             BlobGen[Blob Exporter & Image Streamer]
         end
 
         subgraph SensoryLayer [Audio & Haptic Feedback Subsystems]
-            AudioChime[AudioService: Procedural Web Audio]
-            HapticCtrl[HapticService: Vibration API]
+            AudioChime[AudioService: Procedural Web Audio API]
+            HapticCtrl[HapticService: Vibration API Feedback]
         end
 
         subgraph AILayer [Google Gemini Intelligence Layer]
-            GeminiSDK[Gemini 3.8 Flash Client]
-            FallbackGen[Heuristic Milestone Synthesizer]
+            GeminiSDK[GeminiAiClient: Gemini 3.8 Flash Client]
+            FallbackGen[HeuristicGenerator: Retrograde Sprints Fallback]
         end
     end
 
@@ -40,15 +46,21 @@ graph TD
         GoogleGeminiAPI[Google Gemini AI REST API]
     end
 
-    UIView --> HistoryGuard
+    UIView --> Sanitizer
+    Sanitizer --> HistoryGuard
     HistoryGuard --> UrlCodec
     UIView --> StateMgr
-    Simulator --> StateMgr
+    Simulator --> SafeOverlay
+    StateMgr --> MilestoneMgr
     StateMgr --> TimeEng
     StateMgr --> UrlCodec
     StateMgr --> AudioChime
     StateMgr --> HapticCtrl
     StateMgr --> CanvasEng
+    CanvasEng --> Alloc
+    CanvasEng --> FontSvc
+    CanvasEng --> LayoutEng
+    CanvasEng --> SafeOverlay
     CanvasEng --> TextWrapper
     CanvasEng --> ParticleEng
     CanvasEng --> BlobGen

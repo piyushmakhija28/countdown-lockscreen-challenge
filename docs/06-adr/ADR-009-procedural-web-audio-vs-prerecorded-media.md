@@ -5,7 +5,7 @@
 **Challenge:** Handshake AI Skills Studio X Google ("Your Deadline, Your Design: Create a Countdown Lock Screen")  
 **Author:** Piyush Makhija (Lead Systems Architect & Developer)  
 **Reviewer:** Architecture Review Board  
-**Status:** ACCEPTED  
+**Status:** APPROVED  
 **Date:** 2026-11-23  
 **Standard:** Level 2.2 Documentation Governance / MADR 3.0
 

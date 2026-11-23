@@ -138,7 +138,7 @@ countdown-lockscreen-challenge/
 │   ├── unit/                          # Unit tests
 │   └── integration/                   # Integration tests
 ├── .gitignore                         # Level 2.2 strict doc exclusions
-├── VERSION                            # Single source of truth version string (1.3.0)
+├── VERSION                            # Single source of truth version string (1.5.0)
 ├── CHANGELOG.md                       # Keep a Changelog release history
 ├── CLAUDE.md                          # Claude Code developer instructions
 └── README.md                          # Master project playbook

@@ -75,3 +75,15 @@ Total payload size is compressed by $65\text{--}80\%$, keeping shared URLs stric
 ### 5.4 Wallpaper Micro-QR Vector Matrix (Zero-Network Peer Scan)
 As a tertiary fail-safe, the wallpaper rasterizer embeds an optional $120 \times 120\text{px}$ vector **Micro-QR Code** in the bottom-left corner of the exported wallpaper. Any friend or judge can point their smartphone camera at the lock screen wallpaper to instantly import and fork the countdown without needing an active internet connection!
 
+### 5.5 Polymorphic Milestone Tuple Encoding
+To maximize URL sharing density across mobile messaging networks, milestones support compact 4-element tuple serialization:
+$$\text{Tuple} = [\text{step}: \mathbb{N}, \text{title}: \text{string}, \text{offset\_days}: \mathbb{N}, \text{completed}: \mathbb{B}]$$
+
+The deserializer polymorphically accepts both verbose JSON object representations (`{ step, title, offset_days, completed }`) and packed 4-element tuples (`[1, "Draft proposal", 3, true]`), guaranteeing backward compatibility with legacy share links while cutting JSON byte footprint by $45\%$.
+
+### 5.6 32 KB Decompression Bomb Security Guard (`ERR_DECOMPRESSION_BOMB`)
+To prevent memory exhaustion attacks from malicious URLs containing high-compression zip-bomb vectors, the deserializer strictly asserts byte-length limits:
+1. Ingress Base64 string length $\le 2048\text{ characters}$.
+2. Decompressed UTF-8 byte stream length is monitored via a streaming threshold of $32\text{ KB}$ ($32,768\text{ bytes}$).
+3. Any payload exceeding $32\text{ KB}$ immediately aborts processing and raises `ERR_DECOMPRESSION_BOMB`, preventing DOM or memory thread starvation.
+

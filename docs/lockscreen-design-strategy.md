@@ -18,9 +18,9 @@ Our strategy secures a **top-tier winning entry ($1,000 Prize)** through four de
 
 ```mermaid
 graph TD
-    Win[Winning Submission Moat] --> Moat1[1. True Flagship Resolution: 1170x2532 9:19.5 with 2x Supersampling]
+    Win[Winning Submission Moat] --> Moat1[1. True Flagship Resolution: 1170x2532 with AdaptiveBufferAllocator Dynamic Scaling]
     Win --> Moat2[2. Intelligent AI Retrograde Planning: Google Gemini 3.8 Flash]
-    Win --> Moat3[3. Zero Visual Occlusion: 28% Clock & 18% Gesture Safe Zones]
+    Win --> Moat3[3. Zero Visual Occlusion: Tri-Modal Responsive Safe-Zone Engine]
     Win --> Moat4[4. Zero Friction: 100% Stateless Edge PWA with Shareable URL State]
 ```
 
@@ -43,5 +43,5 @@ To maximize cognitive retention during this brief window:
 For the final Handshake project submission:
 - **Title:** `Countdown Studio — AI Lock Screen & Milestone Engine`
 - **Cover Image:** High-resolution split-screen showcase rendering the Cyber Obsidian, Deep Focus Zen, and Aurora Botanical wallpapers on an iPhone 16 Pro mockup frame.
-- **Description:** Concise breakdown of the problem (deadline anxiety), solution (Gemini backward planning), ergonomic innovation (safe-zone simulator), and technical excellence (zero drift, 1170x2532 canvas).
+- **Description:** Concise breakdown of the problem (deadline anxiety), solution (Google Gemini 3.8 Flash backward planning), ergonomic innovation (Tri-Modal safe-zone simulator), and technical excellence (zero drift chronometer, AdaptiveBufferAllocator, 1170x2532 canvas).
 - **Public URL:** Hosted on GitHub Pages (`https://piyushmakhija28.github.io/countdown-lockscreen-challenge/`) with a pre-configured shareable demo state.

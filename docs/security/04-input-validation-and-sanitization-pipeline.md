@@ -48,6 +48,23 @@ The previous generic category `\p{P}` was removed because it permits dangerous i
 - Safe punctuation: `.` `,` `-` `_` `!` `?` `:` `(` `)` `[` `]`
 - Extended pictographic emojis (`\p{Extended_Pictographic}`)
 
+### 2.2 Standardized Domain Validation Error Codes
+To ensure deterministic error handling across UI form controls and telemetry collectors:
+
+```
++---------------------------------------------------------------------------------------------------------------+
+|                                      STANDARDIZED DOMAIN VALIDATION ERROR CODES                               |
++--------------------------+---------------------+--------------------------------------------------------------+
+| Error Code Constant      | HTTP / Logic Tier   | Trigger Condition & Remediation Strategy                     |
++--------------------------+---------------------+--------------------------------------------------------------+
+| `ERR_TITLE_LENGTH`       | Form Validation     | Goal title length is < 3 or > 60 Unicode code points.        |
+| `ERR_TITLE_INVALID_CHARS`| Input Sanitizer     | Contains unapproved characters (<, >, script tags, controls).|
+| `ERR_PAYLOAD_TOO_LARGE`  | URL Deserializer    | Base64 URL state string exceeds 2048 character limit.        |
+| `ERR_DECOMPRESSION_BOMB` | Security Bulkhead   | Decompressed payload stream expands beyond 32 KB threshold.  |
+| `ERR_AI_SAFETY_BLOCK`    | Gemini AI Client    | Gemini API blocks response due to safety / harm filters.     |
++--------------------------+---------------------+--------------------------------------------------------------+
+```
+
 ---
 
 ## 3. Trojan Source & Bidirectional Override Stripping

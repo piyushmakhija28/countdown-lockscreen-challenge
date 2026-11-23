@@ -77,6 +77,30 @@ $$S_k = 16 \times (1.25)^k \quad (k \in \{-2.1, -1, 0, 1, 2, 3, 4, 6\})$$
 +------------------+----------+-------------+-------------+------------------+------------------------+
 ```
 
+### 2.1 CSS Typography Custom Properties
+```css
+:root {
+  --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', Consolas, Monaco, monospace;
+  --font-size-2xs: 10px;
+  --font-size-xs: 12.8px;
+  --font-size-sm: 16px;
+  --font-size-md: 20px;
+  --font-size-lg: 25px;
+  --font-size-xl: 31.25px;
+  --font-size-2xl: 39px;
+  --font-size-hero: 61px;
+  --line-height-2xs: 14px;
+  --line-height-xs: 18px;
+  --line-height-sm: 24px;
+  --line-height-md: 28px;
+  --line-height-lg: 32px;
+  --line-height-xl: 38px;
+  --line-height-2xl: 46px;
+  --line-height-hero: 64px;
+}
+```
+
 ---
 
 ## 3. Curated Thematic Design Tokens & Palettes (WCAG AAA & APCA Certified)

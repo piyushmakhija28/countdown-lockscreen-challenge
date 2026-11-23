@@ -86,10 +86,11 @@
 ### Q3: What happens if a user inputs a deadline across Daylight Savings Time (DST) or a leap year?
 **Answer:** All temporal calculations in `DualClockTimeEngine` execute using UTC Epoch Milliseconds (`targetDate.getTime()`). Because epoch time is monotonically increasing, local timezone offsets, daylight savings adjustments, and leap years introduce **zero mathematical drift**.
 
-### Q4: How is memory managed during 2x supersampled canvas rasterization?
-**Answer:** An OffscreenCanvas at $2340 \times 5064\text{ pixels}$ consumes:
-$$\text{Memory} = 2340 \times 5064 \times 4 \text{ bytes (RGBA)} \approx 47.4\text{ MB}$$
-Once rasterization completes and the PNG blob is extracted via `canvas.toBlob()`, the canvas context dimensions are set to $0 \times 0$ to trigger immediate GPU texture deallocation, and the generated object URL is revoked via `URL.revokeObjectURL()` after download.
+### Q4: How is memory managed during high-DPI canvas rasterization?
+**Answer:** Rather than blindly allocating a static 2x buffer, `AdaptiveBufferAllocator` dynamically determines the optimal supersampling scale factor ($s \in \{1.0, 1.5, 2.0\}$):
+- On flagship desktop and mobile browsers with sufficient heap headroom, scale factor defaults to $2.0$ ($2340 \times 5064\text{px}$, $\approx 47.4\text{ MB}$ RGBA buffer).
+- On memory-constrained devices or where `navigator.deviceMemory <= 4`, the allocator automatically clamps to $1.5$ ($1755 \times 3798\text{px}$, $\approx 26.6\text{ MB}$) or $1.0$ ($1170 \times 2532\text{px}$, $\approx 11.8\text{ MB}$), eliminating WebKit/Blink canvas OOM crashes.
+- Once rasterization completes and the PNG blob is extracted via `canvas.toBlob()`, canvas dimensions are explicitly collapsed to $0 \times 0$ to force immediate GPU texture collection, and `URL.revokeObjectURL()` cleans up memory after download.
 
 ### Q5: Can the application be used completely offline?
 **Answer:** Yes. The PWA Service Worker caches the HTML, CSS, JavaScript, and font assets upon first visit. If internet connectivity is severed, the countdown runs continuously, and milestone generation seamlessly routes to the deterministic `HeuristicGenerator`.
@@ -99,3 +100,9 @@ Once rasterization completes and the PNG blob is extracted via `canvas.toBlob()`
 
 ### Q7: Why was Gemini 3.8 Flash selected over larger models?
 **Answer:** Gemini 3.8 Flash provides near-instant time-to-first-token ($< 400\text{ms}$), strict adherence to structured JSON schemas, and exceptional retrograde planning reasoning at a fraction of the token cost of Gemini Pro.
+
+### Q8: How does `TokenBucketHistoryGuard` prevent Safari WebKit history quota crashes?
+**Answer:** Apple WebKit enforces a strict rate limit of 100 `history.pushState` calls per 30-second sliding window. When users rapidly drag sliders, cycle themes, or adjust dates, unthrottled URL hash synchronization exceeds this quota within seconds, triggering an uncatchable `SecurityError`. `TokenBucketHistoryGuard` implements a leaky-bucket algorithm with a 300ms throttle interval and a maximum bucket capacity of 10 tokens, coalescing high-frequency state updates while ensuring the URL hash remains synchronized without quota exhaustion.
+
+### Q9: Why is `FontService` necessary if fonts are already specified in CSS?
+**Answer:** The HTML5 Canvas 2D API does not wait for web fonts (`@font-face`) to load asynchronously from external or local stylesheets. If `ctx.fillText()` executes before the font binary is parsed, the canvas engine silently falls back to system serif/sans-serif glyphs with mismatched metrics, resulting in clipped digits and misaligned milestones. `FontService` wraps `document.fonts.load()` with explicit font face assertions (`Inter`, `JetBrains Mono`), guaranteeing that all typographic assets are fully loaded and rasterized before the first draw call.

@@ -37,6 +37,13 @@ To ensure that failure or resource starvation in one component never cascades in
 +---------------------------------------------------------------------------------------------------+
 ```
 
+### 1.1 HTTP 429 Rate-Limit Circuit-Breaker Fast-Fail
+When communicating with the Google Gemini API, receiving an HTTP 429 (`RESOURCE_EXHAUSTED` / Too Many Requests) response immediately trips the AI Ingress circuit breaker to `OPEN` state for a 60-second cooldown window:
+1. All concurrent and subsequent generation requests during this window bypass the remote network hop entirely.
+2. The UI immediately falls back to local `HeuristicGenerator.generate()` execution ($< 5\text{ms}$).
+3. The user receives actionable retrograde milestones instantly without error dialogs or hanging loaders.
+4. After 60 seconds, the circuit breaker enters `HALF-OPEN` state, allowing a single probe request to test API quota recovery.
+
 ---
 
 ## 2. Production Concurrency & Memory Bulkhead Implementation

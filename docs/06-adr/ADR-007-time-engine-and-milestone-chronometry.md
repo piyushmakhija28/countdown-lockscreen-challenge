@@ -57,3 +57,9 @@ On every animation tick, the engine recalculates remaining time directly against
 $$\Delta t_n = t_{\text{deadline\_epoch}} - \text{Date.now()}$$
 
 Cumulative error $E = 0$ because no state is accumulated from previous iterations. When the tab transitions between visible and hidden states, the engine binds to `visibilitychange` to trigger an instantaneous realign tick upon tab focus.
+
+### 5.2 Target-Bound Chronometer Reset Invariant
+When the user edits the target deadline or switches goals, `DualClockTimeEngine.setDeadline(newEpoch)` enforces the target-bound chronometer reset invariant:
+$$\text{if } (\text{activeTargetEpoch} \neq \text{newTargetEpoch}) \implies \begin{cases} \text{cancelAnimationFrame}(\text{currentHandle}) \\ \text{reset isExpired} \leftarrow \text{false} \\ \text{recalibrate epoch baseline against } performance.now() \\ \text{restart RAF loop with newTargetEpoch} \end{cases}$$
+
+This invariant guarantees that changing a deadline from a past epoch to a future epoch immediately cancels completion state, halts audio/haptic victory triggers, and restarts live countdown rendering without requiring a browser page refresh.

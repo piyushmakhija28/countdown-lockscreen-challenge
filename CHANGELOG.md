@@ -5,6 +5,29 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.0] - 2026-11-23
+
+### Added
+- **UML Diagram Suite 17-Class Parity (`uml/`):**
+  - Modernized `uml/component_diagram.md` with `AdaptiveBufferAllocator`, `FontService`, `ResponsiveLayoutEngine`, and `SafeZoneOverlay`.
+  - Upgraded `uml/package_diagram.md` with all 17 classes across `config`, `core`, `services`, `ai`, and `canvas`.
+  - Deepened `uml/sequence_diagram.md` with dynamic scale resolution, font preloading assertion, and layout calculation before canvas draw.
+  - Expanded `uml/call_graph_diagram.md` with explicit invocation branches for allocator scale calculation, font verification, layout engine, and particle engine.
+  - Harmonized `uml/communication_diagram.md` and `uml/composite_diagram.md` modeling complete internal subsystem composition and numbered collaboration flows.
+- **ADR Invariant Hardening (`docs/06-adr/`):**
+  - `ADR-003`: Specified polymorphic 4-element milestone tuple encoding `[step, title, offset_days, completed]` and the 32 KB decompression bomb ceiling (`ERR_DECOMPRESSION_BOMB`).
+  - `ADR-007`: Enforced target-bound chronometer reset invariant (`activeTargetEpoch !== targetEpoch`) eliminating deadline lockups on date extensions.
+  - `ADR-008`: Formalized complete PWA precache assets inventory including `FontService.js` and self-hosted WOFF2 fonts.
+- **DevOps Zero-Build Container Hardening (`DOC-OPS-01`):** Eliminated phantom `npm run build` / `/app/dist` references in favor of clean Zero-Build Vanilla ES2022 static serving; updated container image label to `1.5.0`.
+- **Security & Resilience Hardening (`DOC-SEC-04` & `DOC-RES-01`):**
+  - Cataloged all 5 domain validation error codes (`ERR_TITLE_LENGTH`, `ERR_TITLE_INVALID_CHARS`, `ERR_PAYLOAD_TOO_LARGE`, `ERR_DECOMPRESSION_BOMB`, `ERR_AI_SAFETY_BLOCK`).
+  - Formulated HTTP 429 fail-fast circuit-breaker trip with immediate fallback to local `HeuristicGenerator`.
+- **UI/UX Tokens, Ergonomics & Competition Alignment:**
+  - `DOC-UI-01`: Added CSS typography custom properties (`--font-primary`, `--font-mono`, `--font-size-*`, `--line-height-*`).
+  - `DOC-UI-02`: Linked hardware safe-zone matrix to `SafeZoneOverlay` projection and `ResponsiveLayoutEngine` constraints.
+  - `DOC-07-TRADEOFFS-FAQ`: Added Judge FAQ entries for `AdaptiveBufferAllocator`, `TokenBucketHistoryGuard`, and `FontService`.
+  - `DOC-08-SUBMISSION-PACKAGE`, `DOC-RULES-SUMMARY`, `DOC-PLAYBOOK-WINNING-STRATEGY`: Synchronized Google Gemini 3.8 Flash backward planning, Tri-Modal layout engine, and AdaptiveBufferAllocator competitive moats.
+
 ## [1.4.0] - 2026-11-23
 
 ### Added
