@@ -35,12 +35,14 @@ Conforming to `~/.claude/rules/35-positive-testing-standards.md`:
 | TC-POS-13 | Base64 URL Hash Serialization     | User state snapshot               | Hash <= 450 chars   |
 | TC-POS-14 | URL Hash Deserialization & Mount  | Open link with valid #v1= hash    | State hydrated      |
 | TC-POS-15 | Offline Service Worker Caching    | Network offline, reload page      | App loads from SW   |
+| TC-POS-16 | Web Audio Procedural Chime        | Timer hits 0ms, AudioContext active| Plays major chord, 0 leak|
+| TC-POS-17 | Haptic Vibration Pattern Trigger  | Milestone toggle / Victory pattern | navigator.vibrate invoked|
 +-----------+-----------------------------------+-----------------------------------+---------------------+
 ```
 
 ---
 
-## 2. Negative Test Scenarios (10 Error-Path Cases)
+## 2. Negative Test Scenarios (11 Error-Path Cases)
 
 Conforming to `~/.claude/rules/36-negative-testing-standards.md`:
 
@@ -60,12 +62,13 @@ Conforming to `~/.claude/rules/36-negative-testing-standards.md`:
 | TC-NEG-08 | Invalid Target Date String Format | Date = "invalid-date-format"      | Rejects with toast  |
 | TC-NEG-09 | Out-of-Bounds Theme ID            | Theme = "malicious_theme"         | Defaults to Obsidian|
 | TC-NEG-10 | Canvas Memory Allocation Failure  | High memory pressure simulated    | Fallback to 1x scale|
+| TC-NEG-11 | Web Share Cancellation Fallback   | User swipes down share sheet      | AbortError silenced / modal|
 +-----------+-----------------------------------+-----------------------------------+---------------------+
 ```
 
 ---
 
-## 3. Edge-Case Test Scenarios (10 Boundary Conditions)
+## 3. Edge-Case Test Scenarios (12 Boundary Conditions)
 
 Conforming to `~/.claude/rules/37-edge-case-testing-standards.md`:
 
@@ -86,5 +89,7 @@ Conforming to `~/.claude/rules/37-edge-case-testing-standards.md`:
 | TC-EDGE-08| Extreme Mobile DPR Scale (DPR 3.5)| High-density flagship device      | Clamped to 2x max   |
 | TC-EDGE-09| Zero Milestones Completed (0%)    | Brand new goal                    | Progress ring = 0%  |
 | TC-EDGE-10| All Milestones Completed (100%)   | User marks all 4 checkpoints      | Progress ring = 100%|
+| TC-EDGE-11| Safari 100-Call Quota Debounce    | 500 keystrokes in 10s             | <= 33 calls; 0 SecurityErr|
+| TC-EDGE-12| Web Audio Autoplay Gesture Unlock | First touchstart on window        | AudioContext resumed running|
 +-----------+-----------------------------------+-----------------------------------+---------------------+
 ```

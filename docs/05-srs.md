@@ -108,6 +108,22 @@ Each functional requirement is formally specified with unique identifier, descri
 - **Requirement:** The system shall provide an instant 1-click download button exporting the generated lock screen as a standard PNG or JPEG image blob.
 - **Verification Method:** Demonstration (`TC-POS-11`).
 
+### FR-16: Procedural Web Audio Victory Chime
+- **Requirement:** Upon countdown expiration ($\Delta t \le 0\text{ms}$), the system shall synthesize an in-browser major chord chime (C5-E5-G5-C6) using procedural Web Audio oscillators, with dynamic `sampleRate` adaptation and immediate node disconnection on `ended` to prevent memory leaks.
+- **Verification Method:** Test (`TC-POS-16`).
+
+### FR-17: Tactile Haptic Vibration Feedback
+- **Requirement:** The system shall trigger native haptic tactile feedback patterns (`navigator.vibrate`) on milestone interaction toggles (15ms light pulse) and upon countdown victory celebration (`[100, 50, 100, 50, 250]`), with runtime feature detection and silent degradation.
+- **Verification Method:** Test (`TC-POS-17`).
+
+### FR-18: Debounced URL History Synchronization
+- **Requirement:** During rapid user typing or slider scrubbing, the system shall rate-limit `history.replaceState` calls using a 300ms trailing-edge leaky bucket, bounding frequency to $\le 3.33\text{ Hz}$ to prevent Safari WebKit 100-call / 30s security exceptions.
+- **Verification Method:** Test (`TC-EDGE-11`).
+
+### FR-19: Native Web Share & Standalone PWA Modal Exporter
+- **Requirement:** The system shall route mobile export requests through native Web Share API Level 2 (`navigator.share({ files })`), gracefully falling back to an in-app "Press & Hold to Save" image modal on standalone iOS PWA installations.
+- **Verification Method:** Test (`TC-NEG-11`).
+
 ---
 
 ## 3. Non-Functional Requirements Specification (NFR-01 to NFR-10)
@@ -150,6 +166,10 @@ Each functional requirement is formally specified with unique identifier, descri
 | FR-13   | F-06 Themes        | ThemeController     | ThemeConfig.ts       | TC-POS-09                 |
 | FR-14   | F-07 URL Hash      | UrlSerializer       | UrlStateService.ts   | TC-POS-10, TC-NEG-03      |
 | FR-15   | F-05 Download      | BlobExporter        | CanvasRenderer.ts    | TC-POS-11                 |
+| FR-16   | F-05 Audio Chime   | AudioService        | AudioChimeService.ts | TC-POS-16                 |
+| FR-17   | F-05 Haptics       | HapticService       | HapticService.ts     | TC-POS-17                 |
+| FR-18   | F-07 History Guard | HistoryGuard        | HistoryQuotaGuard.ts | TC-EDGE-11                |
+| FR-19   | F-05 Web Share     | ShareService        | CanvasRenderer.ts    | TC-NEG-11                 |
 +---------+--------------------+---------------------+----------------------+---------------------------+
 ```
 

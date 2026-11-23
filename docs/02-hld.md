@@ -80,18 +80,26 @@ graph TD
 graph TD
     subgraph BrowserRuntime [Browser Progressive Web App Runtime]
         Router[Hash Router & State Hydrator]
+        HistoryGuard[HistoryQuotaGuard: 300ms Leaky Bucket]
         ViewLayer[Reactive UI & Glassmorphic View Controller]
         StateStore[Central State Manager]
         TimeEngine[RAF Chronometer Service]
         CanvasEngine[OffscreenCanvas 2D Pipeline]
+        AudioService[AudioChimeService: Procedural Web Audio]
+        HapticService[HapticFeedbackService: Vibration API]
         ServiceWorker[Cache-First PWA Service Worker]
     end
 
     Router -->|Hydrates #v1= state| StateStore
+    ViewLayer -->|User Input / Keystrokes| HistoryGuard
+    HistoryGuard -->|Debounced #v1= replaceState| Router
     ViewLayer -->|User Events & Edits| StateStore
     StateStore -->|State Subscriptions| ViewLayer
     StateStore -->|Ticking Epochs| TimeEngine
     TimeEngine -->|Frame Deltas (16.6ms)| ViewLayer
+    TimeEngine -->|Timer Expiration <= 0ms| StateStore
+    StateStore -->|Trigger Victory Chime| AudioService
+    StateStore -->|Trigger Haptic Pattern| HapticService
     StateStore -->|Rasterize Snapshot| CanvasEngine
     CanvasEngine -->|Binary Image Blob| ViewLayer
     ServiceWorker -->|Caches Assets & Offline Shell| ViewLayer
@@ -105,8 +113,10 @@ graph TD
         ThemeLayer[Theme Background & OLED Radial Gradient Layer]
         SafeZoneLayer[Lock Screen Safe-Zone Boundary Calculator]
         DigitsLayer[Hero Countdown Digits & Progress Ring Layer]
+        TextWrapper[CanvasTextWrapper: Greedy Wrap & Font Fit]
         MilestoneLayer[Milestone Timeline & Checkbox Layer]
         AffirmationLayer[Affirmation & Typographical Kerning Engine]
+        ParticleEngine[ParticleEngine: Float32Array Celebration Physics]
         Downsampler[Bilinear Downsampler: 2x Scale to 1170x2532]
         BlobConverter[Canvas toBlob PNG/JPEG Exporter]
     end
@@ -114,9 +124,11 @@ graph TD
     Alloc --> ThemeLayer
     ThemeLayer --> SafeZoneLayer
     SafeZoneLayer --> DigitsLayer
-    DigitsLayer --> MilestoneLayer
+    DigitsLayer --> TextWrapper
+    TextWrapper --> MilestoneLayer
     MilestoneLayer --> AffirmationLayer
-    AffirmationLayer --> Downsampler
+    AffirmationLayer --> ParticleEngine
+    ParticleEngine --> Downsampler
     Downsampler --> BlobConverter
 ```
 
@@ -151,11 +163,16 @@ sequenceDiagram
     actor User as Contestant / User
     participant View as UI View Layer
     participant Gemini as Gemini AI Gateway
+    participant Guard as HistoryQuotaGuard
     participant Store as Application State Store
     participant Ticker as TimeEngine (RAF)
+    participant Audio as AudioChimeService
+    participant Haptic as HapticFeedbackService
     participant Canvas as Canvas 2D Engine
 
     User->>View: Enters Goal ("Google Internship Interview") & Date ("2026-12-20")
+    View->>Guard: pushStateUpdate(#v1=serialized)
+    Note over Guard: Debounces keystrokes (300ms window); protects Safari 100-call quota
     View->>View: Validate future date & sanitize string
     alt Online & Gemini API Key Available
         View->>Gemini: POST generateContent (Prompt + JSON Schema)
@@ -168,6 +185,14 @@ sequenceDiagram
     loop Every Frame (16.6ms via RAF)
         Ticker->>Ticker: Compute delta = performance.now() - t_prev
         Ticker->>View: Emit TimeRemaining (Days, Hours, Minutes, Seconds)
+    end
+    alt Timer Expiration (Delta <= 0ms)
+        Ticker->>Store: Dispatch GOAL_EXPIRED
+        par Sensory Celebration
+            Store->>Audio: playVictoryChime() (Major Chord C5-E5-G5-C6)
+            Store->>Haptic: victoryPattern() ([100, 50, 100, 50, 250])
+            Store->>View: Render Confetti & Victory Overlay
+        end
     end
     User->>View: Toggles Lock Screen Safe-Zone Preview
     View->>View: Render iOS / Android Overlay Guides

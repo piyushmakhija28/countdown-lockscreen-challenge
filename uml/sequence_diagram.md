@@ -5,13 +5,18 @@ sequenceDiagram
     autonumber
     actor User as Contestant / User
     participant App as app.js (ViewController)
+    participant Guard as HistoryQuotaGuard
     participant Gemini as GeminiClient
     participant Store as StateStore
     participant Ticker as TimeEngine
+    participant Audio as AudioChimeService
+    participant Haptic as HapticService
     participant Canvas as CanvasRenderer
     participant Browser as Browser Runtime
 
     User->>App: Submits Goal ("Product Hunt Launch") & Target Date
+    App->>Guard: pushStateUpdate(#v1=serialized)
+    Note over Guard: Debounces 300ms window; protects Safari 100-call quota
     App->>Gemini: decomposeGoal(goal, deadline)
     
     alt API Online
@@ -27,6 +32,15 @@ sequenceDiagram
         Ticker->>Ticker: Reconcile delta with performance.now()
         Ticker->>App: onTick(timeRemaining)
         App->>Browser: Update DOM textContent
+    end
+
+    alt Countdown Expiration (Delta <= 0ms)
+        Ticker->>Store: dispatch(GOAL_EXPIRED)
+        par Sensory Celebration
+            Store->>Audio: playVictoryChime() (Major chord)
+            Store->>Haptic: victoryPattern() ([100, 50, 100, 50, 250])
+            Store->>App: Trigger Particle Confetti Burst
+        end
     end
 
     User->>App: Toggles "Phone Lock Screen Overlay"
