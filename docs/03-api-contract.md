@@ -270,6 +270,17 @@ export interface ITickScheduler {
   cancelTick(handle: number): void;
 }
 
+export interface IMilestonePlanner {
+  generatePlan(goalTitle: string, deadline: Date): Promise<MilestonePlanResponse>;
+}
+
+export interface IRenderTarget {
+  width: number;
+  height: number;
+  getContext(contextType: '2d', options?: CanvasRenderingContext2DSettings): CanvasRenderingContext2D | null;
+  convertToBlob(type?: string, quality?: number): Promise<Blob>;
+}
+
 export interface IPlatformLifecycle {
   onWake(callback: () => void): () => void;
   onSleep(callback: () => void): () => void;

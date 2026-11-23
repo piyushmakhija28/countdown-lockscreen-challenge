@@ -114,7 +114,9 @@ countdown-lockscreen-challenge/
 │       ├── config/
 │       │   └── themes.js              # Theme definitions & color tokens
 │       ├── core/
-│       │   ├── StateStore.js          # Central immutable state store with typed UDF dispatch
+│       │   ├── ports.js               # Clean Architecture Port interfaces (ITickScheduler, etc.)
+│       │   ├── LifecycleScope.js      # RAII scope manager for signals and listeners
+│       │   ├── StateStore.js          # Central immutable state store with trampoline dispatch
 │       │   ├── DualClockTimeEngine.js # Drift-compensated hybrid chronometer
 │       │   ├── MilestoneManager.js    # Checkpoint sequencing & progress
 │       │   ├── UrlStateService.js     # Base64 URL hash serialization
@@ -132,6 +134,7 @@ countdown-lockscreen-challenge/
 │       │   ├── ParticleEngine.js      # Float32Array celebration physics (semi-implicit drag)
 │       │   └── SafeZoneOverlay.js     # Lock screen simulator overlay
 │       ├── services/
+│       │   ├── WorkerTickerAdapter.js # Inline Blob Web Worker 1Hz unthrottled chronometer ticker
 │       │   ├── AudioChimeService.js   # Autoplay-primed continuous re-arming Web Audio
 │       │   ├── FontService.js         # Canvas font readiness barrier & FOIT gate
 │       │   └── HapticService.js       # Vibration API tactile patterns
@@ -155,3 +158,39 @@ To maintain strict acyclic dependencies ($D \le 0.15$):
 - `ai/` modules depend only on `core/types` and communicate with Gemini strictly via `x-goog-api-key` HTTP headers.
 - `canvas/` modules depend only on `core/DualClockTimeEngine` and `config/themes`.
 - `app.js` is the sole orchestrator wiring modules together, ensuring strict inward-pointing dependencies conforming to Clean Architecture.
+
+---
+
+### 2.1 Concrete Module Import/Export Matrix
+
+```
++------------------------------+------------------------------------+-------------------------------------------+
+| Source File                  | Exported Symbols                   | Direct Imported Modules                   |
++------------------------------+------------------------------------+-------------------------------------------+
+| `core/ports.js`              | `ITickScheduler`, `IMilestonePlan` | (None - Pure Domain Contracts)            |
+|                              | `IRenderTarget`, `IWallpaperRend`  |                                           |
+|                              | `IStateStoragePort`, `ILifecycle`  |                                           |
+| `core/LifecycleScope.js`     | `LifecycleScope`                   | (None - Standard Web API AbortController) |
+| `core/StateStore.js`         | `StateStore`, `ActionTypes`,       | (None - Pure Zero-Dependency State Store) |
+|                              | `deepFreeze`, `CyclicDispatchError`|                                           |
+| `core/DualClockTimeEngine.js`| `DualClockTimeEngine`              | `core/ports.js`                           |
+| `core/MilestoneManager.js`   | `MilestoneManager`                 | (None - Local Arithmetic)                 |
+| `core/UrlStateService.js`    | `UrlStateService`                  | (None - Compression Streams API)          |
+| `core/TokenBucketHistoryGuard`| `TokenBucketHistoryGuard`         | `core/ports.js`                           |
+| `core/InputSanitizer.js`     | `InputSanitizer`                   | (None - Native Unicode RegExp)            |
+| `ai/GeminiClient.js`         | `GeminiClient`                     | `core/ports.js`, `ai/GeminiRateLimiter.js`|
+| `ai/GeminiRateLimiter.js`    | `GeminiRateLimiter`                | (None - LocalStorage Token Bucket)        |
+| `ai/HeuristicGenerator.js`   | `HeuristicGenerator`               | `core/ports.js`                           |
+| `canvas/CanvasRenderer.js`   | `CanvasRenderer`                   | `core/ports.js`, `canvas/Adaptive...`,    |
+|                              |                                    | `canvas/CanvasTextWrapper.js`,            |
+|                              |                                    | `canvas/SafeZoneOverlay.js`, `FontService`|
+| `canvas/CanvasTextWrapper.js`| `CanvasTextWrapper`                | (None - Intl.Segmenter API)               |
+| `canvas/SafeZoneOverlay.js`  | `SafeZoneOverlay`                  | (None - Canvas 2D Stroke)                 |
+| `canvas/ParticleEngine.js`   | `ParticleEngine`                   | (None - Float32Array Buffers)             |
+| `services/WorkerTickerAdapter`| `WorkerTickerAdapter`             | `core/ports.js`                           |
+| `services/AudioChimeService` | `AudioChimeService`                | (None - Web Audio API AudioContext)       |
+| `services/FontService.js`    | `FontService`                      | (None - document.fonts FontFaceSet)       |
+| `services/HapticService.js`  | `HapticService`                    | (None - navigator.vibrate)                |
+| `app.js` (Orchestrator Root) | `CountdownApp`                     | All Subsystem Modules                     |
++------------------------------+------------------------------------+-------------------------------------------+
+```

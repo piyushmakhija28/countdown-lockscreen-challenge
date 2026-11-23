@@ -58,12 +58,16 @@ We must decide on the hosting platform and deployment topology.
 - Served through Fastly's global CDN with native HTTP/2 and TLS 1.3 encryption.
 
 ### 5.2 Offline Progressive Web App (PWA) Precache Inventory
-To ensure flawless offline execution on mobile devices and zero dependency on CDN availability during judging, the Service Worker (`sw.js`) registers a deterministic **Cache-First** strategy using namespaced cache key `countdown-lockscreen-ghpages-v1.6.0` and dynamic relative scope `self.registration.scope`:
+To ensure flawless offline execution on mobile devices and zero dependency on CDN availability during judging, the Service Worker (`sw.js`) registers a deterministic **Cache-First** strategy using namespaced cache key `countdown-lockscreen-ghpages-v1.7.0` and dynamic relative scope `self.registration.scope`:
 - **Core Shell:** `index.html`, `manifest.json`, `favicon.ico`, `assets/icons/*`
 - **Stylesheets:** `src/css/main.css`, `src/css/tokens.css`, `src/css/glassmorphism.css`
 - **Entry & Config:** `src/js/app.js`, `src/js/config/constants.js`, `src/js/config/themes.js`
-- **Core Engine:** `src/js/core/DualClockTimeEngine.js`, `src/js/core/MilestoneManager.js`, `src/js/core/UrlStateService.js`, `src/js/core/TokenBucketHistoryGuard.js`, `src/js/core/InputSanitizer.js`, `src/js/core/StateStore.js`
-- **Sensory & Fonts:** `src/js/services/AudioChimeService.js`, `src/js/services/HapticService.js`, `src/js/services/FontService.js`
+- **Core Engine & Ports:** `src/js/core/ports.js`, `src/js/core/LifecycleScope.js`, `src/js/core/StateStore.js`, `src/js/core/DualClockTimeEngine.js`, `src/js/core/MilestoneManager.js`, `src/js/core/UrlStateService.js`, `src/js/core/TokenBucketHistoryGuard.js`, `src/js/core/InputSanitizer.js`
+- **Sensory, Worker & Fonts:** `src/js/services/WorkerTickerAdapter.js`, `src/js/services/AudioChimeService.js`, `src/js/services/HapticService.js`, `src/js/services/FontService.js`
 - **AI & Fallback:** `src/js/ai/GeminiClient.js`, `src/js/ai/GeminiRateLimiter.js`, `src/js/ai/HeuristicGenerator.js`
 - **Canvas Subsystem:** `src/js/canvas/CanvasRenderer.js`, `src/js/canvas/AdaptiveBufferAllocator.js`, `src/js/canvas/ResponsiveLayoutEngine.js`, `src/js/canvas/CanvasTextWrapper.js`, `src/js/canvas/ParticleEngine.js`, `src/js/canvas/SafeZoneOverlay.js`
 - **Self-Hosted WOFF2 Typography:** `public/fonts/inter-v13-latin-regular.woff2`, `public/fonts/inter-v13-latin-700.woff2`, `public/fonts/jetbrains-mono-v18-latin-700.woff2`
+
+### 5.3 Cache Scoping, Old Version Eviction & Query-Flood Defense
+1. **Automated Old Cache Eviction:** During the Service Worker `activate` event, any cache key that does not match `countdown-lockscreen-ghpages-v1.7.0` is deleted via `caches.delete(cacheName)`, guaranteeing atomic version upgrades and zero stale bundle corruption.
+2. **Query-Flood Defense:** To prevent malicious or accidental query parameters (e.g. `?fbclid=...`, `?utm_source=...`) from busting the cache or filling quota with duplicate entries, `sw.js` normalizes incoming request URLs via `new URL(request.url)` and strips search parameters before matching against precached assets (`cache.match(cleanUrl)`).

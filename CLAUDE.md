@@ -11,7 +11,7 @@ This repository contains the design, code, and documentation for the **Handshake
 ```
 countdown-lockscreen-challenge/
 ├── .gitignore                         # Ignored files & Level 2.2 doc exclusions
-├── VERSION                            # Single source of truth version (1.6.0)
+├── VERSION                            # Single source of truth version (1.7.0)
 ├── CHANGELOG.md                       # Keep a Changelog release history
 ├── CLAUDE.md                          # Developer instructions & context
 ├── README.md                          # Main documentation & challenge playbook

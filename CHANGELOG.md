@@ -5,6 +5,37 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.0] - 2026-11-23
+
+### Added
+- **Core Architecture & Trampoline State Dispatch (`DOC-LLD-01`, `DOC-02`):**
+  - Upgraded `StateStore` with Trampoline Dispatch Queue (`#actionQueue = []`, `#reentrancyDepth <= 10`, `CyclicDispatchError`), completely eliminating subscriber re-entrancy exceptions and preserving intermediate action metadata during microtask batching.
+  - Formulated Section 1.5 in `DOC-LLD-01` declaring 5 Clean Architecture Abstract Ports (`ITickScheduler`, `IMilestonePlanner`, `IRenderTarget`, `IWallpaperRenderer`, `IStateStoragePort`, `IPlatformLifecycle`).
+  - Refactored constructors for `DualClockTimeEngine(scheduler, lifecycle)`, `TokenBucketHistoryGuard(storage, lifecycle, capacity, refillRate)`, and `CanvasRenderer(target, allocator, layoutEngine, fontService, textWrapper, safeZoneOverlay)` to require abstract port injections.
+  - Added Section 2.3.1 `GeminiRateLimiter` class contract and Section 2.17 `LifecycleScope` RAII helper contract.
+  - Added Section 2.18 `WorkerTickerAdapter` class contract implementing an inline Blob Web Worker (`URL.createObjectURL(new Blob([...]))`) delivering unthrottled 1Hz chronometer ticks in background browser tabs.
+- **Color Science, Font Compensation & Ergonomic Mathematics (`DOC-LLD-09`, `DOC-UI-01`, `DOC-UI-02`):**
+  - Formulated Module 14: Oklab Constant-Hue Gamut Mapping & Chroma Reduction Bisection ($C^* = \alpha \cdot C$ over 10 iterations) preserving perceived lightness $L^*$ and hue $h$ without naive RGB clipping or hue rotation.
+  - Formulated Module 15: Cross-Font Metric Scaling ($k_{\text{font}} = \frac{W_{\text{target}}}{W_{\text{actual}}}$) with $S_{\text{floor}} = 10\text{px}$ floor, preventing fallback font layout overflow during font loading delays.
+  - Formulated Module 16: Fractional DPR Sub-Pixel Alignment & Snapping ($x_{\text{snapped}} = \frac{\lfloor x \cdot \text{DPR} \rfloor + 0.5 \cdot (w_{\text{phys}} \bmod 2)}{\text{DPR}}$) eliminating odd-stroke $1\text{px}$ anti-aliasing blur and coupled extent card seams.
+  - Formalized Regime 3 Bimanual Cockpit Action Bar in `DOC-UI-02`, anchoring Primary CTA in Right Column Lateral Comfort Arc ($X \in [0.70W, 0.93W]$), reducing thumb reach distance from $825.8\text{px}$ to $140\text{px}$ ($82\%$ Fitts's Law Index of Difficulty reduction).
+  - Added `@media (prefers-reduced-transparency: reduce)` solid acrylic token variables and `ThermalCompositorGuard` in `DOC-UI-01` and `ADR-005`.
+  - Added `A11yAnnouncer` live region specification in `DOC-UI-03` conforming to WCAG 2.2 SC 4.1.3 (Status Messages).
+- **Defensive AppSec, Concurrency & Quota Resilience (`DOC-SEC-01..04`, `ADR-006`, `ADR-008`, `ADR-009`):**
+  - Replaced defective WebIDL `ErrorEvent.prototype.message` assignment with unforgeable `installDefensiveConsoleProxy()` wrapping `console.error/warn/info/log`.
+  - Formalized `PersistentGeminiRateLimiter` with `localStorage` persistence (`gemini_rate_guard_v1`) anchored to UTC calendar date, 2.0s pacing, and 15 RPM token bucket refill.
+  - Wrapped `TextDecoder({ fatal: true })` and `JSON.parse` in domain error boundaries with strict non-object root validation and added `safeDeserializeState()` recovery wrapper.
+  - Enforced strict space-only font family regex (`/^[a-zA-Z0-9\-_]+( [a-zA-Z0-9\-_]+)*$/`), documented `<meta name="referrer">`, and added JS frame-busting guard in `DOC-SEC-02`.
+  - Formalized `ResilientStorageService` in `ADR-006` with LRU eviction and 4-tier degradation ladder (`localStorage` $\to$ `sessionStorage` $\to$ In-Memory Heap $\to$ URL Hash).
+  - Formalized Web Locks API single-instance victory alarm mutex (`navigator.locks.request('countdown_victory_alarm_lock', { ifAvailable: true })`) in `ADR-009` and `DOC-02`, eliminating multi-tab acoustic hazards.
+  - Configured scoped Service Worker cache key `countdown-lockscreen-ghpages-v1.7.0` with old version deletion and query-flood defense in `ADR-008`.
+  - Added T4b WebIDL console secret leak, T5b Storage Quota crash, and T5c SW Cache Flooding to `DOC-SEC-01`.
+- **System Specifications & Mermaid UML Parity (`DOC-05`, `DOC-07`, `DOC-MGT-03`, `uml/`):**
+  - Added FR-23 (Cross-Tab State Synchronization), FR-24 (Single-Instance Victory Alarm Locking), and NFR-11 (Scoped SW Cache Scoping) to `DOC-05-SRS`.
+  - Added Judge FAQs Q13 (Multi-Tab Concurrency & Single Alarm Mutex) and Q14 (Scoped SW Cache Invalidation) to `DOC-07`.
+  - Mapped `CountdownApp`, `StateStore`, `CanvasTextWrapper`, `GeminiRateLimiter`, and all 31 previously missing test IDs across Table 1 and Table 5 in `DOC-MGT-03`.
+  - Upgraded `uml/class_diagram.md`, `uml/component_diagram.md`, `uml/package_diagram.md`, and `uml/sequence_diagram.md` modeling all 5 Clean Architecture Ports, `StateStore`, `GeminiRateLimiter`, `WorkerTickerAdapter`, `CanvasTextWrapper`, and `SafeZoneOverlay`.
+
 ## [1.6.0] - 2026-11-23
 
 ### Added

@@ -39,29 +39,48 @@ export function scrubSecrets(rawText: string): string {
 }
 ```
 
-### 1.3 Global Uncaught Error Interceptors
+### 1.3 Defensive Console Proxy & Uncaught Error Interceptors
 
-To prevent unhandled network errors or third-party extension crashes from exposing API keys in browser consoles or telemetry beacons, `app.js` installs global scrubbers:
+In browser environments adhering to the W3C WebIDL specification, `ErrorEvent.prototype.message` is defined as a `readonly attribute DOMString message`. In ES strict mode, attempting direct reassignment (`event.message = scrubSecrets(...)`) throws an uncatchable `TypeError: Cannot assign to read only property 'message' of object '#<ErrorEvent>'`.
+
+To reliably scrub all secrets before they reach the browser console or telemetry sinks, `app.js` deploys an **Unforgeable Console Redaction Proxy** coupled with global unhandled listeners:
 
 ```typescript
 /**
- * Installs global error listeners to scrub sensitive credentials before printing.
+ * Installs unforgeable proxy wrappers over console output methods to scrub sensitive credentials.
  */
-export function installGlobalRedactionGuards(): void {
-  window.addEventListener('error', (event: ErrorEvent) => {
-    if (event.message) {
-      event.message = scrubSecrets(event.message);
-    }
-  });
+export function installDefensiveConsoleProxy(): void {
+  const methods: Array<'error' | 'warn' | 'info' | 'log'> = ['error', 'warn', 'info', 'log'];
+  for (const method of methods) {
+    const original = console[method].bind(console);
+    console[method] = (...args: any[]) => {
+      const sanitized = args.map((arg) => {
+        if (typeof arg === 'string') {
+          return scrubSecrets(arg);
+        } else if (arg instanceof Error) {
+          arg.message = scrubSecrets(arg.message);
+          if (arg.stack) arg.stack = scrubSecrets(arg.stack);
+          return arg;
+        } else if (arg && typeof arg === 'object') {
+          try {
+            return JSON.parse(scrubSecrets(JSON.stringify(arg)));
+          } catch {
+            return arg;
+          }
+        }
+        return arg;
+      });
+      original(...sanitized);
+    };
+  }
 
+  // Intercept unhandled promise rejections safely
   window.addEventListener('unhandledrejection', (event: PromiseRejectionEvent) => {
     if (event.reason instanceof Error) {
       event.reason.message = scrubSecrets(event.reason.message);
       if (event.reason.stack) {
         event.reason.stack = scrubSecrets(event.reason.stack);
       }
-    } else if (typeof event.reason === 'string') {
-      event.reason = scrubSecrets(event.reason);
     }
   });
 }

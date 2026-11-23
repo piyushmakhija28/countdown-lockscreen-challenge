@@ -79,6 +79,15 @@ classDiagram
     class Context2DUnavailableError {
         +string canvasId
     }
+    class StateMutationError {
+        +string actionType
+    }
+    class CyclicDispatchError {
+        +number depth
+    }
+    class FontLoadError {
+        +string fontSpec
+    }
 
     AppError <|-- ValidationError
     AppError <|-- AiServiceError
@@ -87,6 +96,7 @@ classDiagram
     CanvasRenderError <|-- CanvasAreaExceededError
     CanvasRenderError <|-- Context2DUnavailableError
     AppError <|-- FontLoadTimeoutError
+    AppError <|-- FontLoadError
     AppError <|-- AsyncAbortedError
     AppError <|-- QuotaExceededError
     AppError <|-- StateSerializationError
@@ -96,6 +106,8 @@ classDiagram
     AppError <|-- HistoryThrottledError
     AppError <|-- ClipboardPermissionError
     AppError <|-- WebShareDismissedError
+    AppError <|-- StateMutationError
+    StateMutationError <|-- CyclicDispatchError
 ```
 
 ---
@@ -128,5 +140,8 @@ classDiagram
 | `HistoryThrottled`      | `ERR_HIST_THROTTLE`      | > 30 calls in burst   | Queues state in Token Bucket.    |
 | `ClipboardPermission`   | `ERR_CLIP_DENIED`        | Focus-less copy fail  | Falls back to manual selection.  |
 | `WebShareDismissed`     | `ERR_SHARE_ABORT`        | User swiped down sheet| Silently dismissed; no toast.    |
+| `StateMutationError`    | `ERR_STATE_FROZEN`       | Direct state property | Throws in strict mode; enforces UDF.|
+| `CyclicDispatchError`   | `ERR_STATE_CYCLIC_DISPATCH`| Re-entrancy depth >10| Breaks cyclic action cascade.    |
+| `FontLoadError`         | `ERR_FONT_LOAD_FAILED`   | Missing font file 404 | Employs fallback metric scaling. |
 +-------------------------+--------------------------+-----------------------+----------------------------------+
 ```

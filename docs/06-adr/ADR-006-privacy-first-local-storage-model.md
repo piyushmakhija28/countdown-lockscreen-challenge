@@ -55,3 +55,12 @@ We must decide how to handle user data retention while adhering to strict privac
 - Exactly **0 bytes of personal data or goal titles** are transmitted to any external server.
 - Conforms to **Privacy by Design (ISO/IEC 27701)**.
 - Local state persistence uses isolated browser `localStorage` namespaced under `countdown_lockscreen_v1`.
+
+### 5.2 Quota Resilience & The 4-Tier Degradation Ladder (`ResilientStorageService`)
+When mobile browsers enforce aggressive storage limits (e.g. iOS Safari Private Browsing mode throwing `QuotaExceededError` even on minimal writes):
+1. **LRU Eviction Policy:** Prior to raising errors, the storage engine evicts the oldest non-pinned countdown history items from `localStorage`.
+2. **Tiered Degradation Ladder:**
+   - **Tier 1 (Primary):** `localStorage` (Persistent across browser sessions).
+   - **Tier 2 (Session Fallback):** `sessionStorage` (Persists for the lifetime of the active tab).
+   - **Tier 3 (In-Memory Heap):** Ephemeral `Map` closure in JS memory (Active until page reload).
+   - **Tier 4 (URL Hash Memento):** State serialized to `#v1=` hash in window location (Zero data loss even on total storage block).

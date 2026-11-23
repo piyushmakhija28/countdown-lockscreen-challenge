@@ -85,9 +85,23 @@ Content-Security-Policy:
   block-all-mixed-content;
 ```
 
-### 2.3 Comprehensive HTTP Response Security Headers Matrix
+### 2.3 Comprehensive HTTP Response Security Headers & Client-Side Metas
 
-In addition to CSP Level 3, the edge delivery layer serves the complete suite of security headers across all static HTML/JS/CSS assets:
+Because GitHub Pages serves static files where custom HTTP headers cannot be configured on free origin repositories, client-side meta policies and defense-in-depth script guards are embedded directly in `index.html`:
+
+1. **Client-Side Referrer Policy:**
+   ```html
+   <meta name="referrer" content="strict-origin-when-cross-origin">
+   ```
+2. **Defensive JavaScript Frame-Busting Guard:**
+   To guarantee clickjacking immunity even if an intermediary or proxy strips `X-Frame-Options: DENY`:
+   ```javascript
+   if (window.top !== window.self) {
+     window.top.location = window.self.location;
+   }
+   ```
+
+In addition to client-side tags, production CDN edges serve the complete header suite:
 
 ```
 +-----------------------------------+-----------------------------------------+-----------------------------------------+
@@ -129,7 +143,7 @@ export async function rasterizeComplexTextToBitmap(
   fontSize: number,
   color: string
 ): Promise<ImageBitmap> {
-  const safeFont = /^[a-zA-Z0-9\s\-_]+$/.test(fontFamily) ? fontFamily : 'sans-serif';
+  const safeFont = /^[a-zA-Z0-9\-_]+( [a-zA-Z0-9\-_]+)*$/.test(fontFamily) ? fontFamily : 'sans-serif';
   const safeColor = /^#([0-9a-fA-F]{3,8})$/.test(color) ? color : '#FFFFFF';
   const safeSize = Math.max(10, Math.min(200, Number(fontSize) || 24));
 

@@ -81,3 +81,20 @@ The web application exposes a complete semantic accessibility tree:
 - Live countdown uses `aria-live="polite"` with `aria-atomic="true"`.
 - Milestone checklist items use `role="checkbox"` with `aria-checked="true|false"`.
 - Form inputs have explicit `<label for="...">` associations and `aria-describedby` hint text.
+
+### 4.1 `A11yAnnouncer` Status Message Specification (WCAG 2.2 SC 4.1.3)
+To ensure assistive technologies (VoiceOver, TalkBack, NVDA) immediately convey dynamic state mutations without interrupting user focus:
+
+1. **Persistent Announcer Container:**
+   ```html
+   <div id="a11y-announcer" aria-live="polite" aria-atomic="true" class="sr-only"></div>
+   ```
+
+2. **Automated Status Announcements:**
+   - **Milestone Toggle:** `"Milestone {step} marked {completed|incomplete}: {title}. {completedCount} of {totalCount} completed ({progressPercent}%)."`
+   - **Countdown Expiration:** `"Target deadline reached! Goal Achieved: {goalTitle}."`
+   - **Theme Mutation:** `"Aesthetic palette changed to {themeName}."`
+   - **Safe-Zone Guides:** `"Lock screen safe zone guides {enabled|disabled}."`
+
+3. **Debounced Text Injection:**
+   Updates to `#a11y-announcer` are paced with a $150\text{ms}$ text clearing delay to force screen reader engines to re-read successive identical status updates.

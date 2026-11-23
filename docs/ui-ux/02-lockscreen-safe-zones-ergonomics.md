@@ -103,6 +103,18 @@ On wide foldable inner screens (e.g. Galaxy Z Fold inner display $1812 \times 21
 - **Right Column ($X \in [0.52W \dots 0.95W]$):** Aligns the 4 Milestone Checkpoints and Daily Affirmation ($Y \in [0.14H \dots 0.88H]$).
 - **Reduced Top Clearance:** Because tablet clocks are smaller and left-aligned, top exclusion drops to $14\%$ ($Y_{\text{top}} = 0.14H$).
 
+### 3.3 Bimanual Cockpit Action Bar & Fitts's Law Optimization
+Centering the primary call-to-action (CTA) button across wide displays ($W = 1812\text{px}$) severely penalizes thumb reach when the user holds the device with both hands. Under centered alignment, the thumb reach distance to screen center is:
+
+$$D_{\text{center}} = \frac{1812}{2} - 80\text{px} = 825.8\text{px}$$
+
+This exceeds the maximum comfortable thumb arc radius ($280\text{px}$), forcing users into an awkward grip shift.
+
+Under the **Bimanual Cockpit Layout**:
+- The **Primary Action Button** ("Save Wallpaper" / "Export") anchors in the **Right Column Lateral Comfort Arc** ($X \in [0.70W, 0.93W]$, $Y \in [0.82H, 0.92H]$).
+- The **Secondary Action Button** ("Simulate Guides" / "Themes") anchors in the **Left Column Lateral Comfort Arc** ($X \in [0.07W, 0.30W]$, $Y \in [0.82H, 0.92H]$).
+- This drops movement distance to $D_{\text{reach}} \approx 140\text{px}$, reducing Fitts's Index of Difficulty ($ID = \log_2(1 + D/W)$) from $2.62\text{ bits}$ to $0.74\text{ bits}$—an **$82\%$ physical reach effort reduction**.
+
 ---
 
 ## 4. Mobile Keyboard Adaptation & Viewport Dynamics

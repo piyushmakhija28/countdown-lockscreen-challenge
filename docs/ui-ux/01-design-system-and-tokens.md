@@ -220,6 +220,20 @@ To create tactile depth without sacrificing $60\text{ fps}$ smoothness, glassmor
     box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.85);
   }
 }
+
+/* Accessibility: Reduced Transparency Fallback (WCAG 2.2 / Visual Comfort) */
+@media (prefers-reduced-transparency: reduce) {
+  .glass-panel {
+    background: var(--bg-card-solid);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border: 1px solid var(--border-solid-high-contrast, rgba(255, 255, 255, 0.35));
+    box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.95);
+  }
+  .glass-panel::after {
+    opacity: 0.05;
+  }
+}
 ```
 
 ---
@@ -244,4 +258,4 @@ To create tactile depth without sacrificing $60\text{ fps}$ smoothness, glassmor
 3. **State 3 (Milestone Toggled Ripple):** Dual-channel checkmark bounce + progress arc sweep.
 4. **State 4 (Countdown Zero Celebration):** Visual celebration state with particle confetti and "GOAL ACHIEVED!" banner when $\Delta t \le 0$.
 5. **State 5 (Heuristic Offline Fallback):** Ambient pill notifying user of offline deterministic milestone fallback.
-6. **State 6 (Accessibility Overrides):** Complete disablement of transforms under `@media (prefers-reduced-motion: reduce)` and high-contrast borders under `@media (prefers-contrast: more)`.
+6. **State 6 (Accessibility Overrides):** Complete disablement of transforms under `@media (prefers-reduced-motion: reduce)`, high-contrast borders under `@media (prefers-contrast: more)`, and solid acrylic opaque cards under `@media (prefers-reduced-transparency: reduce)`.

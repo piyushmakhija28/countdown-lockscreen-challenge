@@ -63,6 +63,16 @@
 | **Token Bucket**  | Behavioral            | `GeminiRateLimiter`   | Enforces 15 RPM quota limit   |
 |                   |                       |                       | with 2s pacing on Free Tier.  |
 +-------------------+-----------------------+-----------------------+-------------------------------+
+| **Trampoline**    | Behavioral            | `StateStore`          | Queues re-entrant dispatches, |
+|                   |                       |                       | preventing stack overflow &   |
+|                   |                       |                       | dropped action metadata.      |
++-------------------+-----------------------+-----------------------+-------------------------------+
+| **Adapter**       | Structural            | `WorkerTickerAdapter` | Adapts inline Web Worker to   |
+|                   |                       |                       | ITickScheduler for background.|
++-------------------+-----------------------+-----------------------+-------------------------------+
+| **Mutex / Lock**  | Concurrency           | `navigator.locks` &   | Enforces single-instance alarm|
+|                   |                       | `BroadcastChannel`    | sound & cross-tab state sync. |
++-------------------+-----------------------+-----------------------+-------------------------------+
 ```
 
 ---

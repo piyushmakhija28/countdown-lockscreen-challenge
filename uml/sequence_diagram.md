@@ -7,9 +7,12 @@ sequenceDiagram
     participant App as app.js (ViewController)
     participant San as InputSanitizer
     participant Guard as TokenBucketHistoryGuard
+    participant RateLimiter as GeminiRateLimiter
     participant Gemini as GeminiAiClient
     participant Store as StateStore
     participant Ticker as DualClockTimeEngine
+    participant Worker as WorkerTickerAdapter
+    participant WebLocks as Navigator Web Locks
     participant Audio as AudioService
     participant Haptic as HapticService
     participant Alloc as AdaptiveBufferAllocator
@@ -26,27 +29,41 @@ sequenceDiagram
     San-->>App: Clean Unicode NFKC String
     App->>Guard: pushStateUpdate(#v1=serialized)
     Note over Guard: Debounces 300ms window; protects Safari 100-call quota
-    App->>Gemini: decomposeGoal(cleanGoal, deadline)
-    
-    alt API Online
-        Gemini-->>App: Returns Structured Milestones JSON
-    else API Offline / Timeout
-        Gemini-->>App: Fallback to Heuristic Retrograde Sprints
+    App->>RateLimiter: acquireToken()
+    alt Quota Available & >= 2.0s Pacing
+        App->>Gemini: decomposeGoal(cleanGoal, deadline)
+        alt API Online
+            Gemini-->>App: Returns Structured Milestones JSON
+        else API Offline / Timeout
+            Gemini-->>App: Fallback to Heuristic Retrograde Sprints
+        end
+    else Rate Limited / Pacing Active
+        App->>Gemini: Trigger HeuristicGenerator Fallback
     end
     
     App->>Store: dispatch(SET_GOAL_AND_MILESTONES)
     Store->>Ticker: startTicker(deadline)
     
-    loop Every Animation Frame (16.6ms)
-        Ticker->>Ticker: Reconcile delta with performance.now()
-        Ticker->>App: onTick(timeRemaining)
-        App->>Browser: Update DOM textContent
+    alt Tab Foreground (Active)
+        loop Every Animation Frame (16.6ms via RAF)
+            Ticker->>Ticker: Reconcile delta with performance.now()
+            Ticker->>App: onTick(timeRemaining)
+            App->>Browser: Update DOM textContent
+        end
+    else Tab Background (Hidden)
+        Ticker->>Worker: Delegate ticks (1Hz unthrottled Web Worker loop)
+        Worker-->>Ticker: postMessage({ type: 'tick', timestamp })
     end
 
     alt Countdown Expiration (Delta <= 0ms)
         Ticker->>Store: dispatch(GOAL_EXPIRED)
+        Store->>WebLocks: request('countdown_victory_alarm_lock', { ifAvailable: true })
+        alt Lock Acquired (Single Tab Winner)
+            WebLocks->>Audio: playVictoryChime() (Major chord)
+        else Lock Contended (Sibling Tab)
+            WebLocks-->>Store: Suppress duplicate audio chime
+        end
         par Sensory Celebration
-            Store->>Audio: playVictoryChime() (Major chord)
             Store->>Haptic: victoryPattern() ([100, 50, 100, 50, 250])
             Store->>App: Trigger Particle Confetti Burst
         end

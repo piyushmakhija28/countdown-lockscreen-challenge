@@ -18,28 +18,31 @@
 +---------+--------------------+---------------------+----------------------+-----------------------------------+
 | Req ID  | PRD Feature Link   | HLD Component       | Target Implementation| Test Case Verification ID         |
 +---------+--------------------+---------------------+----------------------+-----------------------------------+
-| **FR-01**| F-02 Countdown     | IngressController   | `js/core/InputSanitizer.js`| `TC-POS-01`, `TC-NEG-01`, `TC-NEG-02`, `TC-NEG-09`|
-| **FR-02**| F-01 Gemini AI     | GeminiGateway       | `js/ai/GeminiClient.js`      | `TC-POS-02`, `TC-NEG-14`, `TC-EDGE-22`|
-| **FR-03**| F-01 Fallback      | HeuristicEngine     | `js/ai/HeuristicGenerator.js`| `TC-NEG-04`, `TC-NEG-05`        |
+| **FR-01**| F-02 Countdown     | IngressController   | `js/core/InputSanitizer.js`| `TC-POS-01`, `TC-NEG-01`, `TC-NEG-02`, `TC-NEG-03`, `TC-NEG-09`, `TC-POS-107`|
+| **FR-02**| F-01 Gemini AI     | GeminiGateway       | `js/ai/GeminiClient.js`<br/>`js/ai/GeminiRateLimiter.js`| `TC-POS-02`, `TC-NEG-14`, `TC-EDGE-22`, `TC-POS-103`|
+| **FR-03**| F-01 Fallback      | HeuristicEngine     | `js/ai/HeuristicGenerator.js`| `TC-NEG-04`, `TC-NEG-05`, `TC-POS-103`|
 | **FR-04**| F-01 Affirmation   | GeminiGateway       | `js/ai/GeminiClient.js`      | `TC-POS-03`                       |
-| **FR-05**| F-02 Chronometer   | DualClockTimeEngine | `js/core/DualClockTimeEngine.js`| `TC-POS-04`, `TC-POS-100`, `TC-POS-101`|
-| **FR-06**| F-02 Zero Drift    | DualClockTimeEngine | `js/core/DualClockTimeEngine.js`| `TC-POS-05`, `TC-EDGE-01`, `TC-EDGE-02`|
+| **FR-05**| F-02 Chronometer   | DualClockTimeEngine | `js/core/DualClockTimeEngine.js`| `TC-POS-04`, `TC-POS-100`, `TC-POS-101`, `TC-POS-102`, `TC-EDGE-20`, `TC-EDGE-21`|
+| **FR-06**| F-02 Zero Drift    | DualClockTimeEngine | `js/core/DualClockTimeEngine.js`| `TC-POS-05`, `TC-EDGE-01`, `TC-EDGE-02`, `TC-EDGE-19`|
 | **FR-07**| F-03 Milestones    | MilestoneStore      | `js/core/MilestoneManager.js`| `TC-POS-06`, `TC-EDGE-13`        |
 | **FR-08**| F-03 Progress Calc | MilestoneStore      | `js/core/MilestoneManager.js`| `TC-POS-07`                     |
 | **FR-09**| F-04 Safe Zone     | SimulatorOverlay    | `js/canvas/SafeZoneOverlay.js`| `TC-POS-08`, `TC-EDGE-14`        |
-| **FR-10**| F-04 28% Margin    | LayoutEngine        | `js/canvas/ResponsiveLayoutEngine.js`| `TC-POS-08`, `TC-POS-113`|
+| **FR-10**| F-04 28% Margin    | LayoutEngine        | `js/canvas/ResponsiveLayoutEngine.js`<br/>`js/canvas/CanvasTextWrapper.js`| `TC-POS-08`, `TC-POS-113`, `TC-EDGE-07`, `TC-EDGE-08`|
 | **FR-11**| F-05 High-DPI      | AdaptiveAllocator   | `js/canvas/AdaptiveBufferAllocator.js`| `TC-POS-09`, `TC-EDGE-04`|
 | **FR-12**| F-05 Adaptive Scale| AdaptiveAllocator   | `js/canvas/AdaptiveBufferAllocator.js`| `TC-POS-09`, `TC-EDGE-03`|
 | **FR-13**| F-06 Themes        | ThemeController     | `js/config/themes.js`      | `TC-POS-11`, `TC-POS-12`, `TC-EDGE-23`|
-| **FR-14**| F-07 URL Hash      | StateSerializer     | `js/core/UrlStateService.js`| `TC-POS-13`, `TC-POS-14`, `TC-NEG-06`, `TC-NEG-12`, `TC-NEG-13`|
-| **FR-15**| F-05 Download      | BlobExporter        | `js/canvas/CanvasRenderer.js`| `TC-POS-10`                     |
+| **FR-14**| F-07 URL Hash      | StateSerializer     | `js/core/UrlStateService.js`| `TC-POS-13`, `TC-POS-14`, `TC-NEG-06`, `TC-NEG-07`, `TC-NEG-08`, `TC-NEG-12`, `TC-NEG-13`, `TC-POS-104`, `TC-POS-105`, `TC-EDGE-15`, `TC-EDGE-16`|
+| **FR-15**| F-05 Download      | BlobExporter        | `js/canvas/CanvasRenderer.js`| `TC-POS-10`, `TC-EDGE-09`        |
 | **FR-16**| F-05 Audio FSM     | AudioService        | `js/services/AudioChimeService.js`| `TC-POS-16`, `TC-NEG-10`, `TC-EDGE-17`, `TC-POS-108`, `TC-POS-109`|
 | **FR-17**| F-05 Haptics       | HapticService       | `js/services/HapticService.js`| `TC-POS-17`                     |
 | **FR-18**| F-07 History Guard | TokenBucketGuard    | `js/core/TokenBucketHistoryGuard.js`| `TC-NEG-11`, `TC-EDGE-10`, `TC-EDGE-11`|
-| **FR-19**| F-05 Web Share     | ShareService        | `js/canvas/CanvasRenderer.js`| `TC-NEG-11`                     |
-| **FR-20**| F-04 Safe Zones/VP | LayoutEngine        | `js/canvas/ResponsiveLayoutEngine.js`| `TC-POS-08`, `TC-POS-18`, `TC-EDGE-05`, `TC-EDGE-06`, `TC-POS-112`|
+| **FR-19**| F-05 Web Share     | ShareService        | `js/canvas/CanvasRenderer.js`| `TC-NEG-11`, `TC-POS-15`        |
+| **FR-20**| F-04 Safe Zones/VP | LayoutEngine        | `js/canvas/ResponsiveLayoutEngine.js`<br/>`js/canvas/CanvasTextWrapper.js`| `TC-POS-08`, `TC-POS-18`, `TC-EDGE-05`, `TC-EDGE-06`, `TC-POS-112`, `TC-EDGE-12`|
 | **FR-21**| F-05 Confetti SoA  | ParticleEngine      | `js/canvas/ParticleEngine.js`| `TC-POS-19`, `TC-EDGE-18`, `TC-POS-110`, `TC-POS-111`|
 | **FR-22**| F-05 Font Barrier  | FontService         | `js/services/FontService.js` | `TC-POS-20`, `TC-EDGE-24`, `TC-POS-114`|
+| **FR-23**| F-07 Multi-Tab Sync| BroadcastChannel    | `js/core/StateStore.js`      | `TC-POS-106`                    |
+| **FR-24**| F-05 Alarm Mutex   | WebLocksMutex       | `js/services/AudioChimeService.js`| `TC-POS-107`                |
+| **ROOT**  | Application Root   | Orchestrator Root   | `src/js/app.js` (`CountdownApp`)| `TC-POS-01` through `TC-POS-20` |
 +---------+--------------------+---------------------+----------------------+-----------------------------------+
 ```
 
@@ -63,6 +66,7 @@
 | **NFR-08**| Strict CSP Level 3     | Zero inline scripts | `DOC-SEC-02`       | `DOC-SEC-02`, CSP Evaluator CI  |
 | **NFR-09**| Offline Availability   | 100% PWA cache hits | `ADR-008`          | `DOC-TEST-02` (`TC-POS-15`)     |
 | **NFR-10**| WCAG / APCA Contrast   | $L^c \ge 75$ (AAA)  | `DOC-UI-03`        | `DOC-UI-03`, Contrast Analyzer  |
+| **NFR-11**| SW Cache Scoping       | 0 Stale Bundles     | `ADR-008`          | `DOC-SEC-01` (T5c), SW CI Audit |
 +---------+------------------------+---------------------+--------------------+---------------------------------+
 ```
 
@@ -129,10 +133,10 @@
 | **P-04**| Safe-Zone Ergonomics & Tri-Modal  | `ADR-002`          | `FR-09`, `FR-10`, `FR-20` | `DOC-UI-02`, `DOC-09` |
 | **P-05**| DualClock Chronometry Engine      | `ADR-007`          | `FR-05`, `FR-06`   | `DOC-LLD-10`, `DOC-09`|
 | **P-06**| Gemini 3.8 Flash Backward Plan    | `ADR-001`          | `FR-02`, `FR-03`, `FR-04` | `DOC-03`, `DOC-09` |
-| **P-07**| Procedural Web Audio & Haptics    | `ADR-009`          | `FR-16`, `FR-17`   | `DOC-RES-01`, `DOC-09`|
+| **P-07**| Procedural Web Audio & Haptics    | `ADR-009`          | `FR-16`, `FR-17`, `FR-24`| `DOC-RES-01`, `DOC-09`|
 | **P-08**| Float32Array Confetti Physics     | `ADR-002`          | `FR-21`            | `DOC-LLD-04`, `DOC-09`|
-| **P-09**| TokenBucket History & State Codec | `ADR-003`, `ADR-010`| `FR-14`, `FR-18`  | `DOC-SEC-04`, `DOC-09`|
-| **P-10**| Zero-PII Security & PWA Offline   | `ADR-006`, `ADR-008`| `FR-19`, `NFR-06`  | `DOC-SEC-02`, `DOC-09`|
+| **P-09**| TokenBucket History & State Codec | `ADR-003`, `ADR-010`| `FR-14`, `FR-18`, `FR-23`| `DOC-SEC-04`, `DOC-09`|
+| **P-10**| Zero-PII Security & PWA Offline   | `ADR-006`, `ADR-008`| `FR-19`, `NFR-06`, `NFR-11`| `DOC-SEC-02`, `DOC-09`|
 +---------+-----------------------------------+--------------------+--------------------+-----------------------+
 ```
 ```

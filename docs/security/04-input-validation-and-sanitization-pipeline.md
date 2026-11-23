@@ -214,16 +214,35 @@ export async function parseSafeUrlState(base64Payload) {
       err.code = 'ERR_DECOMPRESSION_BOMB';
       throw err;
     }
-    decompressedText = new TextDecoder('utf-8', { fatal: true }).decode(bytes);
+    try {
+      decompressedText = new TextDecoder('utf-8', { fatal: true }).decode(bytes);
+    } catch {
+      const err = new Error('UTF-8 decoding failed for uncompressed payload');
+      err.code = 'ERR_HASH_CORRUPT';
+      throw err;
+    }
   }
 
-  // 3. Recursive Prototype-Proof JSON Reviver
-  const parsed = JSON.parse(decompressedText, (key, value) => {
-    if (key === '__proto__' || key === 'constructor' || key === 'prototype') {
-      return undefined;
-    }
-    return value;
-  });
+  // 3. Recursive Prototype-Proof JSON Reviver & Root Type Validation
+  let parsed;
+  try {
+    parsed = JSON.parse(decompressedText, (key, value) => {
+      if (key === '__proto__' || key === 'constructor' || key === 'prototype') {
+        return undefined;
+      }
+      return value;
+    });
+  } catch {
+    const err = new Error('JSON parsing failed on decompressed state');
+    err.code = 'ERR_HASH_CORRUPT';
+    throw err;
+  }
+
+  if (parsed === null || typeof parsed !== 'object' || Array.isArray(parsed)) {
+    const err = new Error('Root state payload must be a non-null object');
+    err.code = 'ERR_HASH_CORRUPT';
+    throw err;
+  }
 
   // 4. Schema Assertions, Whitelist Normalization & Polymorphic Milestones
   const safeState = Object.create(null);
@@ -268,6 +287,33 @@ export async function parseSafeUrlState(base64Payload) {
 
   return safeState;
 }
+
+/**
+ * Safe deserialization error boundary returning deterministic fallback demo state upon payload corruption.
+ *
+ * @param {string} base64Payload
+ * @returns {Promise<Record<string, unknown>>}
+ */
+export async function safeDeserializeState(base64Payload) {
+  try {
+    return await deserializeState(base64Payload);
+  } catch (err) {
+    console.warn('safeDeserializeState: Corrupt or invalid state payload, applying fallback state', err);
+    return {
+      v: 1,
+      t: 'Launch AI Product',
+      d: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+      th: 'cyber_obsidian',
+      af: 'Consistency compounds into mastery.',
+      m: [
+        { step: 1, title: 'Phase 1: Foundation & Requirements Mastery', offset_days: 21, completed: false },
+        { step: 2, title: 'Phase 2: Deep Core Execution & Build Sprint', offset_days: 14, completed: false },
+        { step: 3, title: 'Phase 3: Validation, Mock Review & Refinement', offset_days: 7, completed: false },
+        { step: 4, title: 'Phase 4: Final Polish & Deadline Achievement', offset_days: 0, completed: false }
+      ]
+    };
+  }
+}
 ```
 
 ---
@@ -308,6 +354,80 @@ export class SafeFontEngine {
     const clampedSize = Math.max(8, Math.min(512, Math.round(Number(sizePx) || 16)));
     const cleanWeight = [300, 400, 500, 600, 700, 800, 'normal', 'bold'].includes(weight) ? weight : 400;
     return `${cleanWeight} ${clampedSize}px "${cleanFamily}"`;
+  }
+}
+```
+
+---
+
+## 6. Client-Side Persistent Rate Limiting (`PersistentGeminiRateLimiter`)
+
+To protect the Google Gemini API Free Tier quota ($15\text{ RPM}$, $1500\text{ RPD}$) across multiple browser tabs and page refreshes, `PersistentGeminiRateLimiter` persists token balances and timestamps into `localStorage`:
+
+```javascript
+/**
+ * Cross-tab persistent token-bucket rate limiter enforcing 15 RPM with 2.0s minimum spacing.
+ */
+export class PersistentGeminiRateLimiter {
+  static #STORAGE_KEY = 'gemini_rate_guard_v1';
+  static #CAPACITY = 15;
+  static #PACING_MS = 2000;
+  static #REFILL_INTERVAL_MS = 60000;
+
+  /**
+   * Acquires a dispatch permit or throws AiServiceError if rate limit is exceeded.
+   *
+   * @throws {AiServiceError} If 15 RPM quota is exhausted or request violates 2.0s pacing interval
+   */
+  static acquireToken() {
+    const now = Date.now();
+    const todayUtc = new Date().toISOString().slice(0, 10);
+    let record;
+
+    try {
+      const raw = localStorage.getItem(this.#STORAGE_KEY);
+      record = raw ? JSON.parse(raw) : null;
+    } catch {
+      record = null;
+    }
+
+    if (!record || record.dayUtc !== todayUtc) {
+      record = { dayUtc: todayUtc, tokens: this.#CAPACITY, lastRefill: now, lastCall: 0, dailyCalls: 0 };
+    }
+
+    // Refill bucket based on elapsed 60s windows
+    const elapsed = now - record.lastRefill;
+    if (elapsed >= this.#REFILL_INTERVAL_MS) {
+      record.tokens = this.#CAPACITY;
+      record.lastRefill = now;
+    }
+
+    // Enforce 2.0s pacing interval
+    const timeSinceLastCall = now - record.lastCall;
+    if (timeSinceLastCall < this.#PACING_MS) {
+      const waitSec = ((this.#PACING_MS - timeSinceLastCall) / 1000).toFixed(1);
+      const err = new Error(`Pacing limit: Please wait ${waitSec}s before generating again.`);
+      err.code = 'ERR_AI_PACING_THROTTLED';
+      err.isRateLimit = true;
+      throw err;
+    }
+
+    if (record.tokens <= 0) {
+      const err = new Error('Gemini API free tier rate limit reached (15 RPM). Please wait 60s.');
+      err.code = 'ERR_AI_HTTP_429';
+      err.isRateLimit = true;
+      throw err;
+    }
+
+    record.tokens -= 1;
+    record.lastCall = now;
+    record.dailyCalls += 1;
+
+    try {
+      localStorage.setItem(this.#STORAGE_KEY, JSON.stringify(record));
+    } catch {
+      // In-memory fallback if localStorage is disabled or full
+    }
   }
 }
 ```

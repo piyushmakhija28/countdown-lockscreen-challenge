@@ -61,3 +61,5 @@ We must decide on the styling architecture.
    - High-DPI physical hairline border: Dynamic scaling via `calc(1px / env(device-pixel-ratio, 2))` eliminating border thickness bloom on Retina displays.
 3. Graceful degradation: Enforced via `@supports not (backdrop-filter: blur(24px))` rendering solid high-contrast backgrounds with enhanced drop shadows on unsupported mobile browsers.
 4. Conforms natively to `~/.claude/rules/04-frontend-standards.md`.
+5. **Reduced Transparency Guard:** Supports `@media (prefers-reduced-transparency: reduce)`, instantly replacing glassmorphic blur filters with solid acrylic backgrounds (`--bg-card-solid`) to enhance visual legibility and eliminate cognitive fatigue.
+6. **Thermal Compositor Guard:** If frame budget profiling detects consecutive frame drops ($\text{FPS} < 30$ over 3 seconds), `ThermalCompositorGuard` dynamically toggles a `.reduced-blur` class on `document.body`, demoting costly multi-pass Gaussian blur kernels to single-pass box blur or opaque fills to prevent mobile GPU throttling.

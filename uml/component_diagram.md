@@ -12,12 +12,13 @@ graph TD
         end
 
         subgraph CoreEngineLayer [Core Logic & Chronometry Layer]
-            StateMgr[Unidirectional State Manager]
+            StateStore[StateStore: Unidirectional Store & Trampoline Queue]
             TimeEng[DualClockTimeEngine: Drift-Compensated RAF Ticker]
             UrlCodec[UrlStateService: Base64 URL Hash Codec]
             HistoryGuard[TokenBucketHistoryGuard: 300ms Leaky Bucket]
             Sanitizer[InputSanitizer: Unicode NFKC & Whitelist Pipeline]
             MilestoneMgr[MilestoneManager: Backward Planning Tracker]
+            Ports[Clean Architecture Abstract Ports: ITickScheduler, IMilestonePlanner, etc.]
         end
 
         subgraph RenderingLayer [High-DPI Wallpaper Rendering Engine]
@@ -31,13 +32,15 @@ graph TD
             BlobGen[Blob Exporter & Image Streamer]
         end
 
-        subgraph SensoryLayer [Audio & Haptic Feedback Subsystems]
+        subgraph SensoryLayer [Audio, Haptics & Background Worker Subsystems]
             AudioChime[AudioService: Procedural Web Audio API]
             HapticCtrl[HapticService: Vibration API Feedback]
+            WorkerTicker[WorkerTickerAdapter: 1Hz Background Worker Ticker]
         end
 
         subgraph AILayer [Google Gemini Intelligence Layer]
             GeminiSDK[GeminiAiClient: Gemini 3.8 Flash Client]
+            RateLimiter[GeminiRateLimiter: 15 RPM Token Bucket Guard]
             FallbackGen[HeuristicGenerator: Retrograde Sprints Fallback]
         end
     end
@@ -49,14 +52,16 @@ graph TD
     UIView --> Sanitizer
     Sanitizer --> HistoryGuard
     HistoryGuard --> UrlCodec
-    UIView --> StateMgr
+    UIView --> StateStore
     Simulator --> SafeOverlay
-    StateMgr --> MilestoneMgr
-    StateMgr --> TimeEng
-    StateMgr --> UrlCodec
-    StateMgr --> AudioChime
-    StateMgr --> HapticCtrl
-    StateMgr --> CanvasEng
+    StateStore --> MilestoneMgr
+    StateStore --> TimeEng
+    StateStore --> UrlCodec
+    StateStore --> AudioChime
+    StateStore --> HapticCtrl
+    StateStore --> CanvasEng
+    TimeEng --> Ports
+    TimeEng --> WorkerTicker
     CanvasEng --> Alloc
     CanvasEng --> FontSvc
     CanvasEng --> LayoutEng
@@ -65,7 +70,8 @@ graph TD
     CanvasEng --> ParticleEng
     CanvasEng --> BlobGen
     BlobGen --> SaveModal
-    StateMgr --> GeminiSDK
+    StateStore --> GeminiSDK
+    GeminiSDK --> RateLimiter
     GeminiSDK --> FallbackGen
-    GeminiSDK -->|HTTPS REST| GoogleGeminiAPI
+    GeminiSDK -->|HTTPS REST: x-goog-api-key| GoogleGeminiAPI
 ```

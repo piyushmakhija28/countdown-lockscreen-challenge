@@ -136,9 +136,17 @@ Each functional requirement is formally specified with unique identifier, descri
 - **Requirement:** The canvas rendering engine shall verify web font readiness via `FontService` utilizing `document.fonts.load()` prior to drawing text, completely eliminating Flash of Invisible/Unstyled Text (FOIT/FOUT) during wallpaper rasterization.
 - **Verification Method:** Test (`TC-POS-20`).
 
+### FR-23: Cross-Tab State Synchronization via BroadcastChannel
+- **Requirement:** When the user modifies goal parameters, checks milestones, or switches themes in one browser tab, the system shall synchronize state across all concurrent tabs on the same origin via `BroadcastChannel('countdown_lockscreen_sync')` without causing recursive pushState loops.
+- **Verification Method:** Test (`TC-POS-106`).
+
+### FR-24: Single-Instance Victory Alarm Locking via Web Locks API
+- **Requirement:** Upon countdown expiration ($\Delta t \le 0$), the system shall request an exclusive lock via the Web Locks API (`navigator.locks.request('countdown_victory_alarm_lock', { ifAvailable: true })`) to ensure strictly one tab synthesizes celebratory audio, preventing double-amplitude acoustic clipping across duplicate tabs.
+- **Verification Method:** Test (`TC-POS-107`).
+
 ---
 
-## 3. Non-Functional Requirements Specification (NFR-01 to NFR-10)
+## 3. Non-Functional Requirements Specification (NFR-01 to NFR-11)
 
 | NFR ID | Attribute | Specification & Acceptance Threshold | Verification Method |
 |:---|:---|:---|:---|
@@ -152,6 +160,7 @@ Each functional requirement is formally specified with unique identifier, descri
 | **NFR-08** | Memory | Heap memory ceiling during $2\times$ canvas supersampling strictly $\le 50\text{ MB}$. | Chrome Heap Snapshot |
 | **NFR-09** | Ergonomics | Mobile touch targets adhere to Fitts's Law: minimum $44 \times 44\text{ pixels}$. | DOM geometry audit |
 | **NFR-10** | Code Quality | Clean TypeScript codebase with zero `any` types and $100\%$ docstring coverage. | `tsc --noEmit` & ESLint |
+| **NFR-11** | Security / Cache | Scoped Service Worker cache eviction ensuring 0 stale bundles & query parameter stripping. | Automated Cache Audit |
 
 ---
 
@@ -185,6 +194,8 @@ Each functional requirement is formally specified with unique identifier, descri
 | FR-20   | F-04 Safe Zones/VP | LayoutEngine        | js/canvas/ResponsiveLayoutEngine.js| TC-POS-08, TC-POS-18 |
 | FR-21   | F-05 Confetti SoA  | ParticleEngine      | js/canvas/ParticleEngine.js| TC-POS-19           |
 | FR-22   | F-05 Font Barrier  | FontService         | js/services/FontService.js | TC-POS-20           |
+| FR-23   | F-07 Multi-Tab Sync| BroadcastChannel    | js/core/StateStore.js      | TC-POS-106          |
+| FR-24   | F-05 Alarm Mutex   | WebLocksMutex       | js/services/AudioChimeService.js| TC-POS-107     |
 +---------+--------------------+---------------------+----------------------+---------------------------+
 ```
 

@@ -208,3 +208,24 @@ export class AudioChimeService {
 ## 5. Consequences & Soft Degradation
 - If a countdown expires without preceding user interactions, audio playback fails silently without unhandled promise rejections.
 - The UI listens to `audio:autoplay-blocked` and renders a celebratory glassmorphic toast with a "Tap to Play Victory Sound" action, guaranteeing full accessibility and zero browser console errors.
+
+### 5.1 Multi-Tab Concurrency & Single-Instance Alarm Mutex (`navigator.locks`)
+When a user opens multiple browser tabs targeting the same countdown deadline, countdown expiration ($\Delta t \le 0$) would simultaneously trigger procedural chord synthesis across all open tabs, producing an uncomfortable acoustic collision and double-amplitude clipping.
+
+To guarantee that **strictly one tab plays the victory chime**:
+1. When the chronometer reaches zero, it requests an exclusive lock via the Web Locks API:
+   ```javascript
+   if (typeof navigator !== 'undefined' && 'locks' in navigator) {
+     await navigator.locks.request('countdown_victory_alarm_lock', { ifAvailable: true }, async (lock) => {
+       if (!lock) {
+         // Another tab already holds the lock; silently bypass local chime
+         return;
+       }
+       await this.playVictoryChime();
+     });
+   } else {
+     // Fallback for older browsers: play single chime locally
+     await this.playVictoryChime();
+   }
+   ```
+2. The first active tab claims the lock and synthesizes the chime. Concurrent sibling tabs receive `lock === null` and suppress local audio hardware, completely eliminating the multi-tab acoustic hazard.

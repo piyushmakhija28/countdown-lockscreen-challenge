@@ -9,6 +9,9 @@ graph TD
         end
 
         subgraph CoreLayer [src/js/core]
+            PortsPkg[ports.js: Clean Architecture Abstract Ports]
+            StateStorePkg[StateStore.js: State Store & Trampoline Queue]
+            LifecycleScopePkg[LifecycleScope.js: RAII Scope & Listener Guard]
             TimeEnginePkg[DualClockTimeEngine.js: Drift-Compensated RAF Ticker]
             MilestonePkg[MilestoneManager.js: Backward Planning State Logic]
             UrlStatePkg[UrlStateService.js: URL Hash Base64 Codec]
@@ -17,6 +20,7 @@ graph TD
         end
 
         subgraph ServicesLayer [src/js/services]
+            WorkerTickerPkg[WorkerTickerAdapter.js: 1Hz Background Worker Ticker]
             AudioServicePkg[AudioService.js: Procedural Web Audio Synthesizer]
             HapticServicePkg[HapticService.js: Haptic Vibration Feedback]
             FontServicePkg[FontService.js: WebFont Loader & Kerning Ready Guard]
@@ -24,6 +28,7 @@ graph TD
 
         subgraph AILayer [src/js/ai]
             GeminiClientPkg[GeminiAiClient.js: Gemini 3.8 Flash REST Gateway]
+            RateLimiterPkg[GeminiRateLimiter.js: 15 RPM Token Bucket Guard]
             HeuristicPkg[HeuristicGenerator.js: Offline Retrograde Sprints]
         end
 

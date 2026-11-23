@@ -55,10 +55,195 @@
 
 ---
 
+## 1.5 Clean Architecture Abstract Ports & Platform Interfaces
+
+Adhering to Hexagonal Architecture, core domain logic depends exclusively on abstract port interfaces rather than concrete browser APIs or global DOM instances.
+
+```javascript
+/**
+ * Abstract Port: Tick Scheduling strategy decoupled from window.requestAnimationFrame.
+ * @interface ITickScheduler
+ */
+export class ITickScheduler {
+  /**
+   * Schedules a chronometer tick callback.
+   * @param {(timestamp: number) => void} callback
+   * @returns {number} Cancellation handle
+   */
+  requestTick(callback) {
+    throw new Error('ITickScheduler.requestTick: abstract method');
+  }
+
+  /**
+   * Cancels a scheduled chronometer tick.
+   * @param {number} handle
+   * @returns {void}
+   */
+  cancelTick(handle) {
+    throw new Error('ITickScheduler.cancelTick: abstract method');
+  }
+}
+
+/**
+ * Abstract Port: Milestone planning strategy decoupled from Google Gemini network client.
+ * @interface IMilestonePlanner
+ */
+export class IMilestonePlanner {
+  /**
+   * Deconstructs a goal into backward sequential milestones.
+   * @param {string} goalTitle Sanitized goal title
+   * @param {Date} deadline Target deadline timestamp
+   * @returns {Promise<Object>} MilestonePlanResponse
+   */
+  async generatePlan(goalTitle, deadline) {
+    throw new Error('IMilestonePlanner.generatePlan: abstract method');
+  }
+}
+
+/**
+ * Abstract Port: Abstract render target decoupling CanvasRenderer from DOM HTMLCanvasElement.
+ * @interface IRenderTarget
+ */
+export class IRenderTarget {
+  /** @returns {number} Target pixel width */
+  get width() { throw new Error('IRenderTarget.width: abstract getter'); }
+  /** @param {number} val */
+  set width(val) { throw new Error('IRenderTarget.width: abstract setter'); }
+  /** @returns {number} Target pixel height */
+  get height() { throw new Error('IRenderTarget.height: abstract getter'); }
+  /** @param {number} val */
+  set height(val) { throw new Error('IRenderTarget.height: abstract setter'); }
+
+  /**
+   * Obtains 2D rendering context.
+   * @param {'2d'} contextType
+   * @param {Object} [options]
+   * @returns {CanvasRenderingContext2D | null}
+   */
+  getContext(contextType, options) {
+    throw new Error('IRenderTarget.getContext: abstract method');
+  }
+
+  /**
+   * Converts render target to blob.
+   * @param {string} [type]
+   * @param {number} [quality]
+   * @returns {Promise<Blob>}
+   */
+  convertToBlob(type, quality) {
+    throw new Error('IRenderTarget.convertToBlob: abstract method');
+  }
+}
+
+/**
+ * Abstract Port: Wallpaper rendering contract.
+ * @interface IWallpaperRenderer
+ */
+export class IWallpaperRenderer {
+  /**
+   * Renders lockscreen wallpaper onto target canvas.
+   * @param {Object} renderState
+   * @returns {Promise<void>}
+   */
+  async renderWallpaper(renderState) {
+    throw new Error('IWallpaperRenderer.renderWallpaper: abstract method');
+  }
+
+  /**
+   * Exports rendered wallpaper as PNG Blob.
+   * @returns {Promise<Blob>}
+   */
+  async exportBlob() {
+    throw new Error('IWallpaperRenderer.exportBlob: abstract method');
+  }
+}
+
+/**
+ * Abstract Port: Persistent state storage and navigation synchronization.
+ * @interface IStateStoragePort
+ */
+export class IStateStoragePort {
+  /**
+   * Persists an ephemeral key-value pair.
+   * @param {string} key
+   * @param {string} value
+   */
+  saveEphemeral(key, value) {
+    throw new Error('IStateStoragePort.saveEphemeral: abstract method');
+  }
+
+  /**
+   * Loads an ephemeral value by key.
+   * @param {string} key
+   * @returns {string | null}
+   */
+  loadEphemeral(key) {
+    throw new Error('IStateStoragePort.loadEphemeral: abstract method');
+  }
+
+  /**
+   * Updates navigation state hash without causing page reload.
+   * @param {string} hashFragment
+   */
+  replaceNavigationState(hashFragment) {
+    throw new Error('IStateStoragePort.replaceNavigationState: abstract method');
+  }
+}
+
+/**
+ * Abstract Port: Host environment platform lifecycle observer.
+ * @interface IPlatformLifecycle
+ */
+export class IPlatformLifecycle {
+  /**
+   * Registers a callback invoked when document becomes visible or system wakes.
+   * @param {() => void} callback
+   * @returns {() => void} Unbind function
+   */
+  onWake(callback) {
+    throw new Error('IPlatformLifecycle.onWake: abstract method');
+  }
+
+  /**
+   * Registers a callback invoked when document is hidden or page unloads.
+   * @param {() => void} callback
+   * @returns {() => void} Unbind function
+   */
+  onSleep(callback) {
+    throw new Error('IPlatformLifecycle.onSleep: abstract method');
+  }
+
+  /**
+   * Returns true if document is active and in foreground.
+   * @returns {boolean}
+   */
+  isDocumentVisible() {
+    throw new Error('IPlatformLifecycle.isDocumentVisible: abstract method');
+  }
+}
+```
+
+---
+
 ## 2. Concrete Subsystem Class Specifications
 
 ### 2.0 `StateStore` Class Contract
 ```javascript
+/**
+ * Error thrown when dispatch re-entrancy depth exceeds safety threshold.
+ */
+export class CyclicDispatchError extends Error {
+  /**
+   * @param {string} actionType
+   * @param {number} depth
+   */
+  constructor(actionType, depth) {
+    super(`CyclicDispatchError: Exceeded max dispatch recursion depth (${depth}) on action: ${actionType}`);
+    this.name = 'CyclicDispatchError';
+    this.code = 'ERR_STATE_CYCLIC_DISPATCH';
+  }
+}
+
 /**
  * Frozen action types supported by StateStore.
  * @enum {string}
@@ -95,7 +280,8 @@ export function deepFreeze(obj) {
 }
 
 /**
- * Central Observable State Store enforcing Unidirectional Data Flow and absolute state immutability.
+ * Central Observable State Store enforcing Unidirectional Data Flow,
+ * Trampoline re-entrant dispatch queuing, and deep state immutability.
  */
 export class StateStore {
   /** @type {Readonly<CountdownState>} */
@@ -106,6 +292,12 @@ export class StateStore {
   #isBatching = false;
   /** @type {boolean} */
   #isDispatching = false;
+  /** @type {Array<{ type: string, payload?: any, meta?: { source?: string } }>} */
+  #actionQueue = [];
+  /** @type {number} */
+  #reentrancyDepth = 0;
+  /** @type {number} */
+  static MAX_REENTRANCY_DEPTH = 10;
 
   /**
    * Initializes store with immutable initial state.
@@ -126,21 +318,36 @@ export class StateStore {
   }
 
   /**
-   * Dispatches an action to mutate state via registered reducers.
+   * Dispatches an action via a Trampoline queue, preventing recursive stack overflow or dropped actions.
    *
    * @param {{ type: string, payload?: any, meta?: { source?: string } }} action
-   * @throws {Error} If dispatch is called re-entrantly from within a reducer.
+   * @throws {CyclicDispatchError} If re-entrancy depth exceeds 10.
    */
   dispatch(action) {
-    if (this.#isDispatching) {
-      throw new Error(`StateStore: Re-entrant dispatch detected for action ${action.type}`);
+    if (this.#reentrancyDepth > StateStore.MAX_REENTRANCY_DEPTH) {
+      throw new CyclicDispatchError(action.type, this.#reentrancyDepth);
     }
+
+    this.#actionQueue.push(action);
+
+    if (this.#isDispatching) {
+      return;
+    }
+
+    this.#isDispatching = true;
     try {
-      this.#isDispatching = true;
-      const nextState = this.#reduce(this.#state, action);
-      if (nextState !== this.#state) {
-        this.#state = deepFreeze(nextState);
-        this.#notifySubscribers(action);
+      while (this.#actionQueue.length > 0) {
+        const nextAction = this.#actionQueue.shift();
+        this.#reentrancyDepth++;
+        try {
+          const nextState = this.#reduce(this.#state, nextAction);
+          if (nextState !== this.#state) {
+            this.#state = deepFreeze(nextState);
+            this.#notifySubscribers(nextAction);
+          }
+        } finally {
+          this.#reentrancyDepth--;
+        }
       }
     } finally {
       this.#isDispatching = false;
@@ -202,9 +409,13 @@ export class StateStore {
 ### 2.1 `DualClockTimeEngine` Class Contract
 ```javascript
 /**
- * Manages drift-compensated countdown chronometry coupling UTC wall-clock anchors with requestAnimationFrame.
+ * Manages drift-compensated countdown chronometry coupling UTC wall-clock anchors with requestAnimationFrame or Web Worker.
  */
 export class DualClockTimeEngine {
+  /** @type {ITickScheduler} */
+  #scheduler;
+  /** @type {IPlatformLifecycle} */
+  #lifecycle;
   /** @type {number | null} */
   #rafId = null;
   /** @type {number} */
@@ -215,6 +426,17 @@ export class DualClockTimeEngine {
   #activeTargetEpoch = null;
   /** @type {number} */
   #lastReportedRemaining = Infinity;
+
+  /**
+   * Initializes real-time drift-compensated chronometer with injected scheduling and lifecycle ports.
+   *
+   * @param {ITickScheduler} scheduler Tick scheduling strategy (e.g. RAF or Web Worker)
+   * @param {IPlatformLifecycle} lifecycle Host platform lifecycle port for wake/sleep re-anchoring
+   */
+  constructor(scheduler, lifecycle) {
+    this.#scheduler = scheduler;
+    this.#lifecycle = lifecycle;
+  }
 
   /**
    * Initializes real-time animation ticker using requestAnimationFrame.
@@ -347,6 +569,45 @@ export class HeuristicGenerator {
    * @returns {Object} MilestonePlanResponse
    */
   static generatePlan(goalTitle, deadline, now = new Date()) {}
+}
+```
+
+### 2.3.1 `GeminiRateLimiter` Class Contract
+```javascript
+/**
+ * Token bucket rate limiter governing Gemini 3.8 Flash Free Tier quota (15 RPM with 2.0s pacing).
+ * Persists token balance and call timestamps in localStorage across tabs with UTC calendar date anchor.
+ */
+export class GeminiRateLimiter {
+  #capacity = 15;
+  #refillIntervalMs = 60000;
+  #minPacingIntervalMs = 2000;
+  #lastCallEpoch = 0;
+  #storageKey = 'gemini_rate_guard_v1';
+
+  /**
+   * @param {number} [capacity=15] Maximum RPM token burst capacity
+   * @param {number} [minPacingIntervalMs=2000] Minimum inter-dispatch spacing in milliseconds
+   */
+  constructor(capacity = 15, minPacingIntervalMs = 2000) {
+    this.#capacity = capacity;
+    this.#minPacingIntervalMs = minPacingIntervalMs;
+  }
+
+  /**
+   * Attempts to acquire execution token. Throws AiServiceError if rate limit or pacing threshold exceeded.
+   *
+   * @returns {boolean} True if token acquired
+   * @throws {AiServiceError} If 15 RPM exhausted or request occurs < 2.0s since last dispatch
+   */
+  acquireToken() {}
+
+  /**
+   * Returns current token balance and milliseconds until next permitted dispatch.
+   *
+   * @returns {{ tokens: number, waitMs: number }}
+   */
+  getQuotaStatus() {}
 }
 ```
 
@@ -577,10 +838,29 @@ export class TokenBucketHistoryGuard {
   #lastRefillEpoch = Date.now();
   #pendingHash = null;
   #timer = null;
+  /** @type {IStateStoragePort} */
+  #storage;
+  /** @type {IPlatformLifecycle} */
+  #lifecycle;
   /** @type {boolean} Mutex flag blocking state serialization during popstate hydration */
   #isHydrating = false;
   /** @type {string} Fingerprint cache of last pushed hash */
   #lastPushedHash = '';
+
+  /**
+   * Constructs history guard with injected storage port and lifecycle observer.
+   *
+   * @param {IStateStoragePort} storage Injected state storage port
+   * @param {IPlatformLifecycle} lifecycle Injected platform lifecycle port
+   * @param {number} [capacity=30] Maximum burst token capacity
+   * @param {number} [refillRatePerSec=2] Token refill rate per second
+   */
+  constructor(storage, lifecycle, capacity = 30, refillRatePerSec = 2) {
+    this.#storage = storage;
+    this.#lifecycle = lifecycle;
+    this.#capacity = capacity;
+    this.#refillRatePerSec = refillRatePerSec;
+  }
 
   /**
    * Enqueues state update with immediate sessionStorage sync and throttled replaceState.
@@ -642,8 +922,8 @@ export class CountdownApp {
  * Master presentation-tier graphics coordinator rendering high-DPI wallpapers onto HTML5 Canvas 2D.
  */
 export class CanvasRenderer {
-  /** @type {HTMLCanvasElement} */
-  #canvas;
+  /** @type {IRenderTarget} */
+  #target;
   /** @type {CanvasRenderingContext2D} */
   #ctx;
   /** @type {AdaptiveBufferAllocator} */
@@ -660,16 +940,16 @@ export class CanvasRenderer {
   /**
    * Constructs the canvas wallpaper renderer with clean dependency injection.
    *
-   * @param {HTMLCanvasElement} canvas
-   * @param {AdaptiveBufferAllocator} allocator
-   * @param {ResponsiveLayoutEngine} layoutEngine
-   * @param {FontService} fontService
+   * @param {IRenderTarget} target Render target abstraction wrapping HTMLCanvasElement or OffscreenCanvas
+   * @param {AdaptiveBufferAllocator} allocator Buffer dimension allocator
+   * @param {ResponsiveLayoutEngine} layoutEngine Layout computation engine
+   * @param {FontService} fontService Font readiness gate
    * @param {CanvasTextWrapper} [textWrapper] Optional text wrapper override
    * @param {SafeZoneOverlay} [safeZoneOverlay] Optional safe zone overlay override
    */
-  constructor(canvas, allocator, layoutEngine, fontService, textWrapper, safeZoneOverlay) {
-    this.#canvas = canvas;
-    const ctx = canvas.getContext('2d', { colorSpace: 'display-p3' }) || canvas.getContext('2d');
+  constructor(target, allocator, layoutEngine, fontService, textWrapper, safeZoneOverlay) {
+    this.#target = target;
+    const ctx = target.getContext('2d', { colorSpace: 'display-p3' }) || target.getContext('2d');
     if (!ctx) {
       throw new Context2DUnavailableError('CanvasRenderingContext2D could not be acquired');
     }
@@ -835,4 +1115,138 @@ export class FontService {
   async ensureFontsLoaded() {}
 }
 ```
+
+### 2.17 `LifecycleScope` RAII Helper Class Contract
+```javascript
+/**
+ * RAII lifecycle management helper automating AbortController signal chaining and teardown cleanup.
+ * Guarantees zero DOM listener or async timer memory leaks.
+ */
+export class LifecycleScope {
+  /** @type {AbortController} */
+  #controller = new AbortController();
+  /** @type {Set<() => void>} */
+  #disposables = new Set();
+
+  /**
+   * Returns active AbortSignal for passing to fetch, addEventListener, etc.
+   *
+   * @returns {AbortSignal}
+   */
+  get signal() {
+    return this.#controller.signal;
+  }
+
+  /**
+   * Registers a disposable teardown function executed upon scope termination.
+   *
+   * @param {() => void} disposable
+   * @returns {() => void} Function to manually unregister disposable
+   */
+  register(disposable) {
+    this.#disposables.add(disposable);
+    return () => this.#disposables.delete(disposable);
+  }
+
+  /**
+   * Aborts active signal and executes all registered disposal routines.
+   */
+  dispose() {
+    this.#controller.abort();
+    for (const disposeFn of this.#disposables) {
+      try {
+        disposeFn();
+      } catch (err) {
+        console.error('LifecycleScope: disposal error', err);
+      }
+    }
+    this.#disposables.clear();
+  }
+}
+```
+
+### 2.18 `WorkerTickerAdapter` Class Contract
+```javascript
+/**
+ * Inline Blob Web Worker tick scheduler providing unthrottled 1Hz chronometer ticks in background tabs.
+ * Implements ITickScheduler.
+ */
+export class WorkerTickerAdapter extends ITickScheduler {
+  /** @type {Worker | null} */
+  #worker = null;
+  /** @type {number} */
+  #handleCounter = 0;
+  /** @type {Map<number, (timestamp: number) => void>} */
+  #callbacks = new Map();
+
+  /**
+   * Instantiates inline worker via URL.createObjectURL using an unthrottled self.setInterval loop.
+   */
+  constructor() {
+    super();
+    const workerScript = `
+      let timer = null;
+      self.onmessage = (e) => {
+        if (e.data === 'start') {
+          if (!timer) {
+            timer = setInterval(() => self.postMessage({ type: 'tick', timestamp: performance.now() }), 1000);
+          }
+        } else if (e.data === 'stop') {
+          if (timer) { clearInterval(timer); timer = null; }
+        }
+      };
+    `;
+    const blob = new Blob([workerScript], { type: 'application/javascript' });
+    const url = URL.createObjectURL(blob);
+    this.#worker = new Worker(url);
+    URL.revokeObjectURL(url);
+
+    this.#worker.onmessage = (e) => {
+      if (e.data && e.data.type === 'tick') {
+        const ts = e.data.timestamp;
+        for (const cb of this.#callbacks.values()) {
+          cb(ts);
+        }
+      }
+    };
+  }
+
+  /**
+   * Schedules a chronometer tick callback.
+   *
+   * @param {(timestamp: number) => void} callback
+   * @returns {number} Cancellation handle
+   */
+  requestTick(callback) {
+    const handle = ++this.#handleCounter;
+    this.#callbacks.set(handle, callback);
+    if (this.#callbacks.size === 1 && this.#worker) {
+      this.#worker.postMessage('start');
+    }
+    return handle;
+  }
+
+  /**
+   * Cancels a scheduled chronometer tick.
+   *
+   * @param {number} handle
+   */
+  cancelTick(handle) {
+    this.#callbacks.delete(handle);
+    if (this.#callbacks.size === 0 && this.#worker) {
+      this.#worker.postMessage('stop');
+    }
+  }
+
+  /**
+   * Terminates background worker thread completely.
+   */
+  dispose() {
+    if (this.#worker) {
+      this.#worker.terminate();
+      this.#worker = null;
+    }
+    this.#callbacks.clear();
+  }
+}
 ```

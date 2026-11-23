@@ -258,6 +258,9 @@ sequenceDiagram
     participant Guard as TokenBucketHistoryGuard
     participant Store as Application State Store
     participant Ticker as DualClockTimeEngine
+    participant Worker as WorkerTickerAdapter
+    participant WebLocks as Navigator Web Locks
+    participant Sync as BroadcastChannel
     participant Audio as AudioService
     participant Haptic as HapticService
     participant Canvas as Canvas 2D Engine
@@ -274,14 +277,24 @@ sequenceDiagram
     end
     View->>Store: Dispatch HYDRATE_PLAN (Goal, Milestones, Affirmation)
     Store->>Ticker: Start Chronometer Loop (UTC Epoch Anchor)
-    loop Every Frame (16.6ms via RAF)
-        Ticker->>Ticker: Check sleep delta; re-anchor against Date.now() if > 500ms
-        Ticker->>View: Emit TimeRemaining (Days, Hours, Minutes, Seconds)
+    alt Tab Visible (Foreground)
+        loop Every Frame (16.6ms via RAF)
+            Ticker->>Ticker: Check sleep delta; re-anchor against Date.now() if > 500ms
+            Ticker->>View: Emit TimeRemaining (Days, Hours, Minutes, Seconds)
+        end
+    else Tab Hidden (Background)
+        Ticker->>Worker: Delegate ticks (1Hz unthrottled Web Worker loop)
+        Worker-->>Ticker: postMessage({ type: 'tick', timestamp })
     end
     alt Timer Expiration (Delta <= 0ms)
         Ticker->>Store: Dispatch GOAL_EXPIRED
+        Store->>WebLocks: request('countdown_victory_alarm_lock', { ifAvailable: true })
+        alt Lock Acquired (Single Tab Winner)
+            WebLocks->>Audio: playVictoryChime() (Gesture-primed or soft degraded)
+        else Lock Contended (Sibling Tab)
+            WebLocks-->>Store: Suppress duplicate audio playback
+        end
         par Sensory Celebration
-            Store->>Audio: playVictoryChime() (Gesture-primed or soft degraded)
             Store->>Haptic: victoryPattern() ([100, 50, 100, 50, 250])
             Store->>View: Render Confetti & Victory Overlay
         end

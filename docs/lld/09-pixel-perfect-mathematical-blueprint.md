@@ -341,3 +341,89 @@ The typography measurement engine implements a two-tier segmentation strategy:
 | 12 | Zero-duration arc guard     | P when t_total <= 0                   | == 1.00000 (Zero NaN division error) |
 +----+-----------------------------+---------------------------------------+--------------------------------------+
 ```
+
+---
+
+## 15. Module 14: Oklab Constant-Hue Gamut Mapping & Chroma Reduction Bisection
+
+### 15.1 The Gamut Clipping Defect & Hue Rotation
+Linear interpolation in Oklab color space $(L, a, b)$ generates smooth perceptual lightness transitions. However, when converting high-chroma Oklab coordinates back to display color spaces (sRGB or Display-P3), values frequently exit the physical gamut boundary ($R, G, B \notin [0, 1]$).
+
+Naive RGB clamping ($\text{clamp}(C, 0, 1)$) distorts the color vector, causing catastrophic **perceptual hue shifts** (e.g. vibrant cyan rotates into murky violet; luminous amber shifts toward dirty brown).
+
+### 15.2 Constant-Hue Cylindrical Bisection Algorithm
+To preserve perceived lightness $L^*$ and perceptual hue $h$ without introducing chromatic distortion, out-of-gamut colors undergo **Constant-Hue Chroma Reduction**:
+
+1. Convert Cartesian chromaticity $(a, b)$ to cylindrical polar coordinates $(C, h)$:
+   $$C = \sqrt{a^2 + b^2}, \quad h = \text{atan2}(b, a)$$
+
+2. Formulate the boundary test function $\mathcal{F}(\alpha) \in \{0, 1\}$ for chroma scale factor $\alpha \in [0, 1]$:
+   $$a^*(\alpha) = \alpha \cdot C \cos(h), \quad b^*(\alpha) = \alpha \cdot C \sin(h)$$
+   $$\begin{bmatrix} L' \\ M' \\ S' \end{bmatrix} = M_{\text{Oklab}\to\text{LMS}} \begin{bmatrix} L \\ a^*(\alpha) \\ b^*(\alpha) \end{bmatrix}, \quad \begin{bmatrix} R \\ G \\ B \end{bmatrix} = M_{\text{LMS}\to\text{RGB}} \begin{bmatrix} (L')^3 \\ (M')^3 \\ (S')^3 \end{bmatrix}$$
+   $$\mathcal{F}(\alpha) = 1 \iff \min(R, G, B) \ge -\epsilon \quad \text{and} \quad \max(R, G, B) \le 1 + \epsilon \quad (\epsilon = 10^{-4})$$
+
+3. Execute 10-iteration binary bisection on $\alpha \in [0, 1]$:
+   ```javascript
+   let low = 0.0, high = 1.0, alpha = 1.0;
+   if (!isInGamut(L, a, b)) {
+     for (let iter = 0; iter < 10; iter++) {
+       const mid = (low + high) * 0.5;
+       if (isInGamut(L, mid * a, mid * b)) {
+         low = mid;
+         alpha = mid;
+       } else {
+         high = mid;
+       }
+     }
+   }
+   ```
+   After 10 iterations, precision reaches $2^{-10} < 0.001$, finding the maximum gamut chroma while preserving hue $h$ and lightness $L^*$ with $100\%$ mathematical fidelity.
+
+---
+
+## 16. Module 15: Cross-Font Metric Scaling & Fallback Compensation
+
+### 16.1 Fallback Font Layout Displacement
+During cold start or font network delay, the browser falls back from `Inter` or `JetBrains Mono` to system fonts (`Arial`, `Roboto`, `system-ui`). Because glyph advance widths and ascender/descender metrics differ between font families, fallback text can overflow calculated lockscreen safe-zone bounds.
+
+### 16.2 Quantitative Scaling Invariant
+To prevent text overflow under any fallback typography, the layout engine applies **Dynamic Font Metric Scaling**:
+
+$$k_{\text{font}} = \frac{W_{\text{target}}}{W_{\text{actual}}}$$
+
+Where:
+- $W_{\text{target}}$: Pre-calibrated reference width for the canonical numeral string `"00:00:00:00"` at $100\text{px}$ font size using `JetBrains Mono` ($W_{\text{target}} = 600\text{px}$).
+- $W_{\text{actual}}$: Measured width on the active `CanvasRenderingContext2D` using `ctx.measureText("00:00:00:00").width` scaled to $100\text{px}$.
+
+The effective rendering font size $S_{\text{effective}}$ is computed as:
+
+$$S_{\text{effective}} = \max\left(S_{\text{floor}}, \, S_{\text{nominal}} \times \min(1.0, \, k_{\text{font}})\right)$$
+
+Where $S_{\text{floor}} = 10\text{px}$ ensures text never shrinks below WCAG 2.1 minimum legibility thresholds.
+
+---
+
+## 17. Module 16: Fractional DPR Sub-Pixel Alignment & Snapping
+
+### 17.1 Fractional DPR Anti-Aliasing Blur
+Mobile devices exhibit fractional Device Pixel Ratios (e.g. Pixel 8 Pro $\text{DPR} = 2.625$, Galaxy A-series $\text{DPR} = 2.75$, iPhone 13 mini $\text{DPR} = 3.0$).
+
+When drawing 1-pixel hairline borders or grid lines with odd physical stroke widths ($w_{\text{stroke}} \in \{1, 3, 5\}\text{ physical px}$), rasterizing at integer CSS pixel boundaries places the line directly across two physical pixels, causing a $2\text{px}$ wide fuzzy, dimmed stroke ($50\%$ opacity blur).
+
+### 17.2 Odd-Stroke Half-Physical-Pixel Centering Rule
+To ensure razor-sharp physical rasterization:
+
+$$x_{\text{snapped}} = \frac{\lfloor x_{\text{css}} \cdot \text{DPR} \rfloor + 0.5 \cdot (w_{\text{phys}} \bmod 2)}{\text{DPR}}$$
+
+Where:
+- $w_{\text{phys}} = \text{round}(w_{\text{css}} \cdot \text{DPR})$ is the physical stroke width.
+- For odd physical strokes ($w_{\text{phys}} \in \{1, 3, 5\}$), the coordinate is offset by $0.5 / \text{DPR}$, aligning the center of the stroke to the physical pixel midpoint.
+- For even physical strokes ($w_{\text{phys}} \in \{2, 4\}$), the coordinate snaps to the exact physical integer boundary.
+
+### 17.3 Coupled Extent Snapping Invariant
+For adjacent bounding boxes (e.g. card headers and milestone list items), inner boundaries must share identical snapped physical boundaries:
+
+$$x_{\text{left, phys}} = \lfloor x_{\text{left, css}} \cdot \text{DPR} \rfloor, \quad x_{\text{right, phys}} = \lfloor (x_{\text{left, css}} + W_{\text{css}}) \cdot \text{DPR} \rfloor$$
+$$W_{\text{snapped, css}} = \frac{x_{\text{right, phys}} - x_{\text{left, phys}}}{\text{DPR}}$$
+
+This coupled extent invariant guarantees $0\text{px}$ gap or seam between adjacent tiled glassmorphism cards across all fractional DPR displays.

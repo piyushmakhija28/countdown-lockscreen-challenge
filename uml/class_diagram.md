@@ -109,13 +109,99 @@ classDiagram
         +ensureFontsReady(): Promise~void~
     }
 
-    class CanvasRenderer {
-        -canvas: HTMLCanvasElement
-        -ctx: CanvasRenderingContext2D
-        +renderWallpaper(options: WallpaperRenderOptions, state: CountdownState, remaining: TimeRemaining): Promise~HTMLCanvasElement~
-        +exportBlob(format: string, quality: number): Promise~Blob~
+    class CanvasTextWrapper {
+        -measurementCache: Map
+        +wrapText(ctx: CanvasRenderingContext2D, text: string, maxWidth: number): string[]
+        +fitText(ctx: CanvasRenderingContext2D, text: string, maxWidth: number, maxHeight: number, maxFontSize: number, minFontSize: number): Object
+        +measureWidth(ctx: CanvasRenderingContext2D, text: string): number
+    }
+
+    class SafeZoneOverlay {
+        -visible: boolean
+        +toggle(): boolean
+        +getSafeTextBounds(width: number, height: number): Object
+        +drawGuides(ctx: CanvasRenderingContext2D, width: number, height: number): void
+    }
+
+    class GeminiRateLimiter {
+        -capacity: number
+        -minPacingIntervalMs: number
+        +acquireToken(): boolean
+        +getQuotaStatus(): Object
+    }
+
+    class LifecycleScope {
+        -controller: AbortController
+        -disposables: Set
+        +signal: AbortSignal
+        +register(disposable: Function): Function
         +dispose(): void
     }
+
+    class WorkerTickerAdapter {
+        -worker: Worker
+        -callbacks: Map
+        +requestTick(callback: Function): number
+        +cancelTick(handle: number): void
+        +dispose(): void
+    }
+
+    class ITickScheduler {
+        <<interface>>
+        +requestTick(callback: Function): number
+        +cancelTick(handle: number): void
+    }
+
+    class IMilestonePlanner {
+        <<interface>>
+        +generatePlan(goalTitle: string, deadline: Date): Promise~MilestonePlanResponse~
+    }
+
+    class IRenderTarget {
+        <<interface>>
+        +width: number
+        +height: number
+        +getContext(contextType: string, options: Object): CanvasRenderingContext2D
+        +convertToBlob(type: string, quality: number): Promise~Blob~
+    }
+
+    class IWallpaperRenderer {
+        <<interface>>
+        +renderWallpaper(renderState: Object): Promise~void~
+        +exportBlob(): Promise~Blob~
+    }
+
+    class IStateStoragePort {
+        <<interface>>
+        +saveEphemeral(key: string, value: string): void
+        +loadEphemeral(key: string): string
+        +replaceNavigationState(hashFragment: string): void
+    }
+
+    class IPlatformLifecycle {
+        <<interface>>
+        +onWake(callback: Function): Function
+        +onSleep(callback: Function): Function
+        +isDocumentVisible(): boolean
+    }
+
+    class CanvasRenderer {
+        -target: IRenderTarget
+        -ctx: CanvasRenderingContext2D
+        -allocator: AdaptiveBufferAllocator
+        -layoutEngine: ResponsiveLayoutEngine
+        -textWrapper: CanvasTextWrapper
+        -safeZoneOverlay: SafeZoneOverlay
+        -fontService: FontService
+        +renderWallpaper(renderState: Object): Promise~void~
+        +exportBlob(): Promise~Blob~
+        +destroy(): void
+    }
+
+    ITickScheduler <|.. WorkerTickerAdapter
+    IMilestonePlanner <|.. GeminiAiClient
+    IMilestonePlanner <|.. HeuristicGenerator
+    IWallpaperRenderer <|.. CanvasRenderer
 
     CountdownApp --> StateStore
     CountdownApp --> DualClockTimeEngine
@@ -126,10 +212,19 @@ classDiagram
     CountdownApp --> AudioService
     CountdownApp --> HapticService
     CountdownApp --> ParticleEngine
+    CountdownApp --> LifecycleScope
+    DualClockTimeEngine --> ITickScheduler
+    DualClockTimeEngine --> IPlatformLifecycle
+    TokenBucketHistoryGuard --> IStateStoragePort
+    TokenBucketHistoryGuard --> IPlatformLifecycle
+    GeminiAiClient --> GeminiRateLimiter
     StateStore --> MilestoneManager
     GeminiAiClient ..> HeuristicGenerator : fallback
+    CanvasRenderer --> IRenderTarget
     CanvasRenderer --> AdaptiveBufferAllocator
     CanvasRenderer --> ResponsiveLayoutEngine
     CanvasRenderer --> FontService
+    CanvasRenderer --> CanvasTextWrapper
+    CanvasRenderer --> SafeZoneOverlay
     UrlStateService --> InputSanitizer
 ```

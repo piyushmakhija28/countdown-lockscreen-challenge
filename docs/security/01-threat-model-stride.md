@@ -41,8 +41,17 @@ Where:
 | T4| **Info Disclosure**| User goal or Gemini    | 6 | 3 | 2 | 1 | 3 | 3.0   | LOW    | Zero server storage;   |
 |   |                    | API key exfiltration.  |   |   |   |   |   |       |        | header-only auth transport|
 +---+--------------------+------------------------+---+---+---+---+---+-------+--------+------------------------+
+|T4b| **Info Disclosure**| Console Error Log      | 5 | 2 | 2 | 1 | 3 | 2.6   | LOW    | Defensive Console Proxy|
+|   |                    | WebIDL key leak.       |   |   |   |   |   |       |        | scrubs all log outputs.|
++---+--------------------+------------------------+---+---+---+---+---+-------+--------+------------------------+
 | T5| **Denial of Serv.**| Canvas & Decompress    | 5 | 5 | 3 | 2 | 4 | 3.8   | LOW    | 32KB deflate bomb guard|
 |   |                    | OOM attack.            |   |   |   |   |   |       |        | & WebKit 16.7M ceiling.|
++---+--------------------+------------------------+---+---+---+---+---+-------+--------+------------------------+
+|T5b| **Denial of Serv.**| Storage Quota Crash    | 4 | 3 | 3 | 1 | 3 | 2.8   | LOW    | ResilientStorage LRU   |
+|   |                    | (LocalStorage full).   |   |   |   |   |   |       |        | eviction & degradation.|
++---+--------------------+------------------------+---+---+---+---+---+-------+--------+------------------------+
+|T5c| **Denial of Serv.**| SW Cache Flooding via  | 4 | 4 | 3 | 1 | 2 | 2.8   | LOW    | Strip URL search params|
+|   |                    | random query params.   |   |   |   |   |   |       |        | before cache matching. |
 +---+--------------------+------------------------+---+---+---+---+---+-------+--------+------------------------+
 | T6| **Elev. Privilege**| Sandbox escape via     | 7 | 2 | 2 | 1 | 2 | 2.8   | LOW    | No eval(); strict CSP  |
 |   |                    | service worker hook.   |   |   |   |   |   |       |        | script-src 'self' only.|
