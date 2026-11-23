@@ -5,11 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.2.1] - 2026-11-23
+
+### Changed
+- **Pure English Language Normalization across Documentation:**
+  - Normalized all section titles, tables, and paragraphs in `docs/ui-ux/07-design-rationale-and-anti-pattern-defense.md` to 100% formal, authoritative English architectural terminology ("What to Use and Why to Use It", "Technology Selection", "First-Principles Architectural Justification").
+  - Eliminated all colloquial phrasing and non-English tokens across the entire documentation repository, ensuring 100% ISO/IEC/IEEE 29148 professional tone.
+
 ## [2.2.0] - 2026-11-23
 
 ### Added
 - **Foundational Zero-AI-Slop Deep-Dive UI/UX Architecture Suite (`docs/ui-ux/`):**
-  - Authored `DOC-UI-07-DESIGN-RATIONALE-ANTI-SLOP` (`docs/ui-ux/07-design-rationale-and-anti-pattern-defense.md`): First-principles architectural justification ("Kya use karoge, kyu use karoge") for decoupled dual-engine rendering, OKLCH perceptual space, Fresnel specular glassmorphism, 8pt spatial grid, modular typography, and procedural Web Audio. Formulated strict BANNED Anti-Pattern list (zero tolerance for arbitrary hex, single-layer shadows, gradient dead zones, sub-44px targets, or unguided layouts).
+  - Authored `DOC-UI-07-DESIGN-RATIONALE-ANTI-SLOP` (`docs/ui-ux/07-design-rationale-and-anti-pattern-defense.md`): First-principles architectural justification ("What to Use and Why to Use It") for decoupled dual-engine rendering, OKLCH perceptual space, Fresnel specular glassmorphism, 8pt spatial grid, modular typography, and procedural Web Audio. Formulated strict BANNED Anti-Pattern list (zero tolerance for arbitrary hex, single-layer shadows, gradient dead zones, sub-44px targets, or unguided layouts).
   - Authored `DOC-UI-04-COMPONENT-SPECS` (`docs/ui-ux/04-component-interaction-specifications.md`): Comprehensive design and interaction blueprint for all 10 Atomic UI components with ASCII wireframe blueprints, Fitts's Law touch targets ($48\times 48\text{dp}$), W3C ARIA 1.2 semantic roles, and exhaustive 9-state matrices (Default, Hover, Active, Focus-Visible, Disabled, Loading, Error, Empty, Success).
   - Authored `DOC-UI-05-IA-JOURNEYS` (`docs/ui-ux/05-information-architecture-and-user-journeys.md`): Detailed Information Architecture, Site Map, Gutenberg Z-pattern glanceability hierarchy for the 1.8-second lock screen glance, Fitts's Law thumb reach heatmaps across 4 flagship device archetypes (iPhone 16, 16 Pro Max, Galaxy S24 Ultra, Foldables), and complete edge-case state machines (zero-data onboarding, Gemini fallback banner, offline PWA, deadline zero-state celebration).
   - Authored `DOC-UI-06-MOTION-PHYSICS` (`docs/ui-ux/06-motion-choreography-and-kinetic-physics.md`): Closed-form mathematical derivations of second-order damped harmonic oscillator ODE ($m\ddot{x} + c\dot{x} + kx = 0$) for UI spring physics, underdamped solution, settling time formula, canonical spring presets, milestone stagger cascade ($t = i \times 35\text{ms}$), Structure-of-Arrays (SoA) `Float32Array` confetti particle dynamics, procedural Web Audio ADSR gain envelope, and Navigator Vibration API haptic impulse profiles.
