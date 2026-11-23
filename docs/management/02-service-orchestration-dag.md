@@ -71,3 +71,66 @@ Each pipeline stage is mapped to specialized subagent expertise from `claude-glo
 | **Stage 6: Governance**  | `architecture-conformance-auditor`  | Level 2.2 verification & RTM completion.    |
 +--------------------------+-------------------------------------+---------------------------------------------+
 ```
+
+---
+
+## 3. Application Runtime Service Orchestration DAG (All 17 Classes)
+
+The client-side runtime adheres to a strict Directed Acyclic Graph (DAG) with zero circular dependencies ($D \le 0.15$):
+
+```mermaid
+graph TD
+    App[CountdownApp: Root Orchestrator]
+
+    subgraph CoreDomain [Tier 1: Core Domain & State]
+        Time[DualClockTimeEngine]
+        MM[MilestoneManager]
+        Sanitizer[InputSanitizer]
+        State[UrlStateService]
+        Guard[TokenBucketHistoryGuard]
+    end
+
+    subgraph AIService [Tier 2: AI Intelligence & Offline Fallback]
+        Gemini[GeminiAiClient]
+        Heuristic[HeuristicGenerator]
+    end
+
+    subgraph PlatformServices [Tier 3: Platform & Sensory Services]
+        Audio[AudioService]
+        Haptic[HapticService]
+        Font[FontService]
+    end
+
+    subgraph CanvasPipeline [Tier 4: Canvas 2D Graphics Pipeline]
+        Alloc[AdaptiveBufferAllocator]
+        Layout[ResponsiveLayoutEngine]
+        Text[CanvasTextWrapper]
+        Overlay[SafeZoneOverlay]
+        Particles[ParticleEngine]
+        Renderer[CanvasRenderer]
+    end
+
+    App --> Sanitizer
+    App --> State
+    App --> Guard
+    App --> Time
+    App --> MM
+    App --> Audio
+    App --> Haptic
+    App --> Font
+    App --> Renderer
+
+    MM --> Gemini
+    MM --> Heuristic
+
+    State --> Guard
+
+    Renderer --> Alloc
+    Renderer --> Layout
+    Renderer --> Text
+    Renderer --> Overlay
+    Renderer --> Font
+
+    Time -.-> Renderer
+    Particles -.-> Renderer
+```

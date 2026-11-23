@@ -409,4 +409,161 @@ export class CountdownApp {
    */
   async init() {}
 }
+
+### 2.13 `CanvasRenderer` Class Contract
+```javascript
+/**
+ * Master presentation-tier graphics coordinator rendering high-DPI wallpapers onto HTML5 Canvas 2D.
+ */
+export class CanvasRenderer {
+  /** @type {HTMLCanvasElement} */
+  #canvas;
+  /** @type {CanvasRenderingContext2D} */
+  #ctx;
+  /** @type {AdaptiveBufferAllocator} */
+  #allocator;
+  /** @type {ResponsiveLayoutEngine} */
+  #layoutEngine;
+  /** @type {CanvasTextWrapper} */
+  #textWrapper;
+  /** @type {SafeZoneOverlay} */
+  #safeZoneOverlay;
+  /** @type {FontService} */
+  #fontService;
+
+  /**
+   * Constructs the canvas wallpaper renderer.
+   *
+   * @param {HTMLCanvasElement} canvas
+   * @param {AdaptiveBufferAllocator} allocator
+   * @param {ResponsiveLayoutEngine} layoutEngine
+   * @param {FontService} fontService
+   */
+  constructor(canvas, allocator, layoutEngine, fontService) {
+    this.#canvas = canvas;
+    this.#ctx = canvas.getContext('2d', { colorSpace: 'display-p3' }) || canvas.getContext('2d');
+    this.#allocator = allocator;
+    this.#layoutEngine = layoutEngine;
+    this.#textWrapper = new CanvasTextWrapper();
+    this.#safeZoneOverlay = new SafeZoneOverlay();
+    this.#fontService = fontService;
+  }
+
+  /**
+   * Renders the complete lock screen wallpaper with safe-zone bounds and typography.
+   *
+   * @param {Object} renderState - Countdown state, theme tokens, and milestones.
+   * @returns {Promise<void>}
+   */
+  async renderWallpaper(renderState) {}
+
+  /**
+   * Exports the rasterized wallpaper canvas as a downloadable PNG Blob.
+   *
+   * @returns {Promise<Blob>}
+   */
+  async exportBlob() {}
+
+  /**
+   * Releases allocated canvas memory and tears down rendering pipeline.
+   */
+  destroy() {}
+}
+```
+
+### 2.14 `CanvasTextWrapper` Class Contract
+```javascript
+/**
+ * Typography measurement and line-wrapping engine providing Bidi isolation and sub-pixel alignment.
+ */
+export class CanvasTextWrapper {
+  /** @type {Map<string, number>} */
+  #measurementCache = new Map();
+
+  /**
+   * Wraps text into lines that do not exceed the specified maximum width.
+   *
+   * @param {CanvasRenderingContext2D} ctx - Target 2D rendering context.
+   * @param {string} text - Input text string.
+   * @param {number} maxWidth - Maximum line width in pixels.
+   * @returns {string[]} Array of wrapped lines.
+   */
+  wrapText(ctx, text, maxWidth) {}
+
+  /**
+   * Measures text width with LRU caching.
+   *
+   * @param {CanvasRenderingContext2D} ctx
+   * @param {string} text
+   * @returns {number} Width in pixels.
+   */
+  measureWidth(ctx, text) {}
+}
+```
+
+### 2.15 `SafeZoneOverlay` Class Contract
+```javascript
+/**
+ * Renders ergonomic lock screen simulator overlays (iOS Dynamic Island, clock, Android gesture bar).
+ */
+export class SafeZoneOverlay {
+  /** @type {boolean} */
+  #visible = false;
+
+  /**
+   * Toggles the visual visibility of the lockscreen simulator overlay guides.
+   *
+   * @returns {boolean} New visibility state.
+   */
+  toggle() {
+    this.#visible = !this.#visible;
+    return this.#visible;
+  }
+
+  /**
+   * Draws the safe-zone guide overlays onto the canvas.
+   *
+   * @param {CanvasRenderingContext2D} ctx
+   * @param {number} width
+   * @param {number} height
+   */
+  drawGuides(ctx, width, height) {}
+}
+```
+
+### 2.16 `FontService` Class Contract
+```javascript
+/**
+ * Web font readiness and preloading gate eliminating Canvas Flash of Invisible/Unstyled Text (FOIT/FOUT).
+ */
+export class FontService {
+  /** @type {Set<string>} */
+  #loadedFonts = new Set();
+  /** @type {boolean} */
+  #isReady = false;
+
+  /**
+   * Preloads a specific web font family asynchronously.
+   *
+   * @param {string} fontSpec - Font specifier (e.g. '700 32px Inter').
+   * @returns {Promise<boolean>}
+   */
+  async loadFont(fontSpec) {}
+
+  /**
+   * Checks whether a specific font is loaded and available for canvas rasterization.
+   *
+   * @param {string} fontSpec
+   * @returns {boolean}
+   */
+  checkReady(fontSpec) {}
+
+  /**
+   * Awaits all critical application web fonts to ensure atomic canvas rendering readiness.
+   *
+   * @returns {Promise<void>}
+   */
+  async ensureFontsLoaded() {}
+}
+```
 ```

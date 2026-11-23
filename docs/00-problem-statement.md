@@ -123,6 +123,10 @@ graph TD
    - Modern glassmorphic visual treatments with subtle gradient borders.
 6. **Stateless URL Hash Sharing:**
    - URL hash serialization (`#v1=...`) encoding complete state into shareable, linkable URLs for Handshake contest submission.
+7. **Sensory Web Audio & Haptics Engine:**
+   - Procedural Web Audio 4-state major chord chime synthesis and native tactile haptic vibration patterns (`FR-16`, `FR-17`).
+8. **Resilient Token Bucket & Physics Engine:**
+   - Leaky token bucket rate limiter protecting `history.replaceState`, 32KB decompression shield, Float32Array confetti celebration physics, and FontService preloading gate (`FR-18`, `FR-20`, `FR-21`, `FR-22`).
 
 ### 4.2 Explicitly Out-of-Scope
 - **Native Store Apps (.ipa / .apk):** Solution operates as a universally accessible web app and wallpaper exporter.

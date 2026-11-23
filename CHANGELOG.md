@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.0] - 2026-11-23
+
+### Added
+- **Complete Class Blueprint Suite (`DOC-LLD-01`):** Formalized full native ES2022 specifications with Level 2.2 Docstrings-Only and `#privateField` encapsulation for the 4 remaining classes (`CanvasRenderer`, `CanvasTextWrapper`, `SafeZoneOverlay`, `FontService`), bringing class contract coverage to 100% across all 17 target classes.
+- **Polymorphic Heuristic Contract (`DOC-03`):** Specified component contract for `HeuristicGenerator.generatePlan()` guaranteeing identical schema equivalence with `GeminiAiClient.decomposeMilestones()`.
+- **Gang of Four (GoF) Design Patterns Mapping (`DOC-LLD-05`):** Documented GoF patterns for `AdaptiveBufferAllocator` (Strategy), `TokenBucketHistoryGuard` (Proxy/Governor), `ParticleEngine` (Flyweight/SoA), `FontService` (Gateway/Barrier), and `CanvasRenderer` (Facade).
+- **Test Catalog Expansion to 73 Scenarios (`DOC-TEST-02`):**
+  - Added positive tests `TC-POS-18` (Layout/Keyboard), `TC-POS-19` (Confetti/SoA), `TC-POS-20` (Font Barrier).
+  - Added negative tests `TC-NEG-12` (Decompression Payload Too Large), `TC-NEG-13` (Prototype Poison Ingress), `TC-NEG-14` (AI Safety Block).
+  - Added 12 edge cases `TC-EDGE-13` to `TC-EDGE-24` cited in `DOC-LLD-08` (Spline zero-delta, Fitts's law, unpadded Base64URL, tuple deserialization, OS audio interruption, reduced motion, deadline extension, Math.ceil, bitwise LUT, 429 breaker, AAA contrast, FOIT barrier).
+  - Cataloged 15 micro-architectural unit tests `TC-POS-100` to `TC-POS-114`.
+- **System Stress Benchmarks (`DOC-TEST-03`):** Added Benchmark 4 (Allocator memory pressure $< 50\text{MB}$), Benchmark 5 (Token bucket 50-event burst traffic), and Benchmark 6 (Particle engine 60fps zero-GC verification).
+- **Cold-Start Web Font Readiness Probe (`DOC-OBS-02`):** Added `probeFontReadiness()` via `document.fonts.ready` to the startup health check ladder.
+- **WBS Work Packages & Runtime Service DAG (`DOC-MGT-01` & `DOC-MGT-02`):** Added tasks `TASK-ENG-01` through `TASK-ENG-17` for all 17 classes, QA tasks `TASK-QA-01` through `TASK-QA-10`, and rendered complete 17-class client runtime DAG.
+- **Requirements Alignment (`DOC-01-PRD` & `DOC-00-PROBLEM`):** Synchronized scope and features to cover all 22 functional requirements (`FR-01` to `FR-22`).
+
 ## [1.3.0] - 2026-11-23
 
 ### Added

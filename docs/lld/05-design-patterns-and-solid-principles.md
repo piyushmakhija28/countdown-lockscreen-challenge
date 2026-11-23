@@ -21,7 +21,10 @@
 | **Strategy**      | Behavioral            | `MilestoneGenerator`  | Interchangeable planners:     |
 |                   |                       | (Gemini vs Heuristic) | runtime toggle based on net.  |
 +-------------------+-----------------------+-----------------------+-------------------------------+
-| **Observer**      | Behavioral            | `DualClockTimeEngine`          | Subscribes DOM Ticker and     |
+| **Strategy**      | Behavioral            | `AdaptiveAllocator`   | Platform GPU scale solver     |
+|                   |                       |                       | (WebKit 16.7MP vs Desktop).   |
++-------------------+-----------------------+-----------------------+-------------------------------+
+| **Observer**      | Behavioral            | `DualClockTimeEngine` | Subscribes DOM Ticker and     |
 |                   |                       |                       | progress ring to 60fps ticks. |
 +-------------------+-----------------------+-----------------------+-------------------------------+
 | **Factory Method**| Creational            | `ThemeFactory`        | Instantiates design tokens &  |
@@ -32,6 +35,18 @@
 +-------------------+-----------------------+-----------------------+-------------------------------+
 | **Flyweight**     | Structural            | `TWO_DIGIT_LUT`       | Reuses static 100-string array|
 |                   |                       | `ParticleTrigLUT`     | & pre-computed sin/cos arrays.|
++-------------------+-----------------------+-----------------------+-------------------------------+
+| **Flyweight**     | Structural            | `ParticleEngine`      | Contiguous Float32Array SoA   |
+|                   |                       |                       | buffer eliminating GC churn.  |
++-------------------+-----------------------+-----------------------+-------------------------------+
+| **Proxy / Guard** | Structural / Behav.   | `TokenBucketGuard`    | Rate-limits replaceState (30t,|
+|                   |                       |                       | 2/s) preventing WebKit crashes|
++-------------------+-----------------------+-----------------------+-------------------------------+
+| **Gateway/Barrier**| Structural / Creational| `FontService`        | Gates Canvas rendering until  |
+|                   |                       |                       | document.fonts.load() resolves|
++-------------------+-----------------------+-----------------------+-------------------------------+
+| **Facade**        | Structural            | `CanvasRenderer`      | Unifies typography, layout, & |
+|                   |                       |                       | buffer rasterization pipeline.|
 +-------------------+-----------------------+-----------------------+-------------------------------+
 | **Chain of Resp.**| Behavioral            | `SharePipeline`       | Falls through: Web Share API  |
 |                   |                       |                       | -> Anchor Download -> Modal.  |

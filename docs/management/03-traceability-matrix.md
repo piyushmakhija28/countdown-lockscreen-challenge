@@ -18,28 +18,28 @@
 +---------+--------------------+---------------------+----------------------+-----------------------------------+
 | Req ID  | PRD Feature Link   | HLD Component       | Target Implementation| Test Case Verification ID         |
 +---------+--------------------+---------------------+----------------------+-----------------------------------+
-| **FR-01**| F-02 Countdown     | IngressController   | `js/core/InputSanitizer.js`| `TC-POS-01`, `TC-NEG-01`, `TC-NEG-02`|
-| **FR-02**| F-01 Gemini AI     | GeminiGateway       | `js/ai/GeminiAiClient.js`    | `TC-POS-02`, `TC-EDGE-01`         |
+| **FR-01**| F-02 Countdown     | IngressController   | `js/core/InputSanitizer.js`| `TC-POS-01`, `TC-NEG-01`, `TC-NEG-02`, `TC-NEG-09`|
+| **FR-02**| F-01 Gemini AI     | GeminiGateway       | `js/ai/GeminiAiClient.js`    | `TC-POS-02`, `TC-NEG-14`, `TC-EDGE-22`|
 | **FR-03**| F-01 Fallback      | HeuristicEngine     | `js/ai/HeuristicGenerator.js`| `TC-NEG-04`, `TC-NEG-05`        |
 | **FR-04**| F-01 Affirmation   | GeminiGateway       | `js/ai/GeminiAiClient.js`    | `TC-POS-03`                       |
-| **FR-05**| F-02 Chronometer   | DualClockTimeEngine | `js/core/DualClockTimeEngine.js`| `TC-POS-04`                  |
-| **FR-06**| F-02 Zero Drift    | DualClockTimeEngine | `js/core/DualClockTimeEngine.js`| `TC-POS-05`, `TC-EDGE-01`    |
-| **FR-07**| F-03 Milestones    | MilestoneStore      | `js/core/MilestoneManager.js`| `TC-POS-06`                     |
+| **FR-05**| F-02 Chronometer   | DualClockTimeEngine | `js/core/DualClockTimeEngine.js`| `TC-POS-04`, `TC-POS-100`, `TC-POS-101`|
+| **FR-06**| F-02 Zero Drift    | DualClockTimeEngine | `js/core/DualClockTimeEngine.js`| `TC-POS-05`, `TC-EDGE-01`, `TC-EDGE-02`|
+| **FR-07**| F-03 Milestones    | MilestoneStore      | `js/core/MilestoneManager.js`| `TC-POS-06`, `TC-EDGE-13`        |
 | **FR-08**| F-03 Progress Calc | MilestoneStore      | `js/core/MilestoneManager.js`| `TC-POS-07`                     |
-| **FR-09**| F-04 Safe Zone     | SimulatorOverlay    | `js/canvas/SafeZoneOverlay.js`| `TC-POS-08`                    |
-| **FR-10**| F-04 28% Margin    | LayoutEngine        | `js/canvas/ResponsiveLayoutEngine.js`| `TC-POS-08`             |
-| **FR-11**| F-05 High-DPI      | AdaptiveAllocator   | `js/canvas/AdaptiveBufferAllocator.js`| `TC-POS-09`             |
+| **FR-09**| F-04 Safe Zone     | SimulatorOverlay    | `js/canvas/SafeZoneOverlay.js`| `TC-POS-08`, `TC-EDGE-14`        |
+| **FR-10**| F-04 28% Margin    | LayoutEngine        | `js/canvas/ResponsiveLayoutEngine.js`| `TC-POS-08`, `TC-POS-113`|
+| **FR-11**| F-05 High-DPI      | AdaptiveAllocator   | `js/canvas/AdaptiveBufferAllocator.js`| `TC-POS-09`, `TC-EDGE-04`|
 | **FR-12**| F-05 Adaptive Scale| AdaptiveAllocator   | `js/canvas/AdaptiveBufferAllocator.js`| `TC-POS-09`, `TC-EDGE-03`|
-| **FR-13**| F-06 Themes        | ThemeController     | `js/config/themes.js`      | `TC-POS-11`, `TC-POS-12`          |
-| **FR-14**| F-07 URL Hash      | StateSerializer     | `js/core/UrlStateService.js`| `TC-POS-13`, `TC-POS-14`          |
+| **FR-13**| F-06 Themes        | ThemeController     | `js/config/themes.js`      | `TC-POS-11`, `TC-POS-12`, `TC-EDGE-23`|
+| **FR-14**| F-07 URL Hash      | StateSerializer     | `js/core/UrlStateService.js`| `TC-POS-13`, `TC-POS-14`, `TC-NEG-06`, `TC-NEG-12`, `TC-NEG-13`|
 | **FR-15**| F-05 Download      | BlobExporter        | `js/canvas/CanvasRenderer.js`| `TC-POS-10`                     |
-| **FR-16**| F-05 Audio FSM     | AudioService        | `js/services/AudioService.js`| `TC-POS-16`, `TC-NEG-10`         |
+| **FR-16**| F-05 Audio FSM     | AudioService        | `js/services/AudioService.js`| `TC-POS-16`, `TC-NEG-10`, `TC-EDGE-17`, `TC-POS-108`, `TC-POS-109`|
 | **FR-17**| F-05 Haptics       | HapticService       | `js/services/HapticService.js`| `TC-POS-17`                     |
-| **FR-18**| F-07 History Guard | TokenBucketGuard    | `js/core/TokenBucketHistoryGuard.js`| `TC-NEG-11`, `TC-EDGE-10`|
+| **FR-18**| F-07 History Guard | TokenBucketGuard    | `js/core/TokenBucketHistoryGuard.js`| `TC-NEG-11`, `TC-EDGE-10`, `TC-EDGE-11`|
 | **FR-19**| F-05 Web Share     | ShareService        | `js/canvas/CanvasRenderer.js`| `TC-NEG-11`                     |
-| **FR-20**| F-04 Safe Zones/VP | LayoutEngine        | `js/canvas/ResponsiveLayoutEngine.js`| `TC-POS-08`, `TC-POS-18` |
-| **FR-21**| F-05 Confetti SoA  | ParticleEngine      | `js/canvas/ParticleEngine.js`| `TC-POS-19`                     |
-| **FR-22**| F-05 Font Barrier  | FontService         | `js/services/FontService.js` | `TC-POS-20`                     |
+| **FR-20**| F-04 Safe Zones/VP | LayoutEngine        | `js/canvas/ResponsiveLayoutEngine.js`| `TC-POS-08`, `TC-POS-18`, `TC-EDGE-05`, `TC-EDGE-06`, `TC-POS-112`|
+| **FR-21**| F-05 Confetti SoA  | ParticleEngine      | `js/canvas/ParticleEngine.js`| `TC-POS-19`, `TC-EDGE-18`, `TC-POS-110`, `TC-POS-111`|
+| **FR-22**| F-05 Font Barrier  | FontService         | `js/services/FontService.js` | `TC-POS-20`, `TC-EDGE-24`, `TC-POS-114`|
 +---------+--------------------+---------------------+----------------------+-----------------------------------+
 ```
 

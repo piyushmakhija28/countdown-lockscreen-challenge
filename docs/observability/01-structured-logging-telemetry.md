@@ -38,7 +38,11 @@ All runtime diagnostic events conform strictly to a validated, structured JSON s
         "WEB_SHARE_INITIATED",
         "HISTORY_THROTTLE_TRIPPED",
         "AUTOPLAY_BLOCKED",
-        "CLOCK_RESYNC_TRIGGERED"
+        "CLOCK_RESYNC_TRIGGERED",
+        "DECOMPRESSION_BOMB_BLOCKED",
+        "AI_SAFETY_FILTER_TRIPPED",
+        "FONT_PRELOAD_COMPLETED",
+        "PARTICLE_PHYSICS_COMPLETED"
       ] 
     },
     "duration_ms": { "type": "number", "minimum": 0 },

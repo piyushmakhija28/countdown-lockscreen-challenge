@@ -20,7 +20,7 @@ countdown-lockscreen-challenge/
 ├── .github/
 │   └── workflows/
 │       └── ci.yml                     # GitHub Actions CI/CD to GitHub Pages
-├── docs/                              # Level 2.2 Deep Architecture & Governance (53 Specs)
+├── docs/                              # Level 2.2 Deep Architecture & Governance (54 Specs)
 │   ├── 00-problem-statement.md        # ISO/IEC/IEEE 29148 Problem Statement & Invariants
 │   ├── 01-prd.md                      # PRD, Personas, Journey Maps & Mission Traceability
 │   ├── 02-hld.md                      # High-Level Design, C4 Models & Dual-Engine Architecture
@@ -40,6 +40,7 @@ countdown-lockscreen-challenge/
 │   │   └── ADR-010-leaky-bucket-history-guard-vs-synchronous-pushstate.md
 │   ├── 07-architecture-tradeoffs-and-faq.md # Tradeoff Matrices, Failure Modes & Judge FAQ
 │   ├── 08-handshake-submission-package.md # Official Contest Submission Package & Deliverables
+│   ├── 09-tech-stack-fundamentals-and-compliance-matrix.md # Technical Stack Fundamentals & Compliance Matrix
 │   ├── competition-rules-summary.md   # Official Contest Rules Teardown & Legal Verification
 │   ├── lockscreen-design-strategy.md  # 1.8s Glanceability Index & Technical Moats Playbook
 │   ├── ui-ux/                         # UI/UX Specifications

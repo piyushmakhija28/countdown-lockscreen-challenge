@@ -18,7 +18,7 @@
 +---+----------------------------+--------+------------------------------------+--------------------------------+
 | SP| Sprint Milestone Name      | Points | Deliverables & Features            | Status                         |
 +---+----------------------------+--------+------------------------------------+--------------------------------+
-| 1 | **Sprint 1: Architecture** | 8 SP   | 66 Deep Specs + 13 UMLs + 10 ADRs  | 100% COMPLETE [DONE & VERIFIED]|
+| 1 | **Sprint 1: Architecture** | 8 SP   | 54 Deep Specs + 13 UMLs (67 Total) | 100% COMPLETE [DONE & VERIFIED]|
 | 2 | **Sprint 2: Core Engines** | 10 SP  | DualClockTimeEngine + PWA Shell    | ACTIVE IMPLEMENTATION          |
 | 3 | **Sprint 3: Canvas & AI**  | 11 SP  | AdaptiveBufferAllocator + Gemini   | UPCOMING SPRINT 3              |
 | 4 | **Sprint 4: Polish & Ship**| 11 SP  | Safe-Zone + Sensory Audio + Deploy | UPCOMING SPRINT 4              |
@@ -31,24 +31,53 @@
 
 - **Epic 1: Time Chronometry & Ingress (8 SP):**
   - Story 1.1: Drift-compensated hybrid chronometer using `DualClockTimeEngine` (3 SP).
-  - Story 1.2: Date picker ingress with future timestamp and NFKC input sanitization (2 SP).
-  - Story 1.3: Stateless URL hash `#v1=` with `TokenBucketHistoryGuard` and `sessionStorage` micro-persistence (3 SP).
+  - Story 1.2: Date picker ingress with future timestamp and NFKC input sanitization (`InputSanitizer`) (2 SP).
+  - Story 1.3: Stateless URL hash `#v1=` with `TokenBucketHistoryGuard` and `UrlStateService` (3 SP).
 - **Epic 2: Google Gemini Intelligence (8 SP):**
-  - Story 2.1: Gemini 3.8 Flash SDK integration with header-based `x-goog-api-key` auth (5 SP).
+  - Story 2.1: Gemini 3.8 Flash SDK integration with header-based `x-goog-api-key` auth (`GeminiAiClient`) (5 SP).
   - Story 2.2: Deterministic local `HeuristicGenerator` fallback planner (< 5ms) (3 SP).
 - **Epic 3: Canvas 2D High-DPI Engine (11 SP):**
-  - Story 3.1: Adaptive dual-constraint canvas buffer allocation (<= 16.7M px, <= 4096px) (5 SP).
-  - Story 3.2: 3 Curated Thematic color palettes and radial gradients (Display P3) (3 SP).
-  - Story 3.3: Web Share API Level 2 and Standalone PWA Modal Exporter (3 SP).
+  - Story 3.1: Adaptive dual-constraint canvas buffer allocation (`AdaptiveBufferAllocator`) (4 SP).
+  - Story 3.2: Typography and FOIT elimination barrier (`FontService`, `CanvasTextWrapper`) (3 SP).
+  - Story 3.3: 3 Curated Thematic color palettes and radial gradients (Display P3) (2 SP).
+  - Story 3.4: Web Share API Level 2 and Standalone PWA Modal Exporter (`CanvasRenderer`) (2 SP).
 - **Epic 4: Lock Screen Ergonomics & Polish (13 SP):**
-  - Story 4.1: Tri-modal responsive layout engine (foldable dual-column, ultra-tall, standard) (4 SP).
-  - Story 4.2: Glassmorphic UI controls with APCA contrast guarantees (3 SP).
-  - Story 4.3: GitHub Actions CI/CD deployment to GitHub Pages Fastly Edge CDN (3 SP).
-  - Story 4.4: Autoplay-primed procedural Web Audio chime & haptic immersion (3 SP).
+  - Story 4.1: Tri-modal responsive layout engine and virtualViewport keyboard sync (`ResponsiveLayoutEngine`, `SafeZoneOverlay`) (4 SP).
+  - Story 4.2: Float32Array celebration physics engine (`ParticleEngine`) (3 SP).
+  - Story 4.3: Autoplay-primed procedural Web Audio chime & haptic immersion (`AudioService`, `HapticService`) (3 SP).
+  - Story 4.4: App orchestrator, Service Worker PWA, and GitHub Actions CI/CD deployment (`CountdownApp`) (3 SP).
 
 ---
 
-## 3. Engineering Definition of Done (DoD) & Risk Register
+## 3. Concrete Engineering Work Package Mapping (All 17 Classes)
+
+```
++---------------+-------------------------------+-----------------------+-----------------------+
+| Task ID       | Target Implementation File    | Component Description | Governed Requirements |
++---------------+-------------------------------+-----------------------+-----------------------+
+| `TASK-ENG-01` | `src/js/core/DualClockTimeEngine.js` | Wall-clock driftless chronometer| `FR-05`, `FR-06`    |
+| `TASK-ENG-02` | `src/js/core/MilestoneManager.js`    | Checkpoint sequencing & state | `FR-07`, `FR-08`    |
+| `TASK-ENG-03` | `src/js/ai/GeminiAiClient.js`        | Gemini 3.8 Flash REST client  | `FR-02`, `FR-04`    |
+| `TASK-ENG-04` | `src/js/ai/HeuristicGenerator.js`    | Deterministic offline fallback| `FR-03`             |
+| `TASK-ENG-05` | `src/js/canvas/AdaptiveBufferAllocator.js`| GPU scale & texture solver| `FR-11`, `FR-12`    |
+| `TASK-ENG-06` | `src/js/canvas/ResponsiveLayoutEngine.js` | Tri-modal viewport geometry| `FR-10`, `FR-20`   |
+| `TASK-ENG-07` | `src/js/canvas/CanvasTextWrapper.js` | Bidi isolation & text wrap    | `FR-20`             |
+| `TASK-ENG-08` | `src/js/canvas/ParticleEngine.js`    | Float32Array confetti physics | `FR-21`             |
+| `TASK-ENG-09` | `src/js/canvas/SafeZoneOverlay.js`   | Lockscreen simulator overlay  | `FR-09`             |
+| `TASK-ENG-10` | `src/js/services/AudioService.js`    | 4-state procedural Web Audio  | `FR-16`             |
+| `TASK-ENG-11` | `src/js/services/HapticService.js`   | Tactile vibration patterns    | `FR-17`             |
+| `TASK-ENG-12` | `src/js/services/FontService.js`     | Web font loading barrier gate | `FR-22`             |
+| `TASK-ENG-13` | `src/js/core/TokenBucketHistoryGuard.js`| Leaky token bucket rate limiter| `FR-18`          |
+| `TASK-ENG-14` | `src/js/core/InputSanitizer.js`      | NFKC & Trojan Source shield   | `FR-01`             |
+| `TASK-ENG-15` | `src/js/core/UrlStateService.js`     | Base64URL hash state codec    | `FR-14`             |
+| `TASK-ENG-16` | `src/js/canvas/CanvasRenderer.js`    | 2D wallpaper rasterizer       | `FR-15`, `FR-19`    |
+| `TASK-ENG-17` | `src/js/app.js`                      | Root orchestrator & view wire | ALL REQUIREMENTS    |
++---------------+-------------------------------+-----------------------+-----------------------+
+```
+
+---
+
+## 4. Engineering Definition of Done (DoD) & Risk Register
 
 Every user story must satisfy the rigorous Definition of Done:
 1. **Unit Test Coverage:** Minimum $\ge 90\%$ line and $\ge 85\%$ branch coverage verified via Vitest.

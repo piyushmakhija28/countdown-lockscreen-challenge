@@ -73,6 +73,22 @@ export class HealthProbeService {
     }
     return { heapUsedMB: 0, isUnderPressure: false };
   }
+
+  // 6. Cold-Start Web Font Readiness Probe
+  public async probeFontReadiness(): Promise<{ isReady: boolean; durationMs: number }> {
+    const start = performance.now();
+    try {
+      if (document.fonts) {
+        await document.fonts.ready;
+        const durationMs = performance.now() - start;
+        console.info(`[ColdStart:FontProbe] All web fonts ready in ${durationMs.toFixed(2)}ms`);
+        return { isReady: true, durationMs };
+      }
+    } catch (err) {
+      console.warn('[ColdStart:FontProbe] Font readiness check failed, continuing with fallback font', err);
+    }
+    return { isReady: false, durationMs: performance.now() - start };
+  }
 }
 ```
 

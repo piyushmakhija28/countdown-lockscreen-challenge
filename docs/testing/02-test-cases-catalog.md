@@ -35,12 +35,15 @@ Conforming to `~/.claude/rules/35-positive-testing-standards.md`:
 | TC-POS-15 | Offline Service Worker Caching    | Network offline, reload page      | App loads from CacheStorage.      |
 | TC-POS-16 | Web Audio Procedural Chime        | Timer hits 0ms, context primed    | Plays major chord (C5-E5-G5-C6).  |
 | TC-POS-17 | Haptic Vibration Pattern Trigger  | Milestone toggle / VictoryPattern | navigator.vibrate([100,50,100]).  |
+| TC-POS-18 | Tri-Modal & Viewport Keyboard Sync| Soft keyboard focus / resize      | ResponsiveLayoutEngine adapts.    |
+| TC-POS-19 | Confetti Physics Aerodynamics & SoA| Expired timer celebration blast   | 3000ms Float32Array drag physics.  |
+| TC-POS-20 | FontService Asynchronous Preload  | document.fonts.load('Inter')      | FOIT eliminated before canvas draw.|
 +-----------+-----------------------------------+-----------------------------------+-----------------------------------+
 ```
 
 ---
 
-## 2. Negative Test Scenarios (11 Error-Path Cases)
+## 2. Negative Test Scenarios (14 Error-Path Cases)
 
 Conforming to `~/.claude/rules/36-negative-testing-standards.md`:
 
@@ -59,12 +62,15 @@ Conforming to `~/.claude/rules/36-negative-testing-standards.md`:
 | TC-NEG-09 | HTML / XSS Injection in Goal Title| "<script>alert(1)</script>"       | Whitelist rejects forbidden chars.|
 | TC-NEG-10 | Web Audio Autoplay Rejection      | Expiration with unprimed context  | Catches NotAllowed; soft fallback.|
 | TC-NEG-11 | WebKit replaceState Quota Exceed  | > 100 rapid input changes in 30s  | TokenBucket limits to <= 60 calls.|
+| TC-NEG-12 | Uncompressed Payload Exceeds 32KB | Base64 state payload > 32768 B    | Throws ERR_PAYLOAD_TOO_LARGE.     |
+| TC-NEG-13 | Object Prototype Poison Ingress   | constructor.prototype pollution   | Reviver strips polluted keys.     |
+| TC-NEG-14 | Gemini AI Content Filter Safety   | Toxic prompt triggers SAFETY block| Throws ERR_AI_SAFETY_BLOCK.       |
 +-----------+-----------------------------------+-----------------------------------+-----------------------------------+
 ```
 
 ---
 
-## 3. Edge-Case Scenarios (12 Boundary Conditions)
+## 3. Edge-Case Scenarios (24 Boundary Conditions)
 
 Conforming to `~/.claude/rules/37-edge-case-testing-standards.md`:
 
@@ -84,5 +90,70 @@ Conforming to `~/.claude/rules/37-edge-case-testing-standards.md`:
 | TC-EDGE-10| Tab Closed Within 300ms of Edit   | User closes tab immediately       | Preserved via sessionStorage sync.|
 | TC-EDGE-11| Immediate Share Button Click      | User edits & clicks Share in 10ms | getFreshUrl() flushes latest state|
 | TC-EDGE-12| Battery Low Power Mode (< 20%)    | Battery Status API reports low    | Releases wake lock; saves battery.|
+| TC-EDGE-13| Spline Delta Zero Guard           | Successive milestones at same day | Fritsch-Carlson guards div-by-zero|
+| TC-EDGE-14| Fitts Law Minimum Target Size     | Small phone display 320x568       | Touch targets maintain >= 44x44px.|
+| TC-EDGE-15| Base64URL Unpadded Ingress        | Hash missing '=' padding chars    | Restores padding before atob().   |
+| TC-EDGE-16| Polymorphic Tuple Array Ingress   | Shared link contains [1,title,d,c]| Deserializes without title loss.  |
+| TC-EDGE-17| Web Audio Interrupted by OS Call  | OS audio session interruption     | FSM transitions to INTERRUPTED.   |
+| TC-EDGE-18| Reduced Motion System Preference   | prefers-reduced-motion: reduce    | Bypasses particle physics loops.  |
+| TC-EDGE-19| Target Deadline Extension Reset   | Target epoch extended by user     | Monotonic clamp resets target.    |
+| TC-EDGE-20| Exact Second Boundary Ceil Round  | Remaining time delta = 999ms      | Math.ceil displays 1s (not 0s).   |
+| TC-EDGE-21| Look-Up Table Bitwise Truncation  | Fractional index passed to LUT    | TWO_DIGIT_LUT[n | 0] handles safe.|
+| TC-EDGE-22| Fail-Fast AI Rate Limit Breaker   | HTTP 429 response received        | Circuit breaker trips immediately.|
+| TC-EDGE-23| Theme Contrast WCAG AAA Invariant | Theme C Mint on Forest Background | Contrast ratio >= 7.15:1 verified.|
+| TC-EDGE-24| Canvas Web Font FOIT Elimination  | Web font not yet cached           | FontService awaits readiness gate.|
 +-----------+-----------------------------------+-----------------------------------+-----------------------------------+
+```
+
+---
+
+## 4. Micro-Architectural Unit Test Suite (TC-POS-100 to TC-POS-114)
+
+The 15 micro-architectural unit tests specified in `docs/lld/10-micro-architectural-implementation-details.md` verify V8 hidden class stability, memory allocations, and hardware boundary safety:
+
+```
++------------+-----------------------------------+--------------------------------------------------------------+
+| Test ID    | Micro-Architectural Target        | Verification Focus                                           |
++------------+-----------------------------------+--------------------------------------------------------------+
+| TC-POS-100 | Target-Bound Chronometer Reset    | Verifies monotonic reset when activeTargetEpoch changes.     |
+| TC-POS-101 | Exact Second Display Ceiling      | Math.ceil(delta / 1000) prevents premature 00s display.      |
+| TC-POS-102 | Bitwise Int Truncation in LUT     | TWO_DIGIT_LUT[n | 0] protects fractional inputs.            |
+| TC-POS-103 | Fail-Fast HTTP 429 Trip           | Circuit breaker skips retries upon 429 Too Many Requests.    |
+| TC-POS-104 | Polymorphic State Tuple Codec     | Codec decodes [step, title, offset, completed] cleanly.      |
+| TC-POS-105 | Base64URL Padding Normalization   | Restores missing '=' padding before atob() decoding.         |
+| TC-POS-106 | 32 KB Decompression Ceiling       | ERR_DECOMPRESSION_BOMB thrown on oversized uncompressed stream|
+| TC-POS-107 | Unicode Combining Mark Whitelist  | Whitelist regex passes \p{M} accents and diacritics.         |
+| TC-POS-108 | Dynamic Audio Sample Rate Priming | Silent buffer primed at native AudioContext sample rate.     |
+| TC-POS-109 | Audio Limiter Peak Compression    | DynamicsCompressorNode prevents digital output distortion.   |
+| TC-POS-110 | Confetti Air Drag Deceleration    | Linear air drag damping reduces velocity by 5% per frame.    |
+| TC-POS-111 | Confetti Lifespan Alpha Decay     | ParticleEngine terminates simulation after exactly 3000ms.   |
+| TC-POS-112 | Virtual Viewport Soft Keyboard    | interactive-widget adjusts canvas height on mobile focus.    |
+| TC-POS-113 | Closed-Form Ring Radius Clamp     | Progress ring radius r_ring <= 220px prevents overlap.       |
+| TC-POS-114 | Canvas Font Readiness Gate        | FontService.ensureFontsLoaded() eliminates FOIT/FOUT.        |
++------------+-----------------------------------+--------------------------------------------------------------+
+```
+
+---
+
+## 5. Vulnerability Resilience Verification Suite (TC-POS-21 to TC-POS-99, TC-EDGE-25 to TC-EDGE-26)
+
+In addition to the core functional and edge-case triad, the 100-vulnerability system audit in `docs/lld/08-system-design-vulnerability-audit.md` (`DOC-LLD-08`) specifies automated verification test cases mapped across 44 architectural dimensions:
+
+```
++---------------------------------------------------------------------------------------------------------------+
+|                                VULNERABILITY AUDIT VERIFICATION TEST MAPPING                                  |
++--------------------------+-----------------------+------------------------+-----------------------------------+
+| Test ID Range            | Audit Dimension       | Governing Spec         | Verification Objective            |
++--------------------------+-----------------------+------------------------+-----------------------------------+
+| **TC-POS-21 - TC-POS-30**| Canvas & Graphics     | `DOC-LLD-08` (HR-01..10)| GPU memory limits, P3 gamut, FOIT |
+| **TC-POS-31 - TC-POS-40**| Mobile Ergonomics     | `DOC-LLD-08` (ME-01..10)| Notch, keyboard, safe zones, FSM  |
+| **TC-POS-41 - TC-POS-50**| Chronometry & Clocks  | `DOC-LLD-08` (CC-01..10)| 0-drift, sleep wake, leap seconds |
+| **TC-POS-51 - TC-POS-60**| AI Gateway Resilience | `DOC-LLD-08` (AI-01..10)| 429 backoff, schema, prompt inject|
+| **TC-POS-61 - TC-POS-70**| Web Audio & Haptics   | `DOC-LLD-08` (AU-01..10)| AudioContext FSM, limiter, vibrate|
+| **TC-POS-71 - TC-POS-80**| State Codec & URL     | `DOC-LLD-08` (SC-01..10)| 32KB bomb, token bucket, Base64   |
+| **TC-POS-81 - TC-POS-90**| AppSec & CSP Level 3  | `DOC-LLD-08` (SE-01..10)| XSS, Trojan Source, prototype pol.|
+| **TC-POS-91 - TC-POS-99**| Offline PWA & Edge    | `DOC-LLD-08` (PW-01..10)| SW cache, font barrier, Anycast   |
+| **TC-EDGE-25**           | Micro-orbital OLED    | `DOC-LLD-08` (CR-01)   | Burn-in prevention orbit shift    |
+| **TC-EDGE-26**           | Double-Precision IEEE | `DOC-LLD-08` (MA-01)   | Sub-millisecond chronometer math  |
++--------------------------+-----------------------+------------------------+-----------------------------------+
 ```

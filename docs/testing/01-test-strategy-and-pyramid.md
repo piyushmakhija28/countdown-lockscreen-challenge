@@ -26,15 +26,18 @@ Conforming to `~/.claude/rules/28-test-coverage-enforcement.md`, the testing str
 ```
 
 ### 1.1 Layer Allocation & Coverage Mandates
-1. **Unit Testing Layer (70% of Suite):**
-   - **Scope:** Pure functions, `DualClockTimeEngine` UTC arithmetic, `MilestoneManager` progress formulas, `HeuristicGenerator` 4-quarter slicing, and `InputSanitizer` whitelist regexes.
+1. **Unit Testing Layer (70% of Suite — 45 Scenarios + 15 Micro Tests):**
+   - **Scope:** Pure functions and isolated classes: `DualClockTimeEngine` UTC arithmetic and monotonic resets, `MilestoneManager` progress formulas, `HeuristicGenerator` 4-quarter slicing, `InputSanitizer` Unicode whitelist and Bidi Trojan Source stripping, `TokenBucketHistoryGuard` token refill and leak rates, `AdaptiveBufferAllocator` dual-constraint scaling equations, `ResponsiveLayoutEngine` aspect ratio bounds, `ParticleEngine` Float32Array SoA physics, and `CanvasTextWrapper` caching.
    - **Coverage Mandate:** Minimum **$90\%$ Line Coverage** and **$85\%$ Branch Coverage**.
    - **Execution Speed:** $< 500\text{ms}$ total execution time.
-2. **Integration Testing Layer (20% of Suite):**
-   - **Scope:** Interactions between `GeminiAiClient` and `HeuristicGenerator` under simulated network drops; state store serialization/deserialization into URL hashes (`#v1=...`).
+2. **Integration Testing Layer (20% of Suite — 18 Scenarios):**
+   - **Scope:** Cross-module collaborations: `GeminiAiClient` circuit-breaker trip to `HeuristicGenerator` fallback; `UrlStateService` Base64URL compression, decompression bomb defense, and sessionStorage sync; `AudioService` 4-state lifecycle and autoplay priming; `HapticService` vibration patterns; `FontService` async font loading gate (`document.fonts.load()`).
    - **Mocking Policy:** All external HTTP calls to `https://generativelanguage.googleapis.com` are mocked via MSW (Mock Service Worker) or native fetch mocks.
-3. **End-to-End & Visual Canvas Testing Layer (10% of Suite):**
-   - **Scope:** Full user journeys in headless Chromium; verifies canvas rasterization at $1170 \times 2532$ and asserts safe-zone coordinate bounding.
+3. **End-to-End & Visual Canvas Testing Layer (10% of Suite — 10 Scenarios):**
+   - **Scope:** Full user journeys in headless Chromium: `CountdownApp` bootstrapping; `CanvasRenderer` rasterization at $1170 \times 2532$; `SafeZoneOverlay` guide bounds; theme switching (Cyber Obsidian, Deep Focus Zen, Aurora Botanical); 1-click PNG blob download; PWA offline cache recovery.
+
+### 1.2 Full Requirements Coverage (FR-01 to FR-22)
+The test suite maps directly to all 22 Functional Requirements (`FR-01` to `FR-22`) and 10 Non-Functional Requirements (`NFR-01` to `NFR-10`), providing 100% bidirectional verification across all 17 concrete application classes.
 
 ---
 

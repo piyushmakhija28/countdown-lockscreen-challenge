@@ -377,3 +377,48 @@ export function normalizeMilestones(rawItems) {
   });
 }
 ```
+
+---
+
+## 4. `HeuristicGenerator` Component Contract & Polymorphic Schema Guarantee
+
+To guarantee that callers (`CountdownApp`, `MilestoneManager`) can seamlessly consume milestone decomposition plans regardless of whether the plan was synthesized by Google Gemini 3.8 Flash or generated locally by the offline fallback, `HeuristicGenerator` adheres to a strict polymorphic contract:
+
+```typescript
+/**
+ * Unified Milestone Plan Contract shared identically between GeminiAiClient and HeuristicGenerator.
+ */
+export interface MilestonePlan {
+  readonly title: string;
+  readonly deadline_iso: string;
+  readonly milestones: ReadonlyArray<MilestoneItem>;
+  readonly daily_affirmation: string;
+  readonly recommended_theme: 'cyber_obsidian' | 'deep_focus_zen' | 'aurora_botanical';
+}
+
+export interface MilestoneItem {
+  readonly step: number;
+  readonly title: string;
+  readonly offset_days: number;
+  readonly completed: boolean;
+}
+```
+
+### 4.1 Interface Contract
+```javascript
+/**
+ * Deterministic offline heuristic milestone generator providing 100% offline autonomy.
+ */
+export class HeuristicGenerator {
+  /**
+   * Generates a 4-stage backward milestone decomposition plan without network access.
+   *
+   * @param {string} goalTitle - User's target deadline goal.
+   * @param {number} targetEpochMs - Target deadline in UTC epoch milliseconds.
+   * @param {number} [nowEpochMs=Date.now()] - Current epoch reference.
+   * @returns {MilestonePlan} Polymorphic plan matching GeminiAiClient schema.
+   */
+  generatePlan(goalTitle, targetEpochMs, nowEpochMs = Date.now()) {}
+}
+```
+

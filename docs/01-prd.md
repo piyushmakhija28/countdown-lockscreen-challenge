@@ -166,6 +166,18 @@ journey
     Without requiring any server-side database lookups
   ```
 
+### F-08: Sensory Feedback Engine (Web Audio & Haptics)
+- **Functional Description:** Synthesizes major chord victory chime via procedural Web Audio API with a 4-state lifecycle, and triggers native tactile haptic feedback (`navigator.vibrate`) on milestone toggles and celebration (`FR-16`, `FR-17`).
+
+### F-09: Token Bucket History Synchronization & Codec Defense
+- **Functional Description:** Rate-limits `history.replaceState` via a 30-token leaky bucket ($r=2/\text{s}$), mirrors state to `sessionStorage`, and blocks decompression bombs exceeding 32 KB (`FR-18`).
+
+### F-10: Mobile Ergonomic Safe Zones & Tri-Modal Layout
+- **Functional Description:** Reserves 28% top margin for system clocks and widgets, 18% bottom margin for home indicators, clamps progress rings ($r_{\text{ring}} \le 220\text{px}$), adapts to soft keyboards via `visualViewport`, and supports ultra-tall, standard, and foldable dual-column layouts (`FR-20`).
+
+### F-11: Confetti Celebration Physics & Font Preloading Gate
+- **Functional Description:** Simulates celebratory particles using flat `Float32Array` Structure-of-Arrays (SoA) buffers with aerodynamic air drag, honors `prefers-reduced-motion`, and gates canvas rendering via `FontService` to eliminate FOIT (`FR-21`, `FR-22`).
+
 ---
 
 ## 5. Non-Functional Requirements & Performance SLAs
