@@ -19,9 +19,9 @@
 | Req ID  | PRD Feature Link   | HLD Component       | Target Implementation| Test Case Verification ID         |
 +---------+--------------------+---------------------+----------------------+-----------------------------------+
 | **FR-01**| F-02 Countdown     | IngressController   | `js/core/InputSanitizer.js`| `TC-POS-01`, `TC-NEG-01`, `TC-NEG-02`|
-| **FR-02**| F-01 Gemini AI     | GeminiGateway       | `js/ai/GeminiClient.js`    | `TC-POS-02`, `TC-EDGE-01`         |
+| **FR-02**| F-01 Gemini AI     | GeminiGateway       | `js/ai/GeminiAiClient.js`    | `TC-POS-02`, `TC-EDGE-01`         |
 | **FR-03**| F-01 Fallback      | HeuristicEngine     | `js/ai/HeuristicGenerator.js`| `TC-NEG-04`, `TC-NEG-05`        |
-| **FR-04**| F-01 Affirmation   | GeminiGateway       | `js/ai/GeminiClient.js`    | `TC-POS-03`                       |
+| **FR-04**| F-01 Affirmation   | GeminiGateway       | `js/ai/GeminiAiClient.js`    | `TC-POS-03`                       |
 | **FR-05**| F-02 Chronometer   | DualClockTimeEngine | `js/core/DualClockTimeEngine.js`| `TC-POS-04`                  |
 | **FR-06**| F-02 Zero Drift    | DualClockTimeEngine | `js/core/DualClockTimeEngine.js`| `TC-POS-05`, `TC-EDGE-01`    |
 | **FR-07**| F-03 Milestones    | MilestoneStore      | `js/core/MilestoneManager.js`| `TC-POS-06`                     |
@@ -33,7 +33,7 @@
 | **FR-13**| F-06 Themes        | ThemeController     | `js/config/themes.js`      | `TC-POS-11`, `TC-POS-12`          |
 | **FR-14**| F-07 URL Hash      | StateSerializer     | `js/core/UrlStateService.js`| `TC-POS-13`, `TC-POS-14`          |
 | **FR-15**| F-05 Download      | BlobExporter        | `js/canvas/CanvasRenderer.js`| `TC-POS-10`                     |
-| **FR-16**| F-05 Sensory Audio | AudioChimeService   | `js/services/AudioChimeService.js`| `TC-POS-16`, `TC-NEG-10`   |
+| **FR-16**| F-05 Sensory Audio | AudioService   | `js/services/AudioService.js`| `TC-POS-16`, `TC-NEG-10`   |
 | **FR-17**| F-05 Sensory Haptic| HapticService       | `js/services/HapticService.js`| `TC-POS-17`                    |
 | **FR-18**| F-07 History Guard | TokenBucketGuard    | `js/core/TokenBucketHistoryGuard.js`| `TC-NEG-11`, `TC-EDGE-10`|
 | **FR-19**| F-05 Web Share     | ShareService        | `js/canvas/CanvasRenderer.js`| `TC-NEG-11`                     |
@@ -79,7 +79,7 @@
 | **ADR-006**| Privacy-First Local Storage     | Zero server PII storage invariant | `docs/security/03-credential-logging.md`|
 | **ADR-007**| Dual-Clock Chronometry Anchor   | Prevent mobile sleep timing drift | `js/core/DualClockTimeEngine.js`    |
 | **ADR-008**| Cache-First PWA Topology        | 100% offline edge resilience      | `public/sw.js`                      |
-| **ADR-009**| Autoplay-Primed Web Audio Chime | Zero asset overhead, no rejection | `js/services/AudioChimeService.js`  |
+| **ADR-009**| Autoplay-Primed Web Audio Chime | Zero asset overhead, no rejection | `js/services/AudioService.js`  |
 | **ADR-010**| Token Bucket History Limiter    | WebKit 100-call quota immunity    | `js/core/TokenBucketHistoryGuard.js`|
 +---------+-----------------------------------+-----------------------------------+-------------------------------------+
 ```

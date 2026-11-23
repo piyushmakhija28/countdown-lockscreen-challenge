@@ -5,6 +5,33 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2026-11-23
+
+### Fixed
+- **Progress Ring Geometric Container Collision (`DOC-UI-02`):** Corrected ring radius formula from unconstrained width multiplier ($0.40W \implies 936\text{px}$ diameter) to isotropic container-bounded formula $r_{\text{ring}} = \min(\text{heroBox.width} \times 0.32, \text{heroBox.height} \times 0.38) = 220\text{px}$ (diameter $440\text{px}$), completely eliminating the $+361.74\text{px}$ container collision with milestones.
+- **Polymorphic Milestone Deserialization (`DOC-03`, `DOC-SEC-04`):** Fixed milestone title loss bug in `UrlStateService` by introducing polymorphic normalizer handling both compact 4-element tuples `[step, title, offset, completed]` and key-value dictionaries `{ step, title, offset_days, completed }`.
+- **Target-Bound Chronometer Reset (`LLD-TM-01`):** Fixed monotonic elapsed time filter by binding clamp state to `activeTargetEpoch !== targetEpoch`, preventing deadline lockups when extending deadlines.
+- **Exact Second Boundary Display (`LLD-TM-02`):** Corrected remaining seconds rounding from `Math.floor(delta / 1000)` to `Math.ceil(delta / 1000)` to prevent premature `00s` display before deadline expiration.
+- **Look-Up Table Fractional Subscript Safeguard (`LLD-TM-03`):** Added bitwise integer truncation `TWO_DIGIT_LUT[n | 0]` to eliminate `undefined` returns on fractional indices.
+- **Immediate Fail-Fast AI Rate Limiting (`LLD-AI-01`):** Updated `GeminiAiClient` circuit breaker to immediately fail fast upon HTTP 429 rather than executing blocking retry loops.
+- **W3C WCAG 2.2 AAA & APCA Contrast Compliance (`DOC-UI-01`):** Remediated Theme C Mint primary accent to `#6ee7b7` ($CR = 7.15:1, L^c = 78.2$) and secondary to `#a7f3d0` ($CR = 9.82:1, L^c = 86.4$). Remediated Theme B secondary accent to `#fbbf24` ($CR = 8.79:1, L^c = 81.4$).
+- **Canvas 2D Web Font FOIT Elimination (`DOC-UI-01`, `DOC-02`):** Established `FontService` providing atomic pre-rendering font readiness checking via `document.fonts.ready` and explicit `document.fonts.load()`.
+- **Decompression Bomb Shield Strict Enforcement (`DOC-SEC-04`):** Fixed `parseSafeUrlState` to immediately propagate `ERR_DECOMPRESSION_BOMB` when decoded stream exceeds 32 KB rather than falling back to uncompressed decoding.
+
+### Added
+- **Multi-Layer Modern Glassmorphism Engine (`ADR-005`, `DOC-UI-01`):** Upgraded from single-layer `blur(16px)` to modern multi-layer `blur(24px)` glassmorphism featuring top-edge Fresnel specular highlights, radial ambient glow, and high-DPI physical hairline borders with `@supports` fallback.
+- **Hardware Safe-Zone Geometric Benchmark Matrix (`DOC-UI-02`):** Documented exact pixel and normalized percentage boundaries for Dynamic Island, trapezoidal notch, centered punch-holes, in-display fingerprint sensors, and home indicator pills.
+- **Mobile Keyboard Viewport Adaptation (`DOC-UI-02`):** Implemented `<meta name="viewport" content="interactive-widget=resizes-content">` and JavaScript `visualViewport` height synchronization.
+- **5 Missing Exception Codes (`DOC-LLD-06`, `DOC-RES-03`):** Added `ERR_TITLE_LENGTH`, `ERR_TITLE_INVALID_CHARS`, `ERR_PAYLOAD_TOO_LARGE`, `ERR_DECOMPRESSION_BOMB`, and `ERR_AI_SAFETY_BLOCK` to the exception hierarchy and 20-error recovery matrix.
+- **6 Missing LLD Class Contracts (`DOC-LLD-01`):** Formalized complete ES2022 contracts with JSDoc annotations for `AdaptiveBufferAllocator`, `ResponsiveLayoutEngine`, `InputSanitizer`, `UrlStateService`, `ParticleEngine`, and `CountdownApp`.
+- **Procedural Web Audio Peak Limiting (`ADR-009`):** Added `DynamicsCompressorNode` peak limiter graph to `AudioService` and aligned silent buffer to native `ctx.sampleRate`.
+- **Float32Array Confetti Aerodynamics (`DOC-LLD-04`):** Fixed confetti alpha decay to 180 frames ($3000\text{ms}$), added aerodynamic air drag ($\mu = 0.98$), and implemented canvas drawing loops with reduced motion bypass.
+- **Handshake AI Challenge 4x25% Traceability Matrix (`DOC-02-HLD`):** Documented full mapping to challenge evaluation criteria and added System FSM state diagram.
+
+### Changed
+- **Architectural Naming Harmonization:** Standardized all documentation and UML diagrams to canonical names: `DualClockTimeEngine`, `TokenBucketHistoryGuard`, `AudioService`, `HapticService`, and `GeminiAiClient`.
+- **Zero-Build ES2022 Syntax:** Replaced TypeScript-only ambient syntax in LLD code blueprints with standard ECMAScript 2022+ syntax (`#privateField`) and Level 2.2 contract docstrings.
+
 ## [1.1.0] - 2026-11-23
 
 ### Changed

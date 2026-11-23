@@ -27,21 +27,22 @@ graph LR
 ## 2. Validation Rules & Regular Expressions
 
 ```
-+---------------------------------------------------------------------------------------------------------------+
-|                                      INPUT VALIDATION SPECIFICATION MATRIX                                    |
-+------------------+------------------+---------------------+---------------------------------------------------+
-| Field Name       | Data Type        | Length Boundary     | Defensive Validation Constraint                   |
-+------------------+------------------+---------------------+---------------------------------------------------+
-| `goalTitle`      | Unicode String   | $3 \le L \le 60$    | `^[\p{L}\p{N}\p{Zs}\.\,\-\_\!\?\:\(\)\[\]\p{Extended_Pictographic}]{3,60}$/u` |
++-----------------------------------------------------------------------------------------------------------------------+
+|                                           INPUT VALIDATION SPECIFICATION MATRIX                                       |
++------------------+------------------+---------------------+-----------------------------------------------------------+
+| Field Name       | Data Type        | Length Boundary     | Defensive Validation Constraint                           |
++------------------+------------------+---------------------+-----------------------------------------------------------+
+| `goalTitle`      | Unicode String   | $3 \le L \le 60$    | `^[\p{L}\p{M}\p{N}\p{Zs}\.\,\-\_\!\?\:\(\)\[\]\p{Extended_Pictographic}]{3,60}$/u` |
 | `targetDeadline` | ISO-8601 UTC     | Valid Calendar Date | $t_{\text{now}} + 60\text{s} \le t_{\text{target}} \le t_{\text{now}} + 5\text{ years}$ |
-| `themeId`        | Strict Enum      | Restricted Set      | `^(cyber_obsidian\|deep_focus_zen\|aurora_botanical)$` |
-| `urlHashPayload` | Base64 URL-Safe  | $L \le 2048$ chars  | `^[A-Za-z0-9_-]+$` (Capped at 32 KB decompressed) |
-+------------------+------------------+---------------------+---------------------------------------------------+
+| `themeId`        | Strict Enum      | Restricted Set      | `^(cyber_obsidian\|deep_focus_zen\|aurora_botanical)$`    |
+| `urlHashPayload` | Base64 URL-Safe  | $L \le 2048$ chars  | `^[A-Za-z0-9_-]+$` (Capped at 32 KB decompressed)         |
++------------------+------------------+---------------------+-----------------------------------------------------------+
 ```
 
 ### 2.1 The Whitelist Regex Formulation
 The previous generic category `\p{P}` was removed because it permits dangerous injection characters (`<`, `>`, `"`, `'`, `&`, `/`, `\`, `;`, `#`, `=`). The hardened whitelist permits only:
-- All Unicode letters (`\p{L}`) across all world languages (English, Hindi, Arabic, Japanese, etc.)
+- All Unicode letters (`\p{L}`) across all world languages (English, Hindi, French, Japanese, etc.)
+- Unicode combining marks (`\p{M}`) for diacritics and non-Latin vowel signs
 - Unicode numbers (`\p{N}`)
 - Whitespace separators (`\p{Zs}`)
 - Safe punctuation: `.` `,` `-` `_` `!` `?` `:` `(` `)` `[` `]`
@@ -53,18 +54,20 @@ The previous generic category `\p{P}` was removed because it permits dangerous i
 
 To prevent **Trojan Source attacks** (visual manipulation of text direction that cloaks code or reverses countdown digits), the sanitizer strips all Unicode Bidi control characters and ASCII/Unicode control characters:
 
-```typescript
+```javascript
 /**
  * Sanitizes and normalizes raw goal title text.
  * Strips ASCII control characters and dangerous Unicode Bidi formatting marks.
  *
- * @param raw Unsanitized user input string
- * @returns Normalized, validated goal title
+ * @param {string} raw Unsanitized user input string
+ * @returns {string} Normalized, validated goal title
  * @throws {ValidationError} If input violates length or character constraints
  */
-export function sanitizeGoalTitle(raw: string): string {
+export function sanitizeGoalTitle(raw) {
   if (typeof raw !== 'string') {
-    throw new Error('Goal title must be a valid string');
+    const err = new Error('Goal title must be a valid string');
+    err.code = 'ERR_TITLE_EMPTY';
+    throw err;
   }
 
   // 1. Unicode Canonical Decomposition and Composition (NFKC)
@@ -78,13 +81,17 @@ export function sanitizeGoalTitle(raw: string): string {
 
   // 4. Length constraints check
   if (cleaned.length < 3 || cleaned.length > 60) {
-    throw new Error('Goal title must be between 3 and 60 characters in length');
+    const err = new Error('Goal title must be between 3 and 60 characters in length');
+    err.code = 'ERR_TITLE_LENGTH';
+    throw err;
   }
 
-  // 5. Whitelist character validation
-  const whitelist = /^[\p{L}\p{N}\p{Zs}\.\,\-\_\!\?\:\(\)\[\]\p{Extended_Pictographic}]{3,60}$/u;
+  // 5. Whitelist character validation including combining marks (\p{M})
+  const whitelist = /^[\p{L}\p{M}\p{N}\p{Zs}\.\,\-\_\!\?\:\(\)\[\]\p{Extended_Pictographic}]{3,60}$/u;
   if (!whitelist.test(cleaned)) {
-    throw new Error('Goal title contains forbidden characters (HTML tags and quotes are prohibited)');
+    const err = new Error('Goal title contains forbidden characters (HTML tags and quotes are prohibited)');
+    err.code = 'ERR_TITLE_INVALID_CHARS';
+    throw err;
   }
 
   return cleaned;
@@ -96,57 +103,91 @@ export function sanitizeGoalTitle(raw: string): string {
 ## 4. Prototype Pollution & Decompression Bomb Immunity
 
 During hydration of the `#v1=` shareable URL hash payload, the application enforces two defenses:
-1. **Decompression Bomb Shield:** Limits decompressed state bytes to a strict $32\text{ KB}$ ceiling, rejecting exponential memory expansion attacks.
+1. **Decompression Bomb Shield:** Limits decompressed state bytes to a strict $32\text{ KB}$ ceiling, rejecting exponential memory expansion attacks with immediate error propagation.
 2. **Recursive JSON Reviver:** The native JSON parser reviver traverses all object levels (root, milestone arrays, nested properties) and strips `__proto__`, `constructor`, and `prototype`. State is stored in a prototype-free `Object.create(null)` container.
 
-```typescript
+```javascript
 /**
  * Safely decodes, decompresses, and hydrates application state from a URL hash string.
- * Enforces a 32 KB decompression ceiling and prototype pollution immunity.
+ * Enforces a 32 KB decompression ceiling, Base64 padding normalization, and prototype pollution immunity.
  *
- * @param base64Payload Base64 URL-encoded payload string
- * @returns Fully validated and prototype-clean AppState record
+ * @param {string} base64Payload Base64 URL-encoded payload string
+ * @returns {Promise<Record<string, any>>} Fully validated and prototype-clean AppState record
+ * @throws {Error} If decompression bomb or invalid payload is detected
  */
-export async function parseSafeUrlState(base64Payload: string): Promise<Record<string, unknown>> {
-  if (base64Payload.length > 2048) {
-    throw new Error('URL payload exceeds maximum permitted length of 2048 characters');
+export async function parseSafeUrlState(base64Payload) {
+  if (typeof base64Payload !== 'string' || base64Payload.length > 2048) {
+    const err = new Error('URL payload exceeds maximum permitted length of 2048 characters');
+    err.code = 'ERR_PAYLOAD_TOO_LARGE';
+    throw err;
   }
 
-  // 1. Convert Base64URL to binary Uint8Array
-  const binaryString = atob(base64Payload.replace(/-/g, '+').replace(/_/g, '/'));
+  // 1. Base64URL padding normalization
+  const padLen = (4 - (base64Payload.length % 4)) % 4;
+  const normalizedBase64 = (base64Payload + '='.repeat(padLen))
+    .replace(/-/g, '+')
+    .replace(/_/g, '/');
+
+  let binaryString;
+  try {
+    binaryString = atob(normalizedBase64);
+  } catch {
+    const err = new Error('Invalid Base64 payload');
+    err.code = 'ERR_HASH_CORRUPT';
+    throw err;
+  }
+
   const bytes = new Uint8Array(binaryString.length);
   for (let i = 0; i < binaryString.length; i++) {
     bytes[i] = binaryString.charCodeAt(i);
   }
 
-  // 2. Safe Decompression with 32 KB Budget
+  // 2. Safe Decompression with strict 32 KB Budget
   let decompressedText = '';
-  try {
-    const stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream('deflate-raw'));
-    const reader = stream.getReader();
-    let totalBytes = 0;
-    const chunks: Uint8Array[] = [];
+  let decompressionSucceeded = false;
 
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      totalBytes += value.byteLength;
-      if (totalBytes > 32768) {
-        reader.cancel();
-        throw new Error('Payload exceeded 32KB decompression ceiling');
+  if (typeof DecompressionStream !== 'undefined') {
+    try {
+      const stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream('deflate-raw'));
+      const reader = stream.getReader();
+      let totalBytes = 0;
+      const chunks = [];
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        totalBytes += value.byteLength;
+        if (totalBytes > 32768) {
+          reader.cancel();
+          const err = new Error('Payload exceeded 32KB decompression ceiling');
+          err.code = 'ERR_DECOMPRESSION_BOMB';
+          throw err;
+        }
+        chunks.push(value);
       }
-      chunks.push(value);
-    }
 
-    const totalBuffer = new Uint8Array(totalBytes);
-    let offset = 0;
-    for (const chunk of chunks) {
-      totalBuffer.set(chunk, offset);
-      offset += chunk.byteLength;
+      const totalBuffer = new Uint8Array(totalBytes);
+      let offset = 0;
+      for (const chunk of chunks) {
+        totalBuffer.set(chunk, offset);
+        offset += chunk.byteLength;
+      }
+      decompressedText = new TextDecoder('utf-8', { fatal: true }).decode(totalBuffer);
+      decompressionSucceeded = true;
+    } catch (err) {
+      if (err.code === 'ERR_DECOMPRESSION_BOMB') {
+        throw err;
+      }
+      // If deflation stream fails on raw uncompressed data, proceed to fallback
     }
-    decompressedText = new TextDecoder('utf-8', { fatal: true }).decode(totalBuffer);
-  } catch {
-    // Fallback: decode uncompressed raw UTF-8 string
+  }
+
+  if (!decompressionSucceeded) {
+    if (bytes.length > 32768) {
+      const err = new Error('Uncompressed payload exceeds 32KB ceiling');
+      err.code = 'ERR_DECOMPRESSION_BOMB';
+      throw err;
+    }
     decompressedText = new TextDecoder('utf-8', { fatal: true }).decode(bytes);
   }
 
@@ -158,7 +199,7 @@ export async function parseSafeUrlState(base64Payload: string): Promise<Record<s
     return value;
   });
 
-  // 4. Schema Assertions and Normalization
+  // 4. Schema Assertions, Whitelist Normalization & Polymorphic Milestones
   const safeState = Object.create(null);
   safeState.v = typeof parsed.v === 'number' ? parsed.v : 1;
   safeState.t = sanitizeGoalTitle(parsed.t || 'My Goal');
@@ -168,13 +209,35 @@ export async function parseSafeUrlState(base64Payload: string): Promise<Record<s
     : 'cyber_obsidian';
   safeState.af = typeof parsed.af === 'string' ? parsed.af.slice(0, 120) : '';
 
+  // Polymorphic milestone normalization (supporting tuples [step, title, offset, completed] and objects)
   safeState.m = Array.isArray(parsed.m)
-    ? parsed.m.slice(0, 5).map((item: any, idx: number) => ({
-        step: idx + 1,
-        title: typeof item.title === 'string' ? item.title.slice(0, 50) : `Milestone ${idx + 1}`,
-        offset_days: Math.max(0, Math.min(1825, Number(item.offset_days) || 0)),
-        completed: Boolean(item.completed)
-      }))
+    ? parsed.m.slice(0, 5).map((item, idx) => {
+        if (Array.isArray(item)) {
+          return {
+            step: typeof item[0] === 'number' ? item[0] : idx + 1,
+            title: typeof item[1] === 'string' && item[1].trim().length > 0
+              ? item[1].slice(0, 50).trim()
+              : `Milestone ${idx + 1}`,
+            offset_days: Math.max(0, Math.min(1825, Number(item[2]) || 0)),
+            completed: Boolean(item[3])
+          };
+        } else if (item && typeof item === 'object') {
+          return {
+            step: typeof item.step === 'number' ? item.step : idx + 1,
+            title: typeof item.title === 'string' && item.title.trim().length > 0
+              ? item.title.slice(0, 50).trim()
+              : `Milestone ${idx + 1}`,
+            offset_days: Math.max(0, Math.min(1825, Number(item.offset_days) || 0)),
+            completed: Boolean(item.completed)
+          };
+        }
+        return {
+          step: idx + 1,
+          title: `Milestone ${idx + 1}`,
+          offset_days: 0,
+          completed: false
+        };
+      })
     : [];
 
   return safeState;

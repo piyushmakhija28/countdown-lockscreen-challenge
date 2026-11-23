@@ -49,7 +49,7 @@ $$\text{Peak Memory Allocation} = 2340 \times 5064 \times 4\text{ bytes (RGBA)} 
 2. Execute vector drawing passes.
 3. Export binary blob via `buffer.convertToBlob({ type: 'image/png' })`.
 4. **Immediate Deallocation:** Explicitly clear buffer dimensions:
-   ```typescript
+   ```javascript
    buffer.width = 0;
    buffer.height = 0;
    // Context automatically dereferenced for immediate Garbage Collection
@@ -62,7 +62,7 @@ $$\text{Peak Memory Allocation} = 2340 \times 5064 \times 4\text{ bytes (RGBA)} 
 
 When the browser tab transitions to the background (`document.visibilityState === 'hidden'`), modern mobile browsers throttle `requestAnimationFrame` down to $1\text{ Hz}$ or suspend it entirely.
 
-- **Mitigation:** The `TimeEngine` listens to `document.addEventListener('visibilitychange')`.
+- **Mitigation:** The `DualClockTimeEngine` listens to `document.addEventListener('visibilitychange')`.
 - Upon `visibilityState === 'visible'`, the engine bypasses accumulated frame deltas and triggers an **instantaneous absolute resynchronization** against `Date.now()`, ensuring the user sees perfectly accurate countdown numbers with zero visual lag.
 
 ---
@@ -76,7 +76,7 @@ sequenceDiagram
     autonumber
     actor User as User
     participant View as InputView
-    participant Client as GeminiClient
+    participant Client as GeminiAiClient
     participant Network as Gemini API
 
     User->>View: Types Goal A and clicks "Decompose"
@@ -101,31 +101,37 @@ sequenceDiagram
 
 To prevent multiple overlapping `requestAnimationFrame` loops from running simultaneously (which doubles CPU usage and drains battery):
 
-```typescript
-export class TimeEngine {
-  private rafId: number | null = null;
-  private isRunning: boolean = false;
+```javascript
+export class DualClockTimeEngine {
+  #rafId = null;
+  #isRunning = false;
 
-  public startTicker(deadline: Date, onTick: (rem: TimeRemaining) => void): void {
-    // Invariant: Mutually exclusive ticker execution
-    if (this.rafId !== null) {
-      cancelAnimationFrame(this.rafId);
-      this.rafId = null;
+  startTicker(deadline, onTick, onExpire) {
+    if (this.#rafId !== null) {
+      cancelAnimationFrame(this.#rafId);
+      this.#rafId = null;
     }
-    this.isRunning = true;
+    this.#isRunning = true;
     const tick = () => {
-      if (!this.isRunning) return;
-      onTick(this.calculateRemaining(deadline));
-      this.rafId = requestAnimationFrame(tick);
+      if (!this.#isRunning) return;
+      const remaining = this.calculateRemaining(deadline);
+      onTick(remaining);
+      if (remaining.isExpired) {
+        this.#isRunning = false;
+        this.#rafId = null;
+        if (typeof onExpire === 'function') onExpire();
+        return;
+      }
+      this.#rafId = requestAnimationFrame(tick);
     };
-    this.rafId = requestAnimationFrame(tick);
+    this.#rafId = requestAnimationFrame(tick);
   }
 
-  public stopTicker(): void {
-    this.isRunning = false;
-    if (this.rafId !== null) {
-      cancelAnimationFrame(this.rafId);
-      this.rafId = null;
+  stopTicker() {
+    this.#isRunning = false;
+    if (this.#rafId !== null) {
+      cancelAnimationFrame(this.#rafId);
+      this.#rafId = null;
     }
   }
 }
@@ -133,45 +139,64 @@ export class TimeEngine {
 
 ---
 
-## 6. Safari `history.replaceState` 100-Call Quota Leaky Bucket Rate Limiter
+## 6. WebKit `history.replaceState` Token Bucket Rate Limiter
 
 WebKit enforces a strict rate-limit on `history.replaceState`: **a maximum of 100 calls per 30-second sliding window**. Exceeding this quota throws an uncatchable `SecurityError` that crashes the page.
 
 To guarantee zero browser quota exceptions when users type goal titles or scrub sliders:
-1. `HistoryQuotaGuard` implements a **trailing-edge debounced leaky bucket**.
-2. Debounce interval is mathematically set to $T_{\text{debounce}} = 300\text{ms}$.
-3. Maximum theoretical call frequency is bounded to:
-   $$f_{\max} = \frac{1}{0.300\text{s}} \approx 3.33\text{ calls/second}$$
-   Over a 30-second window, maximum possible calls are $3.33 \times 30 = 99.9 < 100$, guaranteeing mathematical safety against WebKit quota eviction.
+1. `TokenBucketHistoryGuard` implements a **token bucket rate limiter** with capacity $B = 30$ tokens and refill rate $r = 2\text{ tokens/second}$.
+2. Every call to `pushStateUpdate` performs an instantaneous update to `sessionStorage` (which has zero rate limit), guaranteeing local state survival across reloads.
+3. If tokens are available ($T \ge 1$), `window.history.replaceState` executes immediately, and tokens decrement by 1.
+4. If tokens are depleted ($T < 1$), updates are enqueued in a trailing-edge timer ($T_{\text{debounce}} = 500\text{ms}$) that flushes once tokens refill.
 
-```typescript
-export class HistoryQuotaGuard {
-  private timer: ReturnType<typeof setTimeout> | null = null;
-  private pendingHash: string | null = null;
-  private readonly intervalMs: number = 300;
+```javascript
+export class TokenBucketHistoryGuard {
+  #tokens = 30;
+  #capacity = 30;
+  #refillRatePerSec = 2;
+  #lastRefillEpoch = Date.now();
+  #pendingHash = null;
+  #timer = null;
 
-  public pushStateUpdate(hash: string): void {
-    this.pendingHash = hash;
-    if (this.timer !== null) {
-      clearTimeout(this.timer);
-    }
-    this.timer = setTimeout(() => {
-      if (this.pendingHash !== null) {
-        window.history.replaceState(null, '', this.pendingHash);
-        this.pendingHash = null;
-      }
-      this.timer = null;
-    }, this.intervalMs);
+  #refill() {
+    const now = Date.now();
+    const elapsedSec = (now - this.#lastRefillEpoch) / 1000;
+    this.#tokens = Math.min(this.#capacity, this.#tokens + elapsedSec * this.#refillRatePerSec);
+    this.#lastRefillEpoch = now;
   }
 
-  public flush(): void {
-    if (this.timer !== null) {
-      clearTimeout(this.timer);
-      this.timer = null;
+  pushStateUpdate(hashPayload) {
+    this.#pendingHash = hashPayload;
+    // Invariant: Instant local storage sync
+    try {
+      sessionStorage.setItem('countdown_state_backup', hashPayload);
+    } catch {}
+
+    this.#refill();
+    if (this.#tokens >= 1) {
+      this.#tokens -= 1;
+      if (this.#timer !== null) {
+        clearTimeout(this.#timer);
+        this.#timer = null;
+      }
+      window.history.replaceState(null, '', this.#pendingHash);
+      this.#pendingHash = null;
+    } else if (this.#timer === null) {
+      this.#timer = setTimeout(() => {
+        this.#timer = null;
+        this.pushStateUpdate(this.#pendingHash);
+      }, 500);
     }
-    if (this.pendingHash !== null) {
-      window.history.replaceState(null, '', this.pendingHash);
-      this.pendingHash = null;
+  }
+
+  flush() {
+    if (this.#timer !== null) {
+      clearTimeout(this.#timer);
+      this.#timer = null;
+    }
+    if (this.#pendingHash !== null) {
+      window.history.replaceState(null, '', this.#pendingHash);
+      this.#pendingHash = null;
     }
   }
 }
@@ -179,27 +204,14 @@ export class HistoryQuotaGuard {
 
 ---
 
-## 7. Mobile Web Audio Autoplay Policy & User Gesture Unlocking
+## 7. Web Audio 4-State Lifecycle & Dynamics Compressor Limiter
 
-Mobile Safari and Chrome strictly enforce user interaction policies: an `AudioContext` instantiated without prior user gesture starts in `'suspended'` state and blocks automatic chime playback.
+Mobile Safari and Chrome strictly enforce user interaction policies: an `AudioContext` instantiated without prior user gesture starts in `'suspended'` state.
 
 ### 7.1 Gesture Unlocking Protocol
-1. On application boot, `AudioChimeService` registers passive one-time listeners on `window`:
-   ```typescript
-   const unlockEvents = ['touchstart', 'touchend', 'mousedown', 'keydown'];
-   const unlockHandler = async () => {
-     await this.unlockAudioContext();
-     unlockEvents.forEach(evt => window.removeEventListener(evt, unlockHandler));
-   };
-   unlockEvents.forEach(evt => window.addEventListener(evt, unlockHandler, { passive: true, once: true }));
-   ```
-2. The unlock method creates a 1-frame silent buffer, plays it, and invokes `ctx.resume()`:
-   ```typescript
-   if (this.ctx && this.ctx.state === 'suspended') {
-     await this.ctx.resume();
-   }
-   ```
-3. Once unlocked, any subsequent countdown expiration (`TIMER_ZERO`) triggers chime playback without user gesture.
+1. On application boot, `AudioService` registers passive one-time listeners on `window` (`pointerdown`, `touchstart`, `keydown`).
+2. When unlocked, it creates a 1-sample silent buffer matching the native hardware `ctx.sampleRate` to avoid audio resampler overhead.
+3. Output routes through a `DynamicsCompressorNode` peak limiter (threshold: $-3\text{dB}$, ratio: $12:1$, attack: $0.003\text{s}$, release: $0.25\text{s}$), completely preventing harmonic distortion and speaker clipping.
 
 ---
 
@@ -212,48 +224,63 @@ The particle engine allocates a single contiguous TypedArray on initialization:
 - Particles count: $N = 150$.
 - Fields per particle: 6 (`x`, `y`, `vx`, `vy`, `alpha`, `colorIdx`).
 - Buffer size: $150 \times 6 \times 4\text{ bytes} = 3,600\text{ bytes}$ (3.6 KB pre-allocated in heap).
+- Duration: 180 frames ($3000\text{ms}$ at 60 FPS). Alpha decay $\Delta \alpha = 1 / 180 \approx 0.00555$.
+- Aerodynamic drag: $\mu_{\text{drag}} = 0.98$ per frame.
 
-```typescript
+```javascript
 export class ParticleEngine {
-  private readonly count: number = 150;
-  // Layout: [x, y, vx, vy, alpha, colorIdx] x 150
-  private readonly buffer: Float32Array = new Float32Array(150 * 6);
-  private rafId: number | null = null;
+  #count = 150;
+  #buffer = new Float32Array(150 * 6);
+  #rafId = null;
+  #palette = ['#06b6d4', '#f59e0b', '#10b981', '#f8fafc'];
 
-  public startBurst(ctx: CanvasRenderingContext2D, width: number, height: number): void {
-    // Initialize 150 particles with polar velocities
-    for (let i = 0; i < this.count; i++) {
-      const offset = i * 6;
-      this.buffer[offset + 0] = width / 2;       // x
-      this.buffer[offset + 1] = height / 2;      // y
-      const angle = Math.random() * Math.PI * 2;
-      const speed = 2 + Math.random() * 8;
-      this.buffer[offset + 2] = Math.cos(angle) * speed; // vx
-      this.buffer[offset + 3] = Math.sin(angle) * speed - 2; // vy (gravity bias)
-      this.buffer[offset + 4] = 1.0;             // alpha
-      this.buffer[offset + 5] = Math.floor(Math.random() * 4); // colorIdx
+  startBurst(ctx, width, height) {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      return; // Respect accessibility reduced motion
     }
-    this.animate(ctx, width, height);
+
+    for (let i = 0; i < this.#count; i++) {
+      const offset = i * 6;
+      this.#buffer[offset + 0] = width / 2;
+      this.#buffer[offset + 1] = height / 2;
+      const angle = Math.random() * Math.PI * 2;
+      const speed = 3 + Math.random() * 9;
+      this.#buffer[offset + 2] = Math.cos(angle) * speed;
+      this.#buffer[offset + 3] = Math.sin(angle) * speed - 2.5;
+      this.#buffer[offset + 4] = 1.0;
+      this.#buffer[offset + 5] = Math.floor(Math.random() * this.#palette.length);
+    }
+    this.#animate(ctx, width, height);
   }
 
-  private animate(ctx: CanvasRenderingContext2D, width: number, height: number): void {
+  #animate(ctx, width, height) {
     const step = () => {
       let activeCount = 0;
-      for (let i = 0; i < this.count; i++) {
+      for (let i = 0; i < this.#count; i++) {
         const offset = i * 6;
-        if (this.buffer[offset + 4] <= 0) continue;
+        let alpha = this.#buffer[offset + 4];
+        if (alpha <= 0) continue;
         activeCount++;
-        // Euler integration with zero object allocations
-        this.buffer[offset + 0] += this.buffer[offset + 2]; // x += vx
-        this.buffer[offset + 1] += this.buffer[offset + 3]; // y += vy
-        this.buffer[offset + 3] += 0.15;                    // vy += gravity
-        this.buffer[offset + 4] -= 0.012;                   // alpha decay
+
+        this.#buffer[offset + 0] += this.#buffer[offset + 2];
+        this.#buffer[offset + 1] += this.#buffer[offset + 3];
+        this.#buffer[offset + 2] *= 0.98; // Aerodynamic drag
+        this.#buffer[offset + 3] = this.#buffer[offset + 3] * 0.98 + 0.18; // Drag + gravity
+        this.#buffer[offset + 4] = Math.max(0, alpha - 0.00555); // 180-frame decay
+
+        // Vector Canvas Draw Call
+        ctx.save();
+        ctx.globalAlpha = alpha;
+        ctx.fillStyle = this.#palette[this.#buffer[offset + 5] | 0];
+        ctx.fillRect(this.#buffer[offset + 0], this.#buffer[offset + 1], 6, 10);
+        ctx.restore();
       }
+
       if (activeCount > 0) {
-        this.rafId = requestAnimationFrame(step);
+        this.#rafId = requestAnimationFrame(step);
       }
     };
-    this.rafId = requestAnimationFrame(step);
+    this.#rafId = requestAnimationFrame(step);
   }
 }
 ```
@@ -264,7 +291,7 @@ export class ParticleEngine {
 
 In standalone PWA mode on iOS WebKit, switching to another app does not always trigger `visibilitychange` before the process is frozen. When returning days later, `pageshow` fires with `e.persisted === true`.
 
-- **Resilience Binding:** The `TimeEngine` listens symmetrically to both `visibilitychange` and `window.addEventListener('pageshow')`.
+- **Resilience Binding:** The `DualClockTimeEngine` listens symmetrically to both `visibilitychange` and `window.addEventListener('pageshow')`.
 - On wake, it executes instantaneous UTC clock resynchronization against `Date.now()`, clearing any accumulated micro-drift and re-validating deadline expiration.
 
 ---
@@ -272,11 +299,11 @@ In standalone PWA mode on iOS WebKit, switching to another app does not always t
 ## 10. V8 GC Pressure Elimination in 60 FPS RAF Loop
 
 Creating string literals or new objects inside `calculateRemaining()` generates up to 240 allocations per second.
-The `ZeroAllocationTickEngine` recycles a single mutable struct:
+The `ZeroAllocationTickEngine` recycles a single mutable struct with exact second rounding (`Math.ceil`):
 
-```typescript
+```javascript
 export class ZeroAllocationTickEngine {
-  private readonly snapshot = {
+  #snapshot = {
     days: 0,
     hours: 0,
     minutes: 0,
@@ -286,24 +313,27 @@ export class ZeroAllocationTickEngine {
     isExpired: false
   };
 
-  public compute(deadlineEpoch: number, nowEpoch: number) {
+  compute(deadlineEpoch, nowEpoch) {
     const delta = deadlineEpoch - nowEpoch;
-    this.snapshot.totalMs = delta;
-    this.snapshot.isExpired = delta <= 0;
+    this.#snapshot.totalMs = delta;
+    this.#snapshot.isExpired = delta <= 0;
+
     if (delta <= 0) {
-      this.snapshot.days = 0;
-      this.snapshot.hours = 0;
-      this.snapshot.minutes = 0;
-      this.snapshot.seconds = 0;
-      this.snapshot.progress = 100;
-      return this.snapshot;
+      this.#snapshot.days = 0;
+      this.#snapshot.hours = 0;
+      this.#snapshot.minutes = 0;
+      this.#snapshot.seconds = 0;
+      this.#snapshot.progress = 100;
+      return this.#snapshot;
     }
-    const sec = Math.floor(delta / 1000);
-    this.snapshot.days = Math.floor(sec / 86400);
-    this.snapshot.hours = Math.floor((sec % 86400) / 3600);
-    this.snapshot.minutes = Math.floor((sec % 3600) / 60);
-    this.snapshot.seconds = sec % 60;
-    return this.snapshot;
+
+    // Exact second boundary: Math.ceil prevents premature 00s display
+    const sec = Math.ceil(delta / 1000);
+    this.#snapshot.days = Math.floor(sec / 86400);
+    this.#snapshot.hours = Math.floor((sec % 86400) / 3600);
+    this.#snapshot.minutes = Math.floor((sec % 3600) / 60);
+    this.#snapshot.seconds = sec % 60;
+    return this.#snapshot;
   }
 }
 ```

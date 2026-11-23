@@ -5,11 +5,11 @@ sequenceDiagram
     autonumber
     actor User as Contestant / User
     participant App as app.js (ViewController)
-    participant Guard as HistoryQuotaGuard
-    participant Gemini as GeminiClient
+    participant Guard as TokenBucketHistoryGuard
+    participant Gemini as GeminiAiClient
     participant Store as StateStore
-    participant Ticker as TimeEngine
-    participant Audio as AudioChimeService
+    participant Ticker as DualClockTimeEngine
+    participant Audio as AudioService
     participant Haptic as HapticService
     participant Canvas as CanvasRenderer
     participant Browser as Browser Runtime

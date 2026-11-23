@@ -9,13 +9,13 @@ graph TD
         end
 
         subgraph CoreLayer [src/js/core]
-            TimeEnginePkg[TimeEngine.js: Drift-Compensated RAF Ticker]
+            TimeEnginePkg[DualClockTimeEngine.js: Drift-Compensated RAF Ticker]
             MilestonePkg[MilestoneManager.js: Milestone Logic]
             UrlStatePkg[UrlStateService.js: Base64 Codec]
         end
 
         subgraph AILayer [src/js/ai]
-            GeminiClientPkg[GeminiClient.js: REST / SDK Gateway]
+            GeminiClientPkg[GeminiAiClient.js: REST / SDK Gateway]
             HeuristicPkg[HeuristicGenerator.js: Offline Fallback]
         end
 

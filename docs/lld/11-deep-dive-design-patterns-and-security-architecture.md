@@ -6,7 +6,7 @@
 **Author:** Piyush Makhija (Lead Systems Architect & Developer)  
 **Reviewer:** Architecture Review Board  
 **Status:** APPROVED  
-**Standard:** Level 2.2 Documentation Governance (Gang of Four + OWASP ASVS Standard)  
+**Standard:** Level 2.2 Documentation Governance (Gang of Four + OWASP ASVS Standard)
 
 ---
 
@@ -18,8 +18,8 @@
 +---+----------------------+--------------------+-----------------------+---------------------------------------+
 | # | Pattern Name         | Classification     | Concrete Subsystem    | Architectural Purpose                 |
 +---+----------------------+--------------------+-----------------------+---------------------------------------+
-| 1 | **Flyweight**        | Structural         | `TWO_DIGIT_LUT`       | Reuses static 100-string pool &       |
-|   |                      |                    | `TrigLUT`             | 360-element sin/cos float tables.     |
+| 1 | **Flyweight**        | Structural         | `TWO_DIGIT_LUT`       | Reuses static 100-string pool with    |
+|   |                      |                    | `TrigLUT`             | bitwise integer index truncation.     |
 +---+----------------------+--------------------+-----------------------+---------------------------------------+
 | 2 | **Chain of Resp.**   | Behavioral         | `ExportPipeline`      | Multi-tier export fallback:           |
 |   |                      |                    |                       | Web Share -> Download -> Modal -> Copy|
@@ -27,11 +27,11 @@
 | 3 | **State**            | Behavioral         | `CountdownFSM`        | Encapsulates behavioral transitions   |
 |   |                      |                    |                       | for IDLE, EXPIRED, and MODAL states.  |
 +---+----------------------+--------------------+-----------------------+---------------------------------------+
-| 4 | **Observer**         | Behavioral         | `TimeEngine`          | Zero-overhead typed event publisher   |
+| 4 | **Observer**         | Behavioral         | `DualClockTimeEngine` | Zero-overhead typed event publisher   |
 |   |                      |                    |                       | driving DOM digits & canvas rings.    |
 +---+----------------------+--------------------+-----------------------+---------------------------------------+
-| 5 | **Strategy**         | Behavioral         | `IMilestonePlanner`   | Interchangeable planning algorithms:  |
-|   |                      |                    |                       | Google Gemini 3.8 vs HeuristicEngine. |
+| 5 | **Strategy**         | Behavioral         | `GeminiAiClient` /    | Interchangeable planning algorithms:  |
+|   |                      |                    | `HeuristicGenerator`  | Google Gemini 3.8 vs HeuristicEngine. |
 +---+----------------------+--------------------+-----------------------+---------------------------------------+
 | 6 | **Adapter**          | Structural         | `CanvasContextShim`   | Compatibility bridge for Offscreen-   |
 |   |                      |                    |                       | Canvas vs standard HTMLCanvasElement. |
@@ -41,36 +41,47 @@
 ### 1.1 The Flyweight Pattern: Zero-Allocation Lookup Tables
 To eliminate garbage collection sweeps in the 60 FPS animation loop, static shared flyweight instances are pre-allocated at application boot:
 
-```typescript
+```javascript
 /**
  * Static 100-element two-digit string lookup pool ['00', '01', ... '99'].
  * Replaces String(n).padStart(2, '0') to avoid 240 string allocations/second.
  */
-export const TWO_DIGIT_LUT: readonly string[] = Object.freeze(
+export const TWO_DIGIT_LUT = Object.freeze(
   Array.from({ length: 100 }, (_, i) => (i < 10 ? `0${i}` : `${i}`))
 );
+
+/**
+ * Accesses two-digit lookup table with bitwise integer truncation.
+ *
+ * @param {number} n
+ * @returns {string} Two-digit padded string
+ */
+export const pad2 = (n) => {
+  const idx = (n | 0);
+  return idx >= 0 && idx < 100 ? TWO_DIGIT_LUT[idx] : String(idx);
+};
 
 /**
  * Pre-computed 360-degree trigonometric sin/cos lookup tables for particle physics.
  */
 export class TrigLUT {
-  public static readonly sinTable: Float32Array = new Float32Array(360);
-  public static readonly cosTable: Float32Array = new Float32Array(360);
+  static #sinTable = new Float32Array(360);
+  static #cosTable = new Float32Array(360);
 
   static {
     for (let deg = 0; deg < 360; deg++) {
       const rad = (deg * Math.PI) / 180;
-      this.sinTable[deg] = Math.sin(rad);
-      this.cosTable[deg] = Math.cos(rad);
+      this.#sinTable[deg] = Math.sin(rad);
+      this.#cosTable[deg] = Math.cos(rad);
     }
   }
 
-  public static sin(deg: number): number {
-    return this.sinTable[((deg % 360) + 360) % 360];
+  static sin(deg) {
+    return this.#sinTable[(((deg | 0) % 360) + 360) % 360];
   }
 
-  public static cos(deg: number): number {
-    return this.cosTable[((deg % 360) + 360) % 360];
+  static cos(deg) {
+    return this.#cosTable[(((deg | 0) % 360) + 360) % 360];
   }
 }
 ```
@@ -89,37 +100,34 @@ graph LR
     H3 -->|Modal Dismissed| H4[4. Base64 Clipboard Fallback]
 ```
 
-```typescript
-export interface IExportHandler {
-  setNext(handler: IExportHandler): IExportHandler;
-  handle(blob: Blob, filename: string): Promise<boolean>;
-}
+```javascript
+export class AbstractExportHandler {
+  #nextHandler = null;
 
-export abstract class AbstractExportHandler implements IExportHandler {
-  private nextHandler: IExportHandler | null = null;
-
-  public setNext(handler: IExportHandler): IExportHandler {
-    this.nextHandler = handler;
+  setNext(handler) {
+    this.#nextHandler = handler;
     return handler;
   }
 
-  public async handle(blob: Blob, filename: string): Promise<boolean> {
-    if (this.nextHandler) {
-      return this.nextHandler.handle(blob, filename);
+  async handle(blob, filename) {
+    if (this.#nextHandler) {
+      return this.#nextHandler.handle(blob, filename);
     }
     return false;
   }
 }
 
 export class WebShareHandler extends AbstractExportHandler {
-  public override async handle(blob: Blob, filename: string): Promise<boolean> {
-    const file = new File([blob], filename, { type: blob.type });
-    if (navigator.canShare && navigator.canShare({ files: [file] })) {
-      try {
-        await navigator.share({ files: [file], title: 'Countdown Lock Screen' });
-        return true;
-      } catch (err: unknown) {
-        if ((err as Error).name === 'AbortError') return true; // User cancelled
+  async handle(blob, filename) {
+    if (typeof navigator !== 'undefined' && navigator.canShare) {
+      const file = new File([blob], filename, { type: blob.type });
+      if (navigator.canShare({ files: [file] })) {
+        try {
+          await navigator.share({ files: [file], title: 'Countdown Lock Screen' });
+          return true;
+        } catch (err) {
+          if (err.name === 'AbortError') return true; // User cancelled
+        }
       }
     }
     return super.handle(blob, filename);
@@ -134,36 +142,36 @@ export class WebShareHandler extends AbstractExportHandler {
 ### 2.1 Fixed-Timestep Accumulator with Frame-Time Clamp
 When a smartphone sleeps or shifts tabs into the background, `requestAnimationFrame` is throttled or suspended. Upon wake, elapsed time $\Delta t$ can exceed $10\text{ seconds}$. A naive simulation accumulator creates the **"spiral of death"** by running hundreds of catch-up ticks in a single frame.
 
-```typescript
+```javascript
 export class FixedTimestepEngine {
-  private readonly fixedDt: number = 1000 / 60; // 16.666ms simulation step
-  private readonly maxFrameTime: number = 100;   // 100ms clamp (Spiral of Death Guard)
-  private accumulator: number = 0;
-  private lastTime: number = 0;
+  #fixedDt = 1000 / 60; // 16.666ms simulation step
+  #maxFrameTime = 100;   // 100ms clamp (Spiral of Death Guard)
+  #accumulator = 0;
+  #lastTime = 0;
 
-  public tick(currentTime: number, onUpdate: (dt: number) => void, onRender: (alpha: number) => void): void {
-    if (this.lastTime === 0) {
-      this.lastTime = currentTime;
+  tick(currentTime, onUpdate, onRender) {
+    if (this.#lastTime === 0) {
+      this.#lastTime = currentTime;
       return;
     }
 
-    let frameTime = currentTime - this.lastTime;
-    this.lastTime = currentTime;
+    let frameTime = currentTime - this.#lastTime;
+    this.#lastTime = currentTime;
 
     // Hard clamp: never allow accumulated lag to freeze the browser
-    if (frameTime > this.maxFrameTime) {
-      frameTime = this.maxFrameTime;
+    if (frameTime > this.#maxFrameTime) {
+      frameTime = this.#maxFrameTime;
     }
 
-    this.accumulator += frameTime;
+    this.#accumulator += frameTime;
 
-    while (this.accumulator >= this.fixedDt) {
-      onUpdate(this.fixedDt);
-      this.accumulator -= this.fixedDt;
+    while (this.#accumulator >= this.#fixedDt) {
+      onUpdate(this.#fixedDt);
+      this.#accumulator -= this.#fixedDt;
     }
 
     // Sub-frame interpolation alpha for 120Hz ProMotion displays
-    const alpha = this.accumulator / this.fixedDt;
+    const alpha = this.#accumulator / this.#fixedDt;
     onRender(alpha);
   }
 }
@@ -180,44 +188,24 @@ On mobile chipsets with shared system DRAM, this causes GPU thermal throttling w
 - **Idle Steady Countdown (1 FPS):** Digits update only once per second ($1000\text{ms}$), reducing memory traffic to $11.8\text{ MB/sec}$ (**$98.3\%$ reduction**).
 - **Background Mode (0 FPS):** Fully suspended via `visibilitychange` and `pageshow`/`pagehide`.
 
-### 2.3 Aerodynamic Confetti Simulation with Drag & Reduced Motion
-Confetti physics incorporates semi-implicit Euler integration with aerodynamic air resistance ($\mu_{\text{drag}} = 0.98$):
-
-```typescript
-export class AccessibleParticleEngine {
-  private readonly isReducedMotion: boolean = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  public triggerCelebration(ctx: CanvasRenderingContext2D, width: number, height: number): void {
-    // Accessibility: Bypasses particle physics for vestibular disorder safety
-    if (this.isReducedMotion) {
-      return;
-    }
-    // Pre-allocated Float32Array execution with drag damping
-    // vx = vx * 0.98; vy = (vy + gravity) * 0.98
-  }
-}
-```
-
 ---
 
 ## 3. Module 3: Web Audio DSP Graph & Glitch-Free Synthesis
 
 ```mermaid
 graph LR
-    Osc[Oscillators: C5, E5, G5, C6] --> Filter[BiquadFilter: Low-Pass 2000Hz]
-    Filter --> Gain[GainNode: Exponential ADSR Envelope]
-    Gain --> Comp[DynamicsCompressor: Limiter -6dB]
-    Comp --> Bus[Master Bus / Mute Toggle]
-    Bus --> Dest[ctx.destination]
+    Osc[Oscillators: C5, E5, G5, C6] --> Gain[GainNode: Exponential Envelope]
+    Gain --> Comp[DynamicsCompressor: Limiter -3dB]
+    Comp --> Dest[ctx.destination]
 ```
 
 ### 3.1 Zipper-Noise Elimination & Sample-Accurate Automation
 Direct assignment to `audioParam.value` causes discontinuous waveform jumps resulting in audible "zipper noise" or clicks. All audio modulations enforce exponential or linear ramps with a minimum duration of $15\text{ms}$:
 
-```typescript
+```javascript
 // Glitch-free gain envelope
 gainNode.gain.setValueAtTime(0.0001, startTime);
-gainNode.gain.exponentialRampToValueAtTime(0.20, startTime + 0.020); // 20ms attack
+gainNode.gain.exponentialRampToValueAtTime(0.18, startTime + 0.040); // 40ms attack
 gainNode.gain.exponentialRampToValueAtTime(0.0001, startTime + 1.200); // 1.2s decay
 ```
 
@@ -225,20 +213,45 @@ gainNode.gain.exponentialRampToValueAtTime(0.0001, startTime + 1.200); // 1.2s d
 
 ## 4. Module 4: Defensive Client-Side Security Architecture
 
-### 4.1 Prototype Pollution Immunity in URL State Deserialization
-When parsing JSON state from `#v1=...`, malicious URLs containing `__proto__` or `constructor` keys are stripped before object creation:
+### 4.1 Prototype Pollution Immunity & Polymorphic Deserialization
+When parsing JSON state from `#v1=...`, malicious URLs containing `__proto__`, `constructor`, or `prototype` keys are stripped before object creation via recursive reviver:
 
-```typescript
-export function safeHydrateState(rawJson: string): Record<string, unknown> {
-  const parsed = JSON.parse(rawJson);
-  const cleanState = Object.create(null); // Pure dictionary with no prototype
-
-  for (const [key, value] of Object.entries(parsed)) {
+```javascript
+export function safeHydrateState(rawJson) {
+  const parsed = JSON.parse(rawJson, (key, value) => {
     if (key === '__proto__' || key === 'constructor' || key === 'prototype') {
-      continue; // Discard prototype poisoning vectors
+      return undefined;
     }
-    cleanState[key] = typeof value === 'string' ? sanitizeHtmlEntities(value) : value;
-  }
+    return value;
+  });
+
+  const cleanState = Object.create(null); // Pure dictionary with no prototype
+  cleanState.v = typeof parsed.v === 'number' ? parsed.v : 1;
+  cleanState.t = typeof parsed.t === 'string' ? parsed.t.slice(0, 60) : 'My Goal';
+  cleanState.d = parsed.d || new Date().toISOString();
+  cleanState.th = parsed.th || 'cyber_obsidian';
+  cleanState.af = typeof parsed.af === 'string' ? parsed.af.slice(0, 120) : '';
+
+  // Polymorphic milestone normalization handling both tuple and dict records
+  cleanState.m = Array.isArray(parsed.m)
+    ? parsed.m.slice(0, 5).map((item, idx) => {
+        if (Array.isArray(item)) {
+          return {
+            step: typeof item[0] === 'number' ? item[0] : idx + 1,
+            title: typeof item[1] === 'string' ? item[1].slice(0, 50) : `Milestone ${idx + 1}`,
+            offset_days: Math.max(0, Math.min(1825, Number(item[2]) || 0)),
+            completed: Boolean(item[3])
+          };
+        }
+        return {
+          step: typeof item?.step === 'number' ? item.step : idx + 1,
+          title: typeof item?.title === 'string' ? item.title.slice(0, 50) : `Milestone ${idx + 1}`,
+          offset_days: Math.max(0, Math.min(1825, Number(item?.offset_days) || 0)),
+          completed: Boolean(item?.completed)
+        };
+      })
+    : [];
+
   return cleanState;
 }
 ```

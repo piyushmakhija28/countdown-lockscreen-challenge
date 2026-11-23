@@ -19,19 +19,19 @@ sequenceDiagram
     participant App as AppBootstrap
     participant Router as UrlStateService
     participant Store as StateStore
-    participant Ticker as TimeEngine
+    participant Ticker as DualClockTimeEngine
     participant View as ViewRenderer
 
     User->>App: Loads Application URL
-    App->>Router: parseUrlHash(window.location.hash)
+    App->>Router: parseSafeUrlState(window.location.hash)
     alt Valid #v1= Hash Present
-        Router->>Router: Base64 Decode & JSON Parse
-        Router-->>App: Return Hydrated State
-    else No Hash / Invalid Hash
-        Router-->>App: Return Default Initial State
+        Router->>Router: Base64 Decode & Polymorphic JSON Parse
+        Router-->>App: Return Hydrated Clean State
+    else No Hash / Invalid Hash / Decompression Bomb
+        Router-->>App: Return Default Demonstrative State
     end
     App->>Store: initialize(HydratedState)
-    App->>Ticker: startTicker(deadline, onTick)
+    App->>Ticker: startTicker(deadline, onTick, onExpire)
     App->>View: initialMount(Store.getState())
     View-->>User: Renders Interactive Preview (FCP < 0.8s)
 ```
@@ -46,7 +46,7 @@ sequenceDiagram
     actor User as Contestant
     participant View as ConfigView
     participant Store as StateStore
-    participant Client as GeminiClient
+    participant Client as GeminiAiClient
     participant Fallback as HeuristicGenerator
     participant API as Google Gemini 3.8 Flash API
 
@@ -54,7 +54,7 @@ sequenceDiagram
     View->>Store: dispatch(SET_AI_LOADING, true)
     View->>Client: generatePlan(goalTitle, deadline)
     alt Gemini Call Successful (< 4000ms)
-        Client->>API: POST /v1beta/models/gemini-3.8-flash:generateContent
+        Client->>API: POST /v1beta/models/gemini-3.8-flash:generateContent (Header Auth)
         API-->>Client: Returns JSON {milestones, affirmation, theme}
         Client-->>View: Return MilestonePlanResponse
     else Network Error / Rate Limit 429 / Timeout > 4000ms
@@ -74,7 +74,7 @@ sequenceDiagram
 ```mermaid
 sequenceDiagram
     autonumber
-    participant Ticker as TimeEngine
+    participant Ticker as DualClockTimeEngine
     participant RAF as Window.requestAnimationFrame
     participant Clock as Hardware Clock (performance.now)
     participant View as DOMTickerView
@@ -102,17 +102,18 @@ sequenceDiagram
     participant View as PreviewView
     participant Canvas as CanvasRenderer
     participant GPU as OffscreenCanvas Buffer (2340x5064)
-    participant Downsampler as Bilinear Scaler (1170x2532)
+    participant Alloc as AdaptiveBufferAllocator
 
     User->>View: Clicks "Download Wallpaper"
     View->>Canvas: renderWallpaper(options, state, remaining)
-    Canvas->>GPU: Allocate 2340x5064 2x Supersampled Context
+    Canvas->>Alloc: computeOptimalBuffer(1170, 2532)
+    Alloc-->>Canvas: Scale factor S <= 2.0 (<= 16.7M px)
+    Canvas->>GPU: Allocate 2340x5064 Context
     Canvas->>GPU: Draw Radial Gradient Background
     Canvas->>GPU: Render Safe-Zone Exclusions (Top 28% Clear)
     Canvas->>GPU: Draw Hero Countdown Digits (Cyan/Amber/Mint)
     Canvas->>GPU: Render Milestone Checkpoints & Affirmation
-    Canvas->>Downsampler: Resample 2x Buffer to 1170x2532
-    Downsampler->>Canvas: toBlob("image/png")
+    Canvas->>Canvas: toBlob("image/png")
     Canvas-->>View: Return PNG Blob (< 350ms total)
     Canvas->>Canvas: dispose() -> Set Dimensions 0x0 (Deallocate GPU Memory)
     View-->>User: Trigger Automatic File Download
@@ -130,7 +131,7 @@ sequenceDiagram
     participant Store as StateStore
     participant DOM as Root Document (:root)
     participant Canvas as CanvasRenderer
-    participant Ticker as TimeEngine
+    participant Ticker as DualClockTimeEngine
 
     User->>View: Selects "Aurora Botanical" Theme
     View->>Store: dispatch(SET_THEME, 'aurora_botanical')
@@ -149,10 +150,10 @@ sequenceDiagram
 ```mermaid
 sequenceDiagram
     autonumber
-    participant Ticker as TimeEngine
+    participant Ticker as DualClockTimeEngine
     participant Store as StateStore
-    participant Audio as AudioChimeService
-    participant Haptic as HapticFeedbackService
+    participant Audio as AudioService
+    participant Haptic as HapticService
     participant Particle as ParticleEngine
     participant View as CelebrationOverlayView
     actor User as User
@@ -163,7 +164,7 @@ sequenceDiagram
     par Parallel Sensory Celebration
         Store->>Audio: playVictoryChime() (Major Chord C5-E5-G5-C6)
         Store->>Haptic: victoryPattern() ([100, 50, 100, 50, 250])
-        Store->>Particle: startBurst(150, canvasContext)
+        Store->>Particle: startBurst(canvasContext, width, height)
         Store->>View: renderVictoryCard("Goal Achieved!")
     end
     Particle->>Particle: Float32Array zero-allocation physics (60 FPS, 3000ms duration)
@@ -173,27 +174,32 @@ sequenceDiagram
 
 ---
 
-## 7. Sequence 7: URL Hash Synchronization with 300ms Leaky Bucket History Guard
+## 7. Sequence 7: URL Hash Synchronization with Token Bucket History Guard
 
 ```mermaid
 sequenceDiagram
     autonumber
     actor User as User
     participant Input as GoalTitleInput
-    participant Guard as HistoryQuotaGuard
+    participant Guard as TokenBucketHistoryGuard
     participant Router as UrlStateService
     participant Browser as Window.history
 
     User->>Input: Types "Launch Startup MVP" (Rapid Keystrokes)
     Input->>Guard: pushStateUpdate(serializedState) [Keystroke 1]
-    Note over Guard: Timer started (300ms debounce window)
-    User->>Input: Next Keystroke (t = 80ms)
-    Input->>Guard: pushStateUpdate(serializedState) [Keystroke 2]
-    Note over Guard: Previous timer cancelled; new 300ms window armed
-    Note over Guard: No history.replaceState calls during typing burst!
-    Note over Guard: 300ms elapse with no new keystrokes
-    Guard->>Router: serialize(latestState)
-    Router->>Browser: history.replaceState(null, '', '#v1=' + base64Payload)
+    Note over Guard: Instant sessionStorage backup sync
+    Note over Guard: Token bucket check (B=30, r=2/s)
+    alt Tokens Available (T >= 1)
+        Guard->>Router: serialize(latestState)
+        Router->>Browser: history.replaceState(null, '', '#v1=' + base64Payload)
+        Note over Guard: Tokens decremented by 1
+    else Tokens Depleted (T < 1)
+        Note over Guard: Update enqueued in 500ms trailing timer
+        Note over Guard: No history.replaceState calls during typing burst!
+        Note over Guard: Timer fires once tokens refill
+        Guard->>Router: serialize(latestState)
+        Router->>Browser: history.replaceState(null, '', '#v1=' + base64Payload)
+    end
     Note over Browser: Safari 100-call / 30s limit respected; zero SecurityError
 ```
 
@@ -206,23 +212,23 @@ sequenceDiagram
     autonumber
     actor User as User
     participant View as WallpaperExportView
-    participant Exporter as ShareService
+    participant Canvas as CanvasRenderer
     participant OS as Mobile OS Share Sheet
     participant Modal as PressAndHoldModal
 
     User->>View: Taps "Share Wallpaper"
-    View->>Exporter: shareOrDownload(wallpaperBlob, "countdown.png")
+    View->>Canvas: shareOrDownload(wallpaperBlob, "countdown.png")
     alt navigator.canShare({ files: [file] }) is TRUE
-        Exporter->>OS: navigator.share({ files: [file], title: "Lockscreen Wallpaper" })
+        Canvas->>OS: navigator.share({ files: [file], title: "Lockscreen Wallpaper" })
         alt User selects native app (WhatsApp, Photos, AirDrop)
-            OS-->>Exporter: Promise resolves
-            Exporter-->>View: Show Success Toast
+            OS-->>Canvas: Promise resolves
+            Canvas-->>View: Show Success Toast
         else User swipes down to dismiss
-            OS-->>Exporter: Throws AbortError
-            Exporter->>Exporter: Silently ignore AbortError (no error toast)
+            OS-->>Canvas: Throws AbortError
+            Canvas->>Canvas: Silently ignore AbortError (no error toast)
         end
     else Standalone iOS PWA / Browser without File Share Support
-        Exporter->>Modal: openModal(wallpaperBlobUrl)
+        Canvas->>Modal: openModal(wallpaperBlobUrl)
         Modal-->>User: Displays <img> preview + "Long press image and select 'Save to Photos'"
         User->>Modal: Long-presses image -> Native iOS action sheet -> Saves to Photos
         User->>Modal: Taps "Done" -> Closes modal
@@ -237,20 +243,19 @@ sequenceDiagram
 sequenceDiagram
     autonumber
     participant App as AppBootstrap
-    participant FontAPI as Document.fonts
+    participant FontService as FontService
     participant Canvas as CanvasRenderer
     participant View as PreviewView
 
-    App->>Canvas: initialize()
-    Canvas->>FontAPI: ready (Promise)
-    alt Web Fonts Already Cached
-        FontAPI-->>Canvas: Resolved immediately
+    App->>FontService: ensureFontsReady()
+    alt Web Fonts Already Loaded
+        FontService-->>Canvas: Resolved immediately
         Canvas->>View: renderWallpaper() with custom typography
     else Web Fonts Downloading (< 2500ms)
-        FontAPI-->>Canvas: Resolved after download
+        FontService-->>Canvas: Resolved after document.fonts.ready & load()
         Canvas->>View: renderWallpaper() with fully shaped custom glyphs
     else Font Network Timeout (> 2500ms)
-        Canvas->>Canvas: Timeout fallback to system font stack (-apple-system, Roboto)
+        FontService->>Canvas: Timeout fallback to system font stack (-apple-system, Roboto)
         Canvas->>View: renderWallpaper() without blocking user interface
     end
 ```

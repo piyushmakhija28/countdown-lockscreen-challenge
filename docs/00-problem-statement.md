@@ -56,7 +56,7 @@ However, existing countdown apps and custom wallpaper generators fail ergonomica
 
 | Invariant ID | Constraint Description | Mathematical / Technical Formulation | Enforcement Mechanism |
 |:---|:---|:---|:---|
-| **INV-001** | **Future Target Timestamp:** Target deadline must strictly resolve to a valid future timestamp. | $t_{\text{deadline}} > t_{\text{current}} + 3600\text{s}$ ($\ge 1\text{ hour}$ into future) | ISO-8601 validation in `TimeEngine` with UTC epoch normalization. |
+| **INV-001** | **Future Target Timestamp:** Target deadline must strictly resolve to a valid future timestamp. | $t_{\text{deadline}} > t_{\text{current}} + 3600\text{s}$ ($\ge 1\text{ hour}$ into future) | ISO-8601 validation in `DualClockTimeEngine` with UTC epoch normalization. |
 | **INV-002** | **Milestone Cognitive Bounding:** Milestones must strictly be bounded between 3 and 5 sequential checkpoints. | $3 \le N_{\text{milestones}} \le 5$ (Conforming to Miller's $7 \pm 2$ cognitive span) | JSON schema assertion on Gemini 3.8 Flash response & heuristic fallback. |
 | **INV-003** | **Upper Clock Safe-Zone Clearance:** Top lock screen canvas must remain strictly unoccluded for OS clock. | $Y_{\text{content\_start}} \ge 0.28 \times H_{\text{canvas}} \quad (708\text{px on a } 2532\text{px canvas})$ | `CanvasRenderer` boundary clipping and mathematical layout assertions. |
 | **INV-004** | **Bottom Gesture Safe-Zone Clearance:** Bottom canvas must remain clear of home indicator / fingerprint pill. | $Y_{\text{content\_end}} \le 0.82 \times H_{\text{canvas}} \quad (2076\text{px on a } 2532\text{px canvas})$ | Canvas vertical coordinate bounds clamping. |

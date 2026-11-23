@@ -30,6 +30,10 @@ classDiagram
         +number httpStatus
         +boolean isRateLimit
     }
+    class AiSafetyBlockError {
+        +string blockReason
+        +string safetyRating
+    }
     class CanvasRenderError {
         +number requestedWidth
         +number requestedHeight
@@ -52,6 +56,14 @@ classDiagram
     class StateSerializationError {
         +string rawPayload
     }
+    class PayloadTooLargeError {
+        +number payloadLength
+        +number maxLimit
+    }
+    class DecompressionBombError {
+        +number decompressedBytes
+        +number ceilingLimit
+    }
     class AudioAutoplayBlockedError {
         +string audioState
     }
@@ -70,6 +82,7 @@ classDiagram
 
     AppError <|-- ValidationError
     AppError <|-- AiServiceError
+    AiServiceError <|-- AiSafetyBlockError
     AppError <|-- CanvasRenderError
     CanvasRenderError <|-- CanvasAreaExceededError
     CanvasRenderError <|-- Context2DUnavailableError
@@ -77,6 +90,8 @@ classDiagram
     AppError <|-- AsyncAbortedError
     AppError <|-- QuotaExceededError
     AppError <|-- StateSerializationError
+    StateSerializationError <|-- PayloadTooLargeError
+    StateSerializationError <|-- DecompressionBombError
     AppError <|-- AudioAutoplayBlockedError
     AppError <|-- HistoryThrottledError
     AppError <|-- ClipboardPermissionError
@@ -88,26 +103,30 @@ classDiagram
 ## 2. Error Catalogue & Recovery Actions
 
 ```
-+---------------------------------------------------------------------------------------------------------+
-|                                        EXCEPTION RECOVERY CATALOGUE                                     |
-+-----------------------+--------------------+-----------------------+------------------------------------+
-| Error Class           | Error Code         | Root Cause            | Automated Recovery Strategy        |
-+-----------------------+--------------------+-----------------------+------------------------------------+
-| `ValidationError`     | `ERR_PAST_DATE`    | Deadline in the past  | Rejects input; displays date hint. |
-| `ValidationError`     | `ERR_TITLE_EMPTY`  | Goal string is blank  | Sets focus to goal input field.    |
-| `AiServiceError`      | `ERR_AI_TIMEOUT`   | Gemini latency >4000ms| Automatically falls back to        |
-|                       |                    |                       | HeuristicGenerator without error.  |
-| `AiServiceError`      | `ERR_AI_HTTP_429`  | Quota exceeded        | Trips circuit breaker; falls back. |
-| `CanvasRenderError`   | `ERR_CANVAS_OOM`   | Memory allocation fail| Retries at native 1x resolution.   |
-| `CanvasAreaExceeded`  | `ERR_CANVAS_CEIL`  | Area > 16.7M pixels   | Auto-clamps DPR to 2.0x max.       |
-| `Context2DUnavailable`| `ERR_NO_CTX_2D`    | Mobile GPU crash/null | Prompts user to refresh tab.       |
-| `FontLoadTimeoutError`| `ERR_FONT_TIMEOUT` | Web font load > 2500ms| Falls back to system sans-serif.   |
-| `AsyncAbortedError`   | `ERR_ASYNC_ABORT`  | Request superceded    | Silently discards stale response.  |
-| `QuotaExceededError`  | `ERR_STORAGE_FULL` | LocalStorage quota    | Falls back to in-memory transient. |
-| `StateSerialization`  | `ERR_HASH_CORRUPT` | Invalid Base64 payload| Logs warning; loads default state. |
-| `AudioAutoplayBlocked`| `ERR_AUDIO_LOCKED` | No prior gesture      | Arms one-time click/touch listener.|
-| `HistoryThrottled`    | `ERR_HIST_THROTTLE`| > 100 calls in 30s    | Queues state in 300ms leaky bucket.|
-| `ClipboardPermission` | `ERR_CLIP_DENIED`  | Focus-less copy fail  | Falls back to legacy execCommand.  |
-| `WebShareDismissed`   | `ERR_SHARE_ABORT`  | User swiped down sheet| Silently dismissed; no error toast.|
-+-----------------------+--------------------+-----------------------+------------------------------------+
++---------------------------------------------------------------------------------------------------------------+
+|                                            EXCEPTION RECOVERY CATALOGUE                                       |
++-------------------------+--------------------------+-----------------------+----------------------------------+
+| Error Class             | Error Code               | Root Cause            | Automated Recovery Strategy      |
++-------------------------+--------------------------+-----------------------+----------------------------------+
+| `ValidationError`       | `ERR_PAST_DATE`          | Deadline in past      | Rejects input; displays hint.    |
+| `ValidationError`       | `ERR_TITLE_EMPTY`        | Goal string is blank  | Sets focus to goal input field.  |
+| `ValidationError`       | `ERR_TITLE_LENGTH`       | Length not in 3..60   | Inline helper shows char count.  |
+| `ValidationError`       | `ERR_TITLE_INVALID_CHARS`| Forbidden HTML/script | Strips tags, prompts clean input.|
+| `AiServiceError`        | `ERR_AI_TIMEOUT`         | Gemini latency >4000ms| Falls back to HeuristicGenerator.|
+| `AiServiceError`        | `ERR_AI_HTTP_429`        | Quota exceeded        | Trips circuit breaker; fallback. |
+| `AiSafetyBlockError`    | `ERR_AI_SAFETY_BLOCK`    | Harm safety filter hit| Generates safe fallback plan.    |
+| `CanvasRenderError`     | `ERR_CANVAS_OOM`         | Memory allocation fail| Retries at native 1x resolution. |
+| `CanvasAreaExceeded`    | `ERR_CANVAS_CEIL`        | Area > 16.7M pixels   | Auto-clamps DPR to 2.0x max.     |
+| `Context2DUnavailable`  | `ERR_NO_CTX_2D`          | Mobile GPU crash/null | Prompts user to refresh tab.     |
+| `FontLoadTimeoutError`  | `ERR_FONT_TIMEOUT`       | Web font load > 2500ms| Falls back to system sans-serif. |
+| `AsyncAbortedError`     | `ERR_ASYNC_ABORT`        | Request superceded    | Silently discards stale response.|
+| `QuotaExceededError`    | `ERR_STORAGE_FULL`       | LocalStorage quota    | Falls back to in-memory store.   |
+| `StateSerialization`    | `ERR_HASH_CORRUPT`       | Invalid Base64 payload| Logs warning; loads demo goal.   |
+| `PayloadTooLargeError`  | `ERR_PAYLOAD_TOO_LARGE`  | URL hash > 2048 chars | Rejects hash; notifies user.     |
+| `DecompressionBombError`| `ERR_DECOMPRESSION_BOMB` | Payload > 32KB decoded| Blocks decompression immediately.|
+| `AudioAutoplayBlocked`  | `ERR_AUDIO_LOCKED`       | No prior gesture      | Arms one-time click listener.    |
+| `HistoryThrottled`      | `ERR_HIST_THROTTLE`      | > 30 calls in burst   | Queues state in Token Bucket.    |
+| `ClipboardPermission`   | `ERR_CLIP_DENIED`        | Focus-less copy fail  | Falls back to manual selection.  |
+| `WebShareDismissed`     | `ERR_SHARE_ABORT`        | User swiped down sheet| Silently dismissed; no toast.    |
++-------------------------+--------------------------+-----------------------+----------------------------------+
 ```

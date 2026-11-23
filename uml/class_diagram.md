@@ -4,9 +4,12 @@
 classDiagram
     class CountdownApp {
         -store: StateStore
-        -timeEngine: TimeEngine
+        -timeEngine: DualClockTimeEngine
         -canvasRenderer: CanvasRenderer
-        -geminiClient: GeminiClient
+        -geminiClient: GeminiAiClient
+        -historyGuard: TokenBucketHistoryGuard
+        -audioService: AudioService
+        -hapticService: HapticService
         +init(): void
         +bindEvents(): void
     }
@@ -19,45 +22,114 @@ classDiagram
         +subscribe(listener: Function): Function
     }
 
-    class TimeEngine {
+    class DualClockTimeEngine {
         -rafId: number
-        -lastTimestamp: number
-        +startTicker(deadline: Date, callback: Function): void
+        -lastWallEpoch: number
+        -isRunning: boolean
+        -activeTargetEpoch: number
+        -lastReportedRemaining: number
+        +startTicker(deadline: Date, onTick: Function, onExpire: Function): void
         +stopTicker(): void
+        +reanchorClocks(wallEpoch: number, monoTime: number): void
         +calculateRemaining(deadline: Date): TimeRemaining
     }
 
     class MilestoneManager {
-        +calculateProgress(milestones: Milestone[]): number
-        +toggleMilestone(milestones: Milestone[], id: string): Milestone[]
+        -milestones: MilestoneItem[]
+        +setMilestones(milestones: MilestoneItem[]): void
+        +calculateProgress(startTime: Date, deadline: Date): number
+        +toggleMilestone(id: string): void
     }
 
-    class GeminiClient {
+    class GeminiAiClient {
         -apiKey: string
-        +decomposeGoal(goal: string, deadline: Date): Promise~MilestonePlanResponse~
+        -activeAbortController: AbortController
+        -currentRequestEpoch: number
+        +generatePlan(goalTitle: string, deadline: Date): Promise~MilestonePlanResponse~
+        +abortActiveRequest(): void
     }
 
     class HeuristicGenerator {
-        +generate(goal: string, deadline: Date): MilestonePlanResponse
+        +generatePlan(goalTitle: string, deadline: Date, now: Date): MilestonePlanResponse
+    }
+
+    class AdaptiveBufferAllocator {
+        -cachedMaxDim: number
+        +getMaxTextureDimension(): number
+        +computeOptimalBuffer(baseWidth: number, baseHeight: number): BufferBounds
+    }
+
+    class ResponsiveLayoutEngine {
+        +computeLayout(width: number, height: number): ComputedLayout
+    }
+
+    class InputSanitizer {
+        +sanitizeGoalTitle(raw: string): string
+        +escapeXmlEntities(input: string): string
+    }
+
+    class UrlStateService {
+        +serializeState(state: CountdownState): Promise~string~
+        +deserializeState(base64Payload: string): Promise~Record~
+    }
+
+    class TokenBucketHistoryGuard {
+        -tokens: number
+        -capacity: number
+        -refillRatePerSec: number
+        +pushStateUpdate(hashPayload: string): void
+        +flush(): void
+    }
+
+    class ParticleEngine {
+        -count: number
+        -buffer: Float32Array
+        -rafId: number
+        +startBurst(ctx: CanvasRenderingContext2D, width: number, height: number): void
+        +stop(): void
+    }
+
+    class AudioService {
+        -ctx: AudioContext
+        -limiterNode: DynamicsCompressorNode
+        -state: string
+        +unlockAudioContext(): Promise~boolean~
+        +playVictoryChime(): Promise~boolean~
+        +dispose(): void
+    }
+
+    class HapticService {
+        -isSupported: boolean
+        +lightTap(): void
+        +victoryPattern(): void
+        +cancel(): void
+    }
+
+    class FontService {
+        +ensureFontsReady(): Promise~void~
     }
 
     class CanvasRenderer {
         -canvas: HTMLCanvasElement
         -ctx: CanvasRenderingContext2D
-        +render(state: CountdownState, options: WallpaperRenderOptions): Promise~HTMLCanvasElement~
-        +toBlob(canvas: HTMLCanvasElement): Promise~Blob~
-    }
-
-    class UrlStateService {
-        +serialize(state: CountdownState): string
-        +deserialize(hash: string): Partial~CountdownState~
+        +renderWallpaper(options: WallpaperRenderOptions, state: CountdownState, remaining: TimeRemaining): Promise~HTMLCanvasElement~
+        +exportBlob(format: string, quality: number): Promise~Blob~
+        +dispose(): void
     }
 
     CountdownApp --> StateStore
-    CountdownApp --> TimeEngine
+    CountdownApp --> DualClockTimeEngine
     CountdownApp --> CanvasRenderer
-    CountdownApp --> GeminiClient
+    CountdownApp --> GeminiAiClient
     CountdownApp --> UrlStateService
-    GeminiClient ..> HeuristicGenerator : fallback
+    CountdownApp --> TokenBucketHistoryGuard
+    CountdownApp --> AudioService
+    CountdownApp --> HapticService
+    CountdownApp --> ParticleEngine
     StateStore --> MilestoneManager
+    GeminiAiClient ..> HeuristicGenerator : fallback
+    CanvasRenderer --> AdaptiveBufferAllocator
+    CanvasRenderer --> ResponsiveLayoutEngine
+    CanvasRenderer --> FontService
+    UrlStateService --> InputSanitizer
 ```

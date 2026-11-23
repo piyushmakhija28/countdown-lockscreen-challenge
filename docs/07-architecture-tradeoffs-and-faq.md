@@ -84,7 +84,7 @@
 **Answer:** The `CanvasRenderer` enforces hard mathematical boundaries. The top $28\%$ ($Y \in [0, 708\text{px}]$) is strictly clipped and reserved. Primary countdown digits and milestones render strictly in the ergonomic safe zone ($Y \in [708\text{px}, 2076\text{px}]$), leaving the bottom $18\%$ clear of flashlight/camera buttons and swipe indicators.
 
 ### Q3: What happens if a user inputs a deadline across Daylight Savings Time (DST) or a leap year?
-**Answer:** All temporal calculations in `TimeEngine` execute using UTC Epoch Milliseconds (`targetDate.getTime()`). Because epoch time is monotonically increasing, local timezone offsets, daylight savings adjustments, and leap years introduce **zero mathematical drift**.
+**Answer:** All temporal calculations in `DualClockTimeEngine` execute using UTC Epoch Milliseconds (`targetDate.getTime()`). Because epoch time is monotonically increasing, local timezone offsets, daylight savings adjustments, and leap years introduce **zero mathematical drift**.
 
 ### Q4: How is memory managed during 2x supersampled canvas rasterization?
 **Answer:** An OffscreenCanvas at $2340 \times 5064\text{ pixels}$ consumes:

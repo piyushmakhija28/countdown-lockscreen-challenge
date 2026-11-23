@@ -12,21 +12,84 @@
 
 ## 1. External AI Service Contract: Google Gemini 3.8 Flash
 
-The application integrates with the **Google Gemini API** (Gemini 3.8 Flash model) via the official `@google/genai` modern SDK or direct HTTPS REST fetch for retrograde deadline planning and affirmation synthesis.
+The application integrates with the **Google Gemini API** (targeting `gemini-3.8-flash` with graceful degradation to `gemini-2.0-flash`) via the modern `@google/genai` SDK or direct HTTPS REST fetch for retrograde deadline planning and affirmation synthesis.
 
 ### 1.1 Header Authentication Invariant
 To prevent cleartext credential leaks in CDN access logs, proxy caches, or browser history:
 - The Google Gemini API key is **strictly transmitted via HTTP request headers**:
   ```http
-  POST /v1beta/models/gemini-1.5-flash:generateContent HTTP/1.1
+  POST /v1beta/models/gemini-3.8-flash:generateContent HTTP/1.1
   Host: generativelanguage.googleapis.com
   Content-Type: application/json
   x-goog-api-key: <API_KEY>
   ```
 - Passing the API key via URL query parameter (`?key=...`) is strictly prohibited.
 
-### 1.2 System Instruction & Context Prompt
+### 1.2 REST Ingress Request Body Specification
+```json
+{
+  "contents": [
+    {
+      "role": "user",
+      "parts": [
+        {
+          "text": "Goal: \"Launch AI Product\"\nTarget Deadline UTC: 2026-12-31T23:59:59Z\nDeconstruct this deadline into backward milestones."
+        }
+      ]
+    }
+  ],
+  "systemInstruction": {
+    "parts": [
+      {
+        "text": "You are an elite productivity strategist specializing in backward goal decomposition (retrograde planning). Deconstruct the deadline into 3 to 5 actionable, sequential milestones with realistic day offsets. Return strictly JSON adhering to the specified schema."
+      }
+    ]
+  },
+  "generationConfig": {
+    "temperature": 0.2,
+    "topP": 0.95,
+    "responseMimeType": "application/json",
+    "responseSchema": {
+      "type": "OBJECT",
+      "properties": {
+        "title": { "type": "STRING" },
+        "deadline_iso": { "type": "STRING" },
+        "milestones": {
+          "type": "ARRAY",
+          "items": {
+            "type": "OBJECT",
+            "properties": {
+              "step": { "type": "INTEGER" },
+              "title": { "type": "STRING" },
+              "offset_days": { "type": "INTEGER" },
+              "completed": { "type": "BOOLEAN" }
+            },
+            "required": ["step", "title", "offset_days", "completed"]
+          }
+        },
+        "daily_affirmation": { "type": "STRING" },
+        "recommended_theme": {
+          "type": "STRING",
+          "enum": ["cyber_obsidian", "deep_focus_zen", "aurora_botanical"]
+        }
+      },
+      "required": ["title", "deadline_iso", "milestones", "daily_affirmation", "recommended_theme"]
+    }
+  },
+  "safetySettings": [
+    { "category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_MEDIUM_AND_ABOVE" },
+    { "category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_MEDIUM_AND_ABOVE" },
+    { "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_MEDIUM_AND_ABOVE" },
+    { "category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_MEDIUM_AND_ABOVE" }
+  ]
+}
+```
+
+### 1.3 System Instruction & Context Prompt
 ```typescript
+/**
+ * System instruction provided to Google Gemini 3.8 Flash for structured retrograde planning.
+ */
 export const GEMINI_SYSTEM_INSTRUCTION = `
 You are an elite productivity strategist and cognitive behavioral coach specializing in backward goal decomposition (retrograde planning).
 Given a user's goal title and target deadline timestamp, you must:
@@ -39,7 +102,7 @@ You must strictly return valid JSON conforming to the requested schema with zero
 `;
 ```
 
-### 1.3 Formal OpenAPI 3.1 / JSON Schema (`MilestonePlanResponse`)
+### 1.4 Formal OpenAPI 3.1 / JSON Schema (`MilestonePlanResponse`)
 ```json
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
@@ -121,19 +184,16 @@ You must strictly return valid JSON conforming to the requested schema with zero
 
 When the client is offline, when an API key is absent, or if the Gemini service encounters rate limits (HTTP 429), the system deterministically executes the following retrograde chronometric partitioning algorithm:
 
-```typescript
+```javascript
 /**
  * Deterministically synthesizes milestone intervals without network dependency.
- * @param goalTitle User entered goal string
- * @param deadline Target deadline date
- * @param now Current reference timestamp
- * @returns Fully populated MilestonePlanResponse
+ *
+ * @param {string} goalTitle User entered goal string
+ * @param {Date} deadline Target deadline date
+ * @param {Date} [now=new Date()] Current reference timestamp
+ * @returns {MilestonePlanResponse} Fully populated MilestonePlanResponse
  */
-export function generateHeuristicMilestones(
-  goalTitle: string,
-  deadline: Date,
-  now: Date = new Date()
-): MilestonePlanResponse {
+export function generateHeuristicMilestones(goalTitle, deadline, now = new Date()) {
   const totalMs = deadline.getTime() - now.getTime();
   const totalDays = Math.max(1, Math.floor(totalMs / (1000 * 60 * 60 * 24)));
 
@@ -170,13 +230,13 @@ export function generateHeuristicMilestones(
 
 ---
 
-## 3. Internal TypeScript Contracts & Branded Types
+## 3. Core Domain Interfaces & Type Contracts
 
-Adhering strictly to `~/.claude/rules/06-typescript-standards.md` (zero `any`, immutable contracts):
+Adhering strictly to Clean Architecture and Level 2.2 Docstring standards:
 
 ```typescript
-export type EpochMilliseconds = number & { readonly __brand: unique symbol };
-export type Percentage = number & { readonly __brand: unique symbol };
+export type EpochMilliseconds = number;
+export type Percentage = number;
 export type ThemeId = 'cyber_obsidian' | 'deep_focus_zen' | 'aurora_botanical';
 export type LayoutRegime = 'ultra_tall' | 'standard_portrait' | 'wide_foldable';
 
@@ -194,20 +254,25 @@ export interface MilestoneItem {
   readonly id: string;
   readonly step: number;
   readonly title: string;
-  readonly targetDate: Date;
+  readonly offsetDays: number;
   readonly isCompleted: boolean;
 }
 
-export interface ITimeEngine {
+export interface IDualClockTimeEngine {
   startTicker(deadline: Date, onTick: (remaining: TimeRemaining) => void, onExpire: () => void): void;
   stopTicker(): void;
   reanchorClocks(wallEpoch: number, monoTime: number): void;
   calculateRemaining(deadline: Date, referenceDate?: Date): TimeRemaining;
 }
 
-export interface IAudioChimeService {
+export interface IAudioService {
   unlockAudioContext(): Promise<boolean>;
   playVictoryChime(): Promise<boolean>;
+}
+
+export interface IHapticService {
+  triggerCelebration(): boolean;
+  triggerMilestoneToggle(): boolean;
 }
 
 export interface WallpaperRenderOptions {
@@ -249,6 +314,8 @@ To enable frictionless sharing without server storage, state is encoded directly
 $$\text{Encoded Hash Length } L_{\text{hash}} \le 2048\text{ characters} \quad (\text{IE/Edge/Mobile Safari Safe})$$
 
 ### 4.2 Compact State Serialization Schema
+To minimize payload size, milestones may be serialized as compact 4-element tuples `[step, title, offset_days, completed]`:
+
 ```json
 {
   "v": 1,
@@ -265,7 +332,48 @@ $$\text{Encoded Hash Length } L_{\text{hash}} \le 2048\text{ characters} \quad (
 }
 ```
 
-### 4.3 Safe Deserialization & Decompression Bomb Guard
-- **Decompression Bomb Shield:** Decompressed JSON payload is capped at $32\text{ KB}$.
-- **Prototype Pollution Shield:** The native JSON reviver strips `__proto__`, `constructor`, and `prototype` keys across all nesting depths.
-- **Constant-Time Verification:** State integrity checksums are verified via bitwise constant-time comparison (`constantTimeEquals`) to eliminate side-channel timing leaks.
+### 4.3 Polymorphic Safe Deserialization Algorithm
+The deserializer supports both compact tuple arrays and structured object dictionaries, preventing milestone title loss during state hydration:
+
+```javascript
+/**
+ * Deserializes raw milestone entries into standard milestone item objects.
+ * Handles both compact 4-element tuples and key-value dictionaries.
+ *
+ * @param {Array<Array<any>|Object>} rawItems Raw milestone representations
+ * @returns {Array<{step: number, title: string, offset_days: number, completed: boolean}>}
+ */
+export function normalizeMilestones(rawItems) {
+  if (!Array.isArray(rawItems)) return [];
+
+  return rawItems.slice(0, 5).map((item, idx) => {
+    if (Array.isArray(item)) {
+      // Polymorphic Case A: Compact 4-element tuple [step, title, offset_days, completed]
+      return {
+        step: typeof item[0] === 'number' ? item[0] : idx + 1,
+        title: typeof item[1] === 'string' && item[1].trim().length > 0
+          ? item[1].slice(0, 50).trim()
+          : `Milestone ${idx + 1}`,
+        offset_days: Math.max(0, Math.min(1825, Number(item[2]) || 0)),
+        completed: Boolean(item[3])
+      };
+    } else if (item && typeof item === 'object') {
+      // Polymorphic Case B: Standard key-value dictionary {step, title, offset_days, completed}
+      return {
+        step: typeof item.step === 'number' ? item.step : idx + 1,
+        title: typeof item.title === 'string' && item.title.trim().length > 0
+          ? item.title.slice(0, 50).trim()
+          : `Milestone ${idx + 1}`,
+        offset_days: Math.max(0, Math.min(1825, Number(item.offset_days) || 0)),
+        completed: Boolean(item.completed)
+      };
+    }
+    return {
+      step: idx + 1,
+      title: `Milestone ${idx + 1}`,
+      offset_days: 0,
+      completed: false
+    };
+  });
+}
+```

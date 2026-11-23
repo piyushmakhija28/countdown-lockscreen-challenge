@@ -19,14 +19,14 @@ We must decide on the styling architecture.
 - **60 FPS Hardware Acceleration:** GPU-composited rendering without layout thrashing.
 - **Dynamic Theming Support:** Instant 1-click theme switching across Cyber Obsidian, Deep Focus Zen, and Aurora Botanical.
 - **Zero Runtime Overhead:** Minimal or zero JavaScript parsing overhead for styles.
-- **Backdrop Filter Support:** Graceful degradation on browsers lacking `backdrop-filter`.
+- **Backdrop Filter Support & Fallbacks:** High-fidelity multi-layer `blur(24px)` with graceful degradation on browsers lacking `backdrop-filter`.
 
 ---
 
 ## 3. Considered Options
 - **Option 1: CSS-in-JS Runtime (Styled Components / Emotion)**
 - **Option 2: Tailwind CSS Utility Framework (via pre-processor)**
-- **Option 3: Pure CSS Custom Properties & Semantic Tokens with Hardware GPU Compositing**
+- **Option 3: Pure CSS Custom Properties & Multi-Layer Glassmorphism with Hardware GPU Compositing**
 
 ---
 
@@ -50,9 +50,14 @@ We must decide on the styling architecture.
 ---
 
 ## 5. Decision Outcome
-**Chosen Option: Option 3 (Pure CSS Custom Properties & Semantic Tokens with Hardware GPU Compositing).**
+**Chosen Option: Option 3 (Pure CSS Custom Properties & Multi-Layer Glassmorphism with Hardware GPU Compositing).**
 
-### 5.1 Rationale
-- Modifying themes is as simple as updating `document.documentElement.dataset.theme = 'aurora_botanical'`, triggering instant re-coloring without re-parsing CSS.
-- Glass panels leverage `backdrop-filter: blur(16px) saturate(180%)` backed by `will-change: transform` and `transform: translateZ(0)` for guaranteed GPU compositor layer promotion.
-- Conforms natively to `~/.claude/rules/04-frontend-standards.md`.
+### 5.1 Rationale & Structural Layering
+1. Modifying themes is executed simply by updating `document.documentElement.dataset.theme = 'aurora_botanical'`, triggering instant recoloring without re-parsing CSS rules or re-attaching stylesheets.
+2. Glass panels leverage a multi-layer composition:
+   - Base frosted layer: `backdrop-filter: blur(24px) saturate(190%)` backed by `will-change: transform` and `transform: translateZ(0)` for guaranteed GPU compositor layer promotion.
+   - Specular Fresnel reflection: Linear gradient hairline sheen (`::before`) providing natural lighting highlights along the top edge.
+   - Ambient sub-surface glow: Radial gradient highlight (`::after`) reacting to active theme accent colors.
+   - High-DPI physical hairline border: Dynamic scaling via `calc(1px / env(device-pixel-ratio, 2))` eliminating border thickness bloom on Retina displays.
+3. Graceful degradation: Enforced via `@supports not (backdrop-filter: blur(24px))` rendering solid high-contrast backgrounds with enhanced drop shadows on unsupported mobile browsers.
+4. Conforms natively to `~/.claude/rules/04-frontend-standards.md`.

@@ -6,174 +6,163 @@
 **Author:** Piyush Makhija (Lead Systems Architect & Developer)  
 **Reviewer:** Architecture Review Board  
 **Status:** APPROVED  
-**Standard:** Level 2.2 Documentation Governance (Strict TypeScript OOP Contracts)
+**Standard:** Level 2.2 Documentation Governance (Zero-Build ES2022 ECMAScript + JSDoc OOP Contracts)
 
 ---
 
-## 1. Core Domain Interfaces & Value Objects
+## 1. Core Domain Value Objects & Schema Types
 
-```typescript
+```javascript
 /**
- * Nominal branded types to enforce unit safety across milliseconds and percentages.
+ * @typedef {number} EpochMilliseconds
+ * @typedef {number} Percentage
+ * @typedef {'cyber_obsidian' | 'deep_focus_zen' | 'aurora_botanical'} ThemeId
+ * @typedef {'ultra_tall' | 'standard_portrait' | 'wide_foldable'} LayoutRegime
  */
-export type EpochMilliseconds = number & { readonly __brand: unique symbol };
-export type Percentage = number & { readonly __brand: unique symbol };
-
-/**
- * Immutable snapshot of remaining time calculated against target UTC epoch.
- */
-export interface TimeRemaining {
-  readonly days: number;
-  readonly hours: number;
-  readonly minutes: number;
-  readonly seconds: number;
-  readonly totalMilliseconds: EpochMilliseconds;
-  readonly progressPercent: Percentage;
-  readonly isExpired: boolean;
-}
 
 /**
- * Sequential milestone checkpoint entity.
+ * @typedef {Object} TimeRemaining
+ * @property {number} days - Days remaining until deadline
+ * @property {number} hours - Hours remaining (0-23)
+ * @property {number} minutes - Minutes remaining (0-59)
+ * @property {number} seconds - Seconds remaining (0-59)
+ * @property {number} totalMilliseconds - Total remaining milliseconds
+ * @property {number} progressPercent - Completion percentage (0-100)
+ * @property {boolean} isExpired - True when deadline has elapsed (totalMilliseconds <= 0)
  */
-export interface Milestone {
-  readonly id: string;
-  readonly step: number;
-  readonly title: string;
-  readonly targetOffsetDays: number;
-  readonly isCompleted: boolean;
-}
 
 /**
- * Visual design theme identifier.
+ * @typedef {Object} MilestoneItem
+ * @property {string} id - Unique identifier (e.g. "ms-1")
+ * @property {number} step - 1-based sequential step index (1-5)
+ * @property {string} title - Actionable milestone description
+ * @property {number} offsetDays - Days prior to deadline for milestone achievement
+ * @property {boolean} isCompleted - Completion status toggle
  */
-export type ThemeId = 'cyber_obsidian' | 'deep_focus_zen' | 'aurora_botanical';
 
 /**
- * Complete immutable application state representation.
+ * @typedef {Object} CountdownState
+ * @property {string} goalTitle - High-impact title (3-60 chars)
+ * @property {Date} deadline - Target UTC deadline date
+ * @property {readonly MilestoneItem[]} milestones - Sequential milestone checkpoints
+ * @property {string} affirmation - Motivational daily affirmation
+ * @property {ThemeId} selectedTheme - Active aesthetic palette
+ * @property {boolean} isOverlayVisible - True when safe-zone guide is displayed
+ * @property {boolean} isAiLoading - True during Gemini API in-flight request
+ * @property {string | null} error - Active error message or null
  */
-export interface CountdownState {
-  readonly goalTitle: string;
-  readonly deadline: Date;
-  readonly milestones: readonly Milestone[];
-  readonly affirmation: string;
-  readonly selectedTheme: ThemeId;
-  readonly isOverlayVisible: boolean;
-  readonly isAiLoading: boolean;
-  readonly error: string | null;
-}
 ```
 
 ---
 
 ## 2. Concrete Subsystem Class Specifications
 
-### 2.1 `TimeEngine` Class Contract
-```typescript
+### 2.1 `DualClockTimeEngine` Class Contract
+```javascript
 /**
- * Manages drift-compensated countdown calculations synchronized to UTC epoch.
+ * Manages drift-compensated countdown chronometry coupling UTC wall-clock anchors with requestAnimationFrame.
  */
-export class TimeEngine {
-  private rafId: number | null = null;
-  private lastTickEpoch: number = 0;
-  private isRunning: boolean = false;
+export class DualClockTimeEngine {
+  #rafId = null;
+  #lastWallEpoch = 0;
+  #isRunning = false;
+  #activeTargetEpoch = null;
+  #lastReportedRemaining = Infinity;
 
   /**
    * Initializes real-time animation ticker using requestAnimationFrame.
-   * @param deadline Target UTC deadline
-   * @param onTick Callback invoked on every frame with recalculated TimeRemaining
+   *
+   * @param {Date} deadline Target UTC deadline
+   * @param {(remaining: TimeRemaining) => void} onTick Frame callback
+   * @param {() => void} onExpire Expiration callback
    */
-  public startTicker(
-    deadline: Date,
-    onTick: (remaining: TimeRemaining) => void
-  ): void;
+  startTicker(deadline, onTick, onExpire) {}
 
   /**
    * Stops active requestAnimationFrame ticker loop.
    */
-  public stopTicker(): void;
+  stopTicker() {}
+
+  /**
+   * Resynchronizes chronometer clocks against absolute UTC epoch upon tab wake.
+   *
+   * @param {number} wallEpoch Current Date.now() timestamp
+   * @param {number} monoTime Current performance.now() timestamp
+   */
+  reanchorClocks(wallEpoch, monoTime) {}
 
   /**
    * Calculates instantaneous TimeRemaining without advancing state.
-   * @param deadline Target deadline date
-   * @param referenceTime Current time (defaults to Date.now())
+   *
+   * @param {Date} deadline Target deadline date
+   * @param {Date} [referenceTime=new Date()] Reference time
+   * @returns {TimeRemaining} Snapshot
    */
-  public calculateRemaining(
-    deadline: Date,
-    referenceTime?: Date
-  ): TimeRemaining;
+  calculateRemaining(deadline, referenceTime = new Date()) {}
 }
 ```
 
 ### 2.2 `MilestoneManager` Class Contract
-```typescript
+```javascript
 /**
  * Manages sequencing, progress metrics, and state mutations for milestone items.
  */
 export class MilestoneManager {
-  private milestones: Milestone[] = [];
+  #milestones = [];
 
   /**
-   * Replaces current milestone list with a validated new collection.
+   * Replaces current milestone collection with validated items.
+   *
+   * @param {readonly MilestoneItem[]} milestones
    */
-  public setMilestones(milestones: readonly Milestone[]): void;
+  setMilestones(milestones) {}
 
   /**
    * Toggles completion status of a specific milestone by ID.
+   *
+   * @param {string} id
    */
-  public toggleMilestone(id: string): void;
-
-  /**
-   * Adds an intermediate milestone checkpoint.
-   */
-  public addMilestone(title: string, offsetDays: number): void;
+  toggleMilestone(id) {}
 
   /**
    * Calculates aggregate progress percentage combining elapsed time and milestone checks.
+   *
+   * @param {Date} startTime Initial goal creation timestamp
+   * @param {Date} deadline Target deadline timestamp
+   * @returns {number} Progress percentage (0-100)
    */
-  public calculateProgress(startTime: Date, deadline: Date): Percentage;
+  calculateProgress(startTime, deadline) {}
 }
 ```
 
-### 2.3 `GeminiClient` & `HeuristicGenerator` Class Contracts
-```typescript
-export interface MilestonePlanResponse {
-  title: string;
-  deadline_iso: string;
-  milestones: Array<{
-    step: number;
-    title: string;
-    offset_days: number;
-    completed: boolean;
-  }>;
-  daily_affirmation: string;
-  recommended_theme: ThemeId;
-}
-
+### 2.3 `GeminiAiClient` & `HeuristicGenerator` Class Contracts
+```javascript
 /**
  * Client gateway for Google Gemini 3.8 Flash model.
  */
-export class GeminiClient {
-  private apiKey: string | null = null;
-  private activeAbortController: AbortController | null = null;
-  private currentRequestEpoch: number = 0;
+export class GeminiAiClient {
+  #apiKey = null;
+  #activeAbortController = null;
+  #currentRequestEpoch = 0;
 
-  constructor(apiKey?: string);
+  /**
+   * @param {string} [apiKey] Optional Google Gemini API key
+   */
+  constructor(apiKey) {}
 
   /**
    * Deconstructs a goal into backward milestones using Google Gemini 3.8 Flash.
-   * Cancels any pending in-flight requests via AbortController to prevent ABA races.
-   * Throws AiServiceError if request fails or times out (> 4000ms).
-   * Throws AsyncAbortedError if a newer request supercedes this request.
+   *
+   * @param {string} goalTitle Sanitized goal title
+   * @param {Date} deadline Target deadline timestamp
+   * @returns {Promise<Object>} MilestonePlanResponse
    */
-  public async generatePlan(
-    goalTitle: string,
-    deadline: Date
-  ): Promise<MilestonePlanResponse>;
+  async generatePlan(goalTitle, deadline) {}
 
   /**
    * Aborts active in-flight request if present.
    */
-  public abortActiveRequest(): void;
+  abortActiveRequest() {}
 }
 
 /**
@@ -181,315 +170,243 @@ export class GeminiClient {
  */
 export class HeuristicGenerator {
   /**
-   * Synthesizes 4 equidistant milestone intervals using pure local arithmetic.
+   * Synthesizes 4 equidistant milestone intervals using pure local arithmetic in < 5ms.
+   *
+   * @param {string} goalTitle Goal string
+   * @param {Date} deadline Target deadline
+   * @param {Date} [now=new Date()] Reference timestamp
+   * @returns {Object} MilestonePlanResponse
    */
-  public static generatePlan(
-    goalTitle: string,
-    deadline: Date
-  ): MilestonePlanResponse;
+  static generatePlan(goalTitle, deadline, now = new Date()) {}
 }
 ```
 
-### 2.4 `CanvasRenderer` Class Contract
-```typescript
-export interface RenderOptions {
-  width: number;           // Standard: 1170
-  height: number;          // Standard: 2532
-  devicePixelRatio: number;// Clamped to min(2.0, devicePixelRatio) to prevent 16.7M ceiling
-  themeId: ThemeId;
-  showSafeZoneOverlay: boolean;
-}
-
+### 2.4 `AdaptiveBufferAllocator` Class Contract
+```javascript
 /**
- * High-DPI Canvas 2D rasterizer producing 1170x2532 lock screen wallpapers.
+ * Probes GPU limits and calculates optimal supersampling scale factors satisfying WebKit 16.7M px area.
  */
-export class CanvasRenderer {
-  private canvas: HTMLCanvasElement;
-  private ctx: CanvasRenderingContext2D;
-
-  constructor();
+export class AdaptiveBufferAllocator {
+  static #cachedMaxDim = null;
+  static #WEBKIT_MAX_AREA = 16777216;
 
   /**
-   * Pre-loads required web fonts before rendering, preventing Canvas FOUT/FOIT.
+   * Probes GPU WebGL context for maximum hardware texture dimension.
+   *
+   * @returns {number} 4096 on constrained mobile GPUs; 8192 on desktop/flagships
    */
-  public async ensureFontsLoaded(): Promise<void>;
+  static getMaxTextureDimension() {}
 
   /**
-   * Executes multi-layer rasterization pipeline onto internal 2x supersampled canvas.
+   * Solves closed-form dual-constraint scale factor for target resolution.
+   *
+   * @param {number} baseWidth Base canvas width
+   * @param {number} baseHeight Base canvas height
+   * @returns {{width: number, height: number, scaleFactor: number, isConstrained: boolean}}
    */
-  public async renderWallpaper(
-    options: RenderOptions,
-    state: CountdownState,
-    remaining: TimeRemaining
-  ): Promise<HTMLCanvasElement>;
+  static computeOptimalBuffer(baseWidth, baseHeight) {}
+}
+```
+
+### 2.5 `ResponsiveLayoutEngine` Class Contract
+```javascript
+/**
+ * Computes non-overlapping layout bounds across Ultra-Tall, Standard, and Foldable regimes.
+ */
+export class ResponsiveLayoutEngine {
+  /**
+   * Calculates layout boxes with guaranteed non-overlapping bounds.
+   *
+   * @param {number} width Canvas width in pixels
+   * @param {number} height Canvas height in pixels
+   * @returns {Object} Computed layout metrics and coordinates
+   */
+  static computeLayout(width, height) {}
+}
+```
+
+### 2.6 `InputSanitizer` Class Contract
+```javascript
+/**
+ * Defensive input validator stripping control chars, Trojan Source Bidi overrides, and HTML tags.
+ */
+export class InputSanitizer {
+  /**
+   * Normalizes Unicode, removes Bidi overrides, and validates against whitelist regex.
+   *
+   * @param {string} raw Raw user input string
+   * @returns {string} Sanitized clean goal title
+   * @throws {Error} If input violates length or character constraints
+   */
+  static sanitizeGoalTitle(raw) {}
 
   /**
-   * Extracts rasterized canvas to binary image blob for download or native mobile sharing.
+   * Escapes XML/HTML entities for safe insertion into prompts and DOM.
+   *
+   * @param {string} input
+   * @returns {string} Escaped string
    */
-  public async exportBlob(
-    format?: 'image/png' | 'image/jpeg',
-    quality?: number
-  ): Promise<Blob>;
+  static escapeXmlEntities(input) {}
+}
+```
+
+### 2.7 `UrlStateService` Class Contract
+```javascript
+/**
+ * Serializes and deserializes application state to/from #v1= URL hash with 32KB decompression bomb defense.
+ */
+export class UrlStateService {
+  /**
+   * Encodes application state into compressed Base64URL string.
+   *
+   * @param {CountdownState} state
+   * @returns {Promise<string>} #v1= hash string
+   */
+  static async serializeState(state) {}
 
   /**
-   * Triggers native Web Share API (Level 2) or falls back to anchor download.
+   * Deserializes Base64URL payload into clean, prototype-free state dictionary.
+   * Supports both compact tuple arrays and structured object dictionaries.
+   *
+   * @param {string} base64Payload
+   * @returns {Promise<Record<string, any>>}
    */
-  public async shareOrDownload(blob: Blob, filename: string): Promise<void>;
+  static async deserializeState(base64Payload) {}
+}
+```
+
+### 2.8 `ParticleEngine` Class Contract
+```javascript
+/**
+ * Zero-allocation Float32Array celebration confetti physics engine.
+ */
+export class ParticleEngine {
+  #count = 150;
+  #buffer = new Float32Array(150 * 6);
+  #rafId = null;
 
   /**
-   * Clears canvas buffers (width=0, height=0) and triggers GPU texture deallocation.
+   * Initializes 150 particles with polar velocities and triggers 180-frame animation.
+   *
+   * @param {CanvasRenderingContext2D} ctx
+   * @param {number} width
+   * @param {number} height
    */
-  public dispose(): void;
-}
-
-/**
- * Offscreen DOM text shaping bridge ensuring 100% accurate Indic/Arabic complex script shaping.
- */
-export interface BiDiTextShaper {
-  rasterizeComplexText(text: string, fontFamily: string, fontSize: number, color: string): Promise<ImageBitmap>;
-  detectDirectionality(text: string): 'rtl' | 'ltr';
-  wrapDirectionalIsolates(text: string): string;
-}
-
-/**
- * Perceptually uniform Oklab color space gradient interpolation engine.
- */
-export interface OklabGradientEngine {
-  interpolateOklab(colorA: string, colorB: string, t: number): string;
-  createOklabCanvasGradient(ctx: CanvasRenderingContext2D, x0: number, y0: number, x1: number, y1: number, stops: [number, string][]): CanvasGradient;
-}
-
-/**
- * Adaptive tri-modal frame governor mitigating mobile GPU thermal throttling.
- */
-export interface AdaptiveFrameGovernor {
-  setInteractionState(active: boolean): void;
-  getThrottleIntervalMs(): number;
-  registerVisibilityListener(): void;
-}
-
-/**
- * Procedural micro-orbital shifting engine preventing OLED sub-pixel burn-in on AOD displays.
- */
-export interface MicroOrbitalBurnInGuard {
-  getOrbitalOffset(timestampMs: number): { dx: number; dy: number };
-  clampRelativeLuminance(rgb: [number, number, number]): [number, number, number];
-}
-
-/**
- * Dual-transport URL and binary bit-packed state encoding service.
- */
-export interface DualTransportUrlService {
-  encodeCompactBinary(state: CountdownState): Uint8Array;
-  decodeCompactBinary(bytes: Uint8Array): CountdownState;
-  generateShareableLink(state: CountdownState, mode: 'hash' | 'query'): string;
-  renderMicroQrVector(bytes: Uint8Array, sizePx: number): Promise<ImageBitmap>;
-}
-
-/**
- * Resilient streaming JSON repair parser handling mid-token disconnections.
- */
-export interface StreamingJSONRepairService {
-  repairAndParse<T>(truncatedJson: string): T | null;
-}
-
-/**
- * Dynamic lockscreen safe zone router handling notification peek and foldable morphing.
- */
-export interface DynamicSafeZoneRouter {
-  getActiveSafeZone(aspectRatio: string, notificationActive: boolean): SafeZoneBounds;
-}
-
-/**
- * Procedural Web Audio API sound synthesizer with sample-rate resilience and auto-cleanup.
- */
-export class AudioChimeService {
-  private ctx: AudioContext | null = null;
-  private isUnlocked: boolean = false;
-
-  constructor();
+  startBurst(ctx, width, height) {}
 
   /**
-   * Initializes or unlocks the AudioContext upon first user gesture (touch/click).
+   * Stops particle animation loop and resets buffer.
    */
-  public async unlockAudioContext(): Promise<void>;
-
-  /**
-   * Synthesizes a celebratory major chord chime (C5-E5-G5-C6) upon countdown completion.
-   * Auto-disconnects oscillator and gain nodes immediately after playback.
-   */
-  public async playVictoryChime(): Promise<void>;
-
-  /**
-   * Synthesizes subtle high-frequency tick click (2400Hz, 8ms) for interactive slider scrubbing.
-   */
-  public playTickChime(): void;
-
-  /**
-   * Closes active AudioContext and releases hardware sound buffers.
-   */
-  public dispose(): Promise<void>;
+  stop() {}
 }
+```
 
+### 2.9 `AudioService` Class Contract
+```javascript
+/**
+ * Procedural Web Audio API sound synthesizer with 4-state lifecycle, dynamic sample rate, and peak limiter.
+ */
+export class AudioService {
+  #ctx = null;
+  #limiterNode = null;
+  #state = 'LOCKED';
+
+  /**
+   * Initializes gesture listeners to prime AudioContext on first tap/click.
+   */
+  constructor() {}
+
+  /**
+   * Unlocks AudioContext via 1-sample buffer playback.
+   *
+   * @returns {Promise<boolean>}
+   */
+  async unlockAudioContext() {}
+
+  /**
+   * Synthesizes celebratory major chord chime (C5-E5-G5-C6) with peak compression.
+   *
+   * @returns {Promise<boolean>}
+   */
+  async playVictoryChime() {}
+
+  /**
+   * Releases hardware audio resources.
+   */
+  dispose() {}
+}
+```
+
+### 2.10 `HapticService` Class Contract
+```javascript
 /**
  * Mobile vibration haptic feedback controller with feature detection and silent fallback.
  */
-export class HapticFeedbackService {
-  private readonly isSupported: boolean;
+export class HapticService {
+  #isSupported = false;
 
-  constructor();
+  constructor() {}
 
   /**
    * Triggers single light tactile pulse (15ms) for interactive toggles.
    */
-  public lightTap(): void;
+  lightTap() {}
 
   /**
-   * Triggers victory vibration pattern ([100ms on, 50ms off, 100ms on, 50ms off, 250ms on]).
+   * Triggers victory vibration pattern ([100, 50, 100, 50, 250]).
    */
-  public victoryPattern(): void;
+  victoryPattern() {}
 
   /**
    * Immediately terminates active vibration patterns.
    */
-  public cancel(): void;
-}
-
-/**
- * Greedy multi-line word-wrapping and font shrink-to-fit calculation engine for Canvas 2D.
- */
-export class CanvasTextWrapper {
-  /**
-   * Wraps text into lines fitting within maxPixelWidth using canvas measureText.
-   */
-  public static wrapText(
-    ctx: CanvasRenderingContext2D,
-    text: string,
-    maxPixelWidth: number
-  ): string[];
-
-  /**
-   * Computes optimal font size using binary search between minSize and maxSize
-   * ensuring text strictly fits inside target bounding box [maxW x maxH].
-   */
-  public static fitText(
-    ctx: CanvasRenderingContext2D,
-    text: string,
-    fontFamily: string,
-    minSize: number,
-    maxSize: number,
-    maxW: number,
-    maxH: number
-  ): number;
-}
-
-/**
- * Leaky bucket rate-limiter protecting against Safari's 100-call / 30s history.replaceState ceiling.
- */
-export class HistoryQuotaGuard {
-  private timerId: number | null = null;
-  private pendingPayload: string | null = null;
-  private readonly debounceMs: number = 300;
-
-  constructor(debounceMs?: number);
-
-  /**
-   * Schedules a debounced history.replaceState update, dropping intermediate states.
-   */
-  public pushStateUpdate(hashPayload: string): void;
-
-  /**
-   * Immediately flushes any pending state into history before page unload.
-   */
-  public flush(): void;
-}
-
-/**
- * High-performance, zero-allocation tick snapshot engine for 60 FPS RAF loops.
- */
-export class ZeroAllocationTickEngine {
-  private readonly snapshot: {
-    days: number;
-    hours: number;
-    minutes: number;
-    seconds: number;
-    totalMs: number;
-    progress: number;
-    isExpired: boolean;
-  };
-
-  constructor();
-
-  /**
-   * Recycles internal snapshot struct without instantiating new objects, eliminating V8 GC pressure.
-   */
-  public compute(deadlineEpoch: number, nowEpoch: number): typeof this.snapshot;
-}
-
-/**
- * Multi-device lockscreen safe-zone guide renderer.
- */
-export class SafeZoneOverlay {
-  /**
-   * Renders visual exclusion guides for Dynamic Island, notch, fingerprint sensor, and dock.
-   */
-  public static renderGuides(
-    ctx: CanvasRenderingContext2D,
-    width: number,
-    height: number,
-    deviceModel: 'iphone_island' | 'iphone_notch' | 'android_punchhole'
-  ): void;
-
-  /**
-   * Returns exact pixel bounding box safe for text placement [x, y, width, height].
-   */
-  public static getSafeTextBounds(
-    width: number,
-    height: number
-  ): { x: number; y: number; width: number; height: number };
+  cancel() {}
 }
 ```
 
----
-
-## 3. Vanilla ES Modules & JSDoc Runtime Schema
-
-To preserve the zero-build-step, pure native browser architecture, all production code in `src/js/` is written in standard ECMAScript 2022 Modules (`.js`). Types and nominal contracts defined in Section 1 and 2 are enforced at authoring time via strict JSDoc annotations conforming to `~/.claude/rules/12-docstrings-only.md`:
-
+### 2.11 `TokenBucketHistoryGuard` Class Contract
 ```javascript
 /**
- * @typedef {Object} TimeRemaining
- * @property {number} days
- * @property {number} hours
- * @property {number} minutes
- * @property {number} seconds
- * @property {number} totalMilliseconds
- * @property {number} progressPercent
- * @property {boolean} isExpired
+ * Leaky token bucket rate limiter (B=30, r=2/s) preventing WebKit history.replaceState quota errors.
  */
+export class TokenBucketHistoryGuard {
+  #tokens = 30;
+  #capacity = 30;
+  #refillRatePerSec = 2;
+  #lastRefillEpoch = Date.now();
+  #pendingHash = null;
+  #timer = null;
 
-/**
- * @typedef {Object} Milestone
- * @property {string} id
- * @property {number} step
- * @property {string} title
- * @property {number} targetOffsetDays
- * @property {boolean} isCompleted
- */
+  /**
+   * Enqueues state update with immediate sessionStorage sync and throttled replaceState.
+   *
+   * @param {string} hashPayload
+   */
+  pushStateUpdate(hashPayload) {}
 
-/**
- * @typedef {'cyber_obsidian' | 'deep_focus_zen' | 'aurora_botanical'} ThemeId
- */
+  /**
+   * Flushes any pending state into history immediately before page unload.
+   */
+  flush() {}
+}
+```
 
+### 2.12 `CountdownApp` Class Contract
+```javascript
 /**
- * @typedef {Object} CountdownState
- * @property {string} goalTitle
- * @property {Date} deadline
- * @property {readonly Milestone[]} milestones
- * @property {string} affirmation
- * @property {ThemeId} selectedTheme
- * @property {boolean} isOverlayVisible
- * @property {boolean} isAiLoading
- * @property {string | null} error
+ * Compositional application root orchestrating state store, chronometer, DOM views, and export engine.
  */
+export class CountdownApp {
+  #store = null;
+  #timeEngine = null;
+  #audioService = null;
+  #hapticService = null;
+  #historyGuard = null;
+  #canvasRenderer = null;
+
+  /**
+   * Boots application, hydrates URL hash, registers event listeners, and mounts UI.
+   */
+  async init() {}
+}
 ```

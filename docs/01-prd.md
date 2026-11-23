@@ -207,7 +207,7 @@ gantt
     section Phase 1: Architecture
     SDLC 10/10 Specs & UML Modeling     :done, des1, 2026-11-22, 1d
     section Phase 2: MVP Core
-    TimeEngine & Heuristic Generator    :active, dev1, 2026-11-22, 1d
+    DualClockTimeEngine & Heuristic Generator    :active, dev1, 2026-11-22, 1d
     Canvas 2D 1170x2532 Rasterizer      :active, dev2, 2026-11-22, 1d
     Safe-Zone Simulator & 3 Themes      :dev3, 2026-11-23, 1d
     section Phase 3: AI & PWA

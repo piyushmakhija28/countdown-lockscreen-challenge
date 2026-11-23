@@ -119,7 +119,7 @@ countdown-lockscreen-challenge/
 │       │   ├── TokenBucketHistoryGuard.js # Token-bucket history rate limiter
 │       │   └── InputSanitizer.js      # Unicode NFKC & Bidi Trojan Source shield
 │       ├── ai/
-│       │   ├── GeminiClient.js        # Google Gemini 3.8 Flash SDK client (Header auth)
+│       │   ├── GeminiAiClient.js        # Google Gemini 3.8 Flash SDK client (Header auth)
 │       │   └── HeuristicGenerator.js  # Deterministic offline fallback
 │       ├── canvas/
 │       │   ├── CanvasRenderer.js      # High-DPI 2D rasterizer
@@ -129,7 +129,7 @@ countdown-lockscreen-challenge/
 │       │   ├── ParticleEngine.js      # Float32Array celebration physics
 │       │   └── SafeZoneOverlay.js     # Lock screen simulator overlay
 │       ├── services/
-│       │   ├── AudioChimeService.js   # Autoplay-primed procedural Web Audio
+│       │   ├── AudioService.js   # Autoplay-primed procedural Web Audio
 │       │   └── HapticService.js       # Vibration API tactile patterns
 │       └── app.js                     # Root view controller & event bindings
 ├── tests/                             # Target Test Suite (Sprint 3 Delivery)

@@ -13,7 +13,7 @@ Smartphone displays have advanced to ultra-high pixel densities (e.g. Apple Supe
 
 However, naive supersampling (such as fixed $2\times$ or $3\times$ scaling) introduces two catastrophic failure modes on mobile devices:
 1. **WebKit 16.7M Pixel Area Ceiling:** iOS Safari hard-caps individual canvas backing stores to $16,777,216\text{ pixels}$ ($2^{24}$). Any allocation exceeding this limit crashes the GPU process or renders a blank white/black canvas.
-2. **Hardware Max Texture Dimension Ceiling ($4096\text{px}$):** On memory-constrained devices (iPhone SE 2/3, iPhone 11, base iPads), the underlying GPU Metal/WebGL texture dimension ceiling is $4096\text{px}$. At $2\times$ supersampling on an $1170 \times 2532\text{px}$ canvas, height $H = 5064\text{px} \gg 4096\text{px}$, causing allocation rejection.
+2. **Hardware Max Texture Dimension Ceiling ($4096\text{px}$):** On memory-constrained devices (iPhone SE 2/3, iPhone 11-14 base, base iPads), the underlying GPU Metal/WebGL texture dimension ceiling is $4096\text{px}$. At $2\times$ supersampling on an $1170 \times 2532\text{px}$ canvas, height $H = 5064\text{px} \gg 4096\text{px}$, causing allocation rejection.
 
 We must establish an adaptive, dual-constraint mathematical model that guarantees razor-sharp typography while mathematically guaranteeing immunity against GPU memory failures.
 
@@ -65,45 +65,56 @@ $$S = \min \left( 2.0, \sqrt{\frac{A_{\max}}{W_{\text{base}} \times H_{\text{bas
 Where:
 - $A_{\max} = 16,777,216\text{ pixels}$ ($2^{24}$, iOS WebKit hard area ceiling).
 - $D_{\max} = \text{detectMaxTextureDimension}()$:
-  $$D_{\max} = \begin{cases} 4096\text{px} & \text{on memory-constrained iOS devices} \\ 8192\text{px} & \text{on modern desktop / flagship mobile devices} \end{cases}$$
+  $$D_{\max} = \begin{cases} 4096\text{px} & \text{on memory-constrained mobile/iOS devices} \\ 8192\text{px} & \text{on modern desktop / flagship mobile devices} \end{cases}$$
 
 ### 5.2 Architectural Implementation Blueprint (`AdaptiveBufferAllocator.js`)
-```typescript
+```javascript
 /**
- * Computes optimal canvas buffer dimensions respecting GPU texture limits.
+ * Computes optimal canvas buffer dimensions respecting GPU texture limits and WebKit ceilings.
  */
 export class AdaptiveBufferAllocator {
-  private static cachedMaxDim: number | null = null;
-  private static readonly WEBKIT_MAX_AREA = 16777216;
+  static #cachedMaxDim = null;
+  static #WEBKIT_MAX_AREA = 16777216;
 
-  public static getMaxTextureDimension(): number {
-    if (this.cachedMaxDim !== null) return this.cachedMaxDim;
+  /**
+   * Probes GPU WebGL context for maximum hardware texture dimension.
+   *
+   * @returns {number} Maximum safe texture dimension (4096 or 8192)
+   */
+  static getMaxTextureDimension() {
+    if (this.#cachedMaxDim !== null) return this.#cachedMaxDim;
     try {
       const canvas = document.createElement('canvas');
       const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
       if (gl) {
-        this.cachedMaxDim = (gl as WebGLRenderingContext).getParameter(
-          (gl as WebGLRenderingContext).MAX_TEXTURE_SIZE
-        );
+        this.#cachedMaxDim = gl.getParameter(gl.MAX_TEXTURE_SIZE);
       } else {
-        this.cachedMaxDim = 4096;
+        this.#cachedMaxDim = 4096;
       }
     } catch {
-      this.cachedMaxDim = 4096;
+      this.#cachedMaxDim = 4096;
     }
 
+    // iOS and iPadOS hardware concurrency check
     const isConstrainedIos =
-      /iPhone OS (1[2-6]|20[0-6])/i.test(navigator.userAgent) &&
+      /iPhone OS (1[2-9]|[2-9][0-9])|CPU OS (1[2-9]|[2-9][0-9])/i.test(navigator.userAgent) &&
       (navigator.hardwareConcurrency || 4) <= 4;
-    if (isConstrainedIos && this.cachedMaxDim > 4096) {
-      this.cachedMaxDim = 4096;
+    if (isConstrainedIos && this.#cachedMaxDim > 4096) {
+      this.#cachedMaxDim = 4096;
     }
-    return this.cachedMaxDim;
+    return this.#cachedMaxDim;
   }
 
-  public static computeOptimalBuffer(baseWidth: number, baseHeight: number) {
+  /**
+   * Solves closed-form dual-constraint scale factor for target resolution.
+   *
+   * @param {number} baseWidth Base canvas width
+   * @param {number} baseHeight Base canvas height
+   * @returns {{width: number, height: number, scaleFactor: number, isConstrained: boolean}}
+   */
+  static computeOptimalBuffer(baseWidth, baseHeight) {
     const maxDim = this.getMaxTextureDimension();
-    const areaScale = Math.sqrt(this.WEBKIT_MAX_AREA / (baseWidth * baseHeight));
+    const areaScale = Math.sqrt(this.#WEBKIT_MAX_AREA / (baseWidth * baseHeight));
     const linearScale = maxDim / Math.max(baseWidth, baseHeight);
     const scale = Math.min(2.0, areaScale, linearScale);
 

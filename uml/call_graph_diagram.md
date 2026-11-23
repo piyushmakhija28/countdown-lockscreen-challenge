@@ -3,27 +3,27 @@
 ```mermaid
 graph TD
     AppInit[app.js: initializeApp] --> StoreInit[StateStore.init]
-    AppInit --> TimeInit[TimeEngine.startTicker]
+    AppInit --> TimeInit[DualClockTimeEngine.startTicker]
     AppInit --> UrlInit[UrlStateService.deserialize]
     
     UrlInit -->|If Hash Present| StoreDispatch[StateStore.dispatch: SET_STATE]
     
     UserAction[User Clicks Generate with Gemini] --> HandleSubmit[app.js: handleGoalSubmit]
-    HandleSubmit --> GeminiInvoke[GeminiClient.decomposeGoal]
+    HandleSubmit --> GeminiInvoke[GeminiAiClient.decomposeGoal]
     
     GeminiInvoke -->|Try| FetchAPI[fetch https://generativelanguage.googleapis.com]
     GeminiInvoke -->|Catch Error| FallbackInvoke[HeuristicGenerator.generate]
     
-    FetchAPI --> ValidateJSON[GeminiClient.validateSchema]
+    FetchAPI --> ValidateJSON[GeminiAiClient.validateSchema]
     ValidateJSON --> StoreDispatch
     FallbackInvoke --> StoreDispatch
     
-    StoreDispatch --> TimeUpdate[TimeEngine.setDeadline]
+    StoreDispatch --> TimeUpdate[DualClockTimeEngine.setDeadline]
     StoreDispatch --> RenderDOM[ViewRenderer.renderAll]
     
-    TimeInit --> RAFLoop[TimeEngine.tick]
+    TimeInit --> RAFLoop[DualClockTimeEngine.tick]
     RAFLoop --> PerfNow[window.performance.now]
-    RAFLoop --> CalcUnits[TimeEngine.calculateRemaining]
+    RAFLoop --> CalcUnits[DualClockTimeEngine.calculateRemaining]
     CalcUnits --> UpdateTickerDOM[ViewRenderer.updateTicker]
     
     UserExport[User Clicks Download Wallpaper] --> HandleExport[app.js: handleExportClick]

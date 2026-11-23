@@ -15,7 +15,7 @@ graph TD
             StateMgr[Unidirectional State Manager]
             TimeEng[Drift-Compensated Time Engine]
             UrlCodec[Base64 URL Hash Serializer]
-            HistoryGuard[HistoryQuotaGuard: 300ms Leaky Bucket]
+            HistoryGuard[TokenBucketHistoryGuard: 300ms Leaky Bucket]
         end
 
         subgraph RenderingLayer [High-DPI Wallpaper Rendering Engine]
@@ -26,8 +26,8 @@ graph TD
         end
 
         subgraph SensoryLayer [Audio & Haptic Feedback Subsystems]
-            AudioChime[AudioChimeService: Procedural Web Audio]
-            HapticCtrl[HapticFeedbackService: Vibration API]
+            AudioChime[AudioService: Procedural Web Audio]
+            HapticCtrl[HapticService: Vibration API]
         end
 
         subgraph AILayer [Google Gemini Intelligence Layer]

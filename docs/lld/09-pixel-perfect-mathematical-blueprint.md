@@ -1,4 +1,4 @@
-﻿# Level 4: Low-Level Design â€” Cross-Device Pixel-Perfect Mathematical Blueprint
+﻿# Level 4: Low-Level Design — Cross-Device Pixel-Perfect Mathematical Blueprint
 ### (Complete Mathematical Formulations, Coordinate Transforms, Rasterization Grids, and Color Science)
 
 **Document ID:** `DOC-LLD-09-PIXEL-PERFECT-MATHEMATICAL-BLUEPRINT`  
@@ -21,16 +21,16 @@ To ensure the countdown lock screen engine renders with **100% mathematical prec
 +---+---------------------------------------------------+--------------------+----------------------------+
 | # | Mathematical Domain                               | Key Equations      | Target Objective           |
 +---+---------------------------------------------------+--------------------+----------------------------+
-| 1 | **2D Affine Transform & Screen Unprojection**       | M = T Â· R Â· S     | Coordinate system invariance|
-| 2 | **DPR Sub-Pixel Snapping & Baseline Quantization**| y_snap = round(yÂ·D)/D| Zero baseline blur/wobble  |
+| 1 | **2D Affine Transform & Screen Unprojection**       | M = T · R · S      | Coordinate system invariance|
+| 2 | **DPR Sub-Pixel Snapping & Baseline Quantization**| y_snap = round(y·D)/D| Zero baseline blur/wobble  |
 | 3 | **Multi-Aspect Ratio Conformal Mapping**          | S_iso = min(Sx, Sy)| 9:19.5, 9:16, 23:9, 4:3 fit|
 | 4 | **Oklab Perceptual Color Space Transform Matrix** | sRGB -> LMS -> Oklab| Zero-banding neon gradients|
-| 5 | **Polar-to-Cartesian Arc Geometry & Ring Math**   | C(Î¸) = c + r[cos,sin]| Exact stroke-dashoffset    |
-| 6 | **Fritsch-Carlson Monotone Cubic Splines**        | Î±Â² + Î²Â² â‰¤ 9        | Zero overshoot wave curves |
-| 7 | **Fitts's Law Ergonomic Touch Boundaries**        | MT = a + b logâ‚‚(2D/W)| ID â‰¤ 3.5 bits thumb reach |
+| 5 | **Polar-to-Cartesian Arc Geometry & Ring Math**   | C(θ) = c + r[cos,sin]| Exact stroke-dashoffset    |
+| 6 | **Fritsch-Carlson Monotone Cubic Splines**        | α² + β² ≤ 9        | Zero overshoot wave curves |
+| 7 | **Fitts's Law Ergonomic Touch Boundaries**        | MT = a + b log₂(2D/W)| ID ≤ 3.5 bits thumb reach  |
 | 8 | **Mazur's Hyperbolic Chronometry & Decay Curves** | V = A / (1 + kD)   | Cognitive urgency mapping  |
-| 9 | **Procedural Micro-Orbital Shifting Geometry**    | Î”r(t) = R [cos, sin]| OLED AOD burn-in immunity  |
-| 10| **Adaptive Frame Decimation & Thermal Governor**  | Î”t âˆˆ {16, 66, 1000} | Mobile GPU thermal ceiling |
+| 9 | **Procedural Micro-Orbital Shifting Geometry**    | Δr(t) = R [cos, sin]| OLED AOD burn-in immunity  |
+| 10| **Adaptive Frame Decimation & Thermal Governor**  | Δt ∈ {16, 66, 1000} | Mobile GPU thermal ceiling |
 +---+---------------------------------------------------+--------------------+----------------------------+
 ```
 
@@ -50,11 +50,14 @@ $$x_{\text{world}} = s_x x_{\text{local}} \cos\theta - s_y y_{\text{local}} \sin
 $$y_{\text{world}} = s_x x_{\text{local}} \sin\theta + s_y y_{\text{local}} \cos\theta + t_y$$
 
 ### 2.2 Algebraic Inverse Transform (Unprojection)
-When the user taps on the interactive screen at viewport coordinate $(s_x, s_y)$, we unproject to normalized canvas coordinates $(u, v) \in [0, 1]^2$ to determine hit-testing:
+When the user taps on the interactive screen at viewport coordinate $(x_{\text{screen}}, y_{\text{screen}})$, we unproject to normalized canvas coordinates $(u, v) \in [0, 1]^2$ to determine hit-testing:
 
 $$M^{-1} = S^{-1} \cdot R^{-1} \cdot T^{-1} = \begin{bmatrix} 1/s_x & 0 & 0 \\ 0 & 1/s_y & 0 \\ 0 & 0 & 1 \end{bmatrix} \begin{bmatrix} \cos\theta & \sin\theta & 0 \\ -\sin\theta & \cos\theta & 0 \\ 0 & 0 & 1 \end{bmatrix} \begin{bmatrix} 1 & 0 & -t_x \\ 0 & 1 & -t_y \\ 0 & 0 & 1 \end{bmatrix}$$
 
-Because $R^{-1} = R^T$ (due to orthogonality: $\cos^2\theta + \sin^2\theta = 1$), inversion is strictly $O(1)$ closed-form with zero Gaussian elimination overhead.
+Because $R^{-1} = R^T$ (due to orthogonality: $\cos^2\theta + \sin^2\theta = 1$), inversion is strictly $O(1)$ closed-form:
+$$x_{\text{local}} = \frac{(x_{\text{world}} - t_x)\cos\theta + (y_{\text{world}} - t_y)\sin\theta}{s_x}$$
+$$y_{\text{local}} = \frac{-(x_{\text{world}} - t_x)\sin\theta + (y_{\text{world}} - t_y)\cos\theta}{s_y}$$
+$$u = \frac{x_{\text{local}}}{W_{\text{canvas}}}, \quad v = \frac{y_{\text{local}}}{H_{\text{canvas}}}$$
 
 ---
 
@@ -109,8 +112,8 @@ $$T_y = \frac{H_{\text{target}} - (H_{\text{base}} \cdot S_{\text{uniform}})}{2}
 ### 5.1 The sRGB Gradient "Dead Zone" Failure
 Standard linear RGB color interpolation between complementary hues (e.g., Cyber Cyan `#00F5FF` to Neon Violet `#9D00FF`) passes through a muddy, desaturated gray "dead zone" because sRGB is not perceptually uniform.
 
-### 5.2 Oklab Transformation Pipeline
-BjÃ¶rn Ottosson's Oklab color space provides exact perceptual uniformity. The continuous mathematical transformation from non-linear sRGB $(R, G, B) \in [0, 1]^3$ to Oklab $(L, a, b)$ is derived in three closed-form matrix steps:
+### 5.2 Forward Oklab Transformation Pipeline
+Björn Ottosson's Oklab color space provides exact perceptual uniformity. The continuous mathematical transformation from non-linear sRGB $(R, G, B) \in [0, 1]^3$ to Oklab $(L, a, b)$ is derived in three closed-form matrix steps:
 
 #### Step 1: Linearize sRGB
 $$C_{\text{linear}} = \begin{cases} \frac{C}{12.92} & \text{if } C \le 0.04045 \\ \left(\frac{C + 0.055}{1.055}\right)^{2.4} & \text{otherwise} \end{cases} \quad \forall C \in \{R, G, B\}$$
@@ -125,7 +128,18 @@ $$\begin{bmatrix} L^* \\ a^* \\ b^* \end{bmatrix} = \begin{bmatrix} 0.2104542553
 
 Interpolation between Color $A$ and Color $B$ for progress $t \in [0, 1]$ is strictly linear in Oklab space:
 $$L^*(t) = (1 - t) L_A^* + t L_B^*, \quad a^*(t) = (1 - t) a_A^* + t a_B^*, \quad b^*(t) = (1 - t) b_A^* + t b_B^*$$
-Inverting the matrix back to sRGB produces luminous, vibrant glassmorphic gradients completely free of gray dead zones.
+
+### 5.3 Closed-Form Inverse Transform: Oklab to sRGB
+To render the interpolated color onto the canvas context, the Oklab coordinates are mapped back to sRGB:
+
+$$\begin{bmatrix} l' \\ m' \\ s' \end{bmatrix} = \begin{bmatrix} 1.0 & 0.3963377774 & 0.2158037573 \\ 1.0 & -0.1055613458 & -0.0638541728 \\ 1.0 & -0.0894841775 & -1.2914855480 \end{bmatrix} \begin{bmatrix} L^* \\ a^* \\ b^* \end{bmatrix}$$
+
+$$l = (l')^3, \quad m = (m')^3, \quad s = (s')^3$$
+
+$$\begin{bmatrix} R_{\text{linear}} \\ G_{\text{linear}} \\ B_{\text{linear}} \end{bmatrix} = \begin{bmatrix} 4.0767434057 & -3.3077115913 & 0.2309699292 \\ -1.2684380046 & 2.6097574011 & -0.3413193965 \\ -0.0041960863 & -0.7034186147 & 1.7076147010 \end{bmatrix} \begin{bmatrix} l \\ m \\ s \end{bmatrix}$$
+
+Gamma companding back to non-linear sRGB $(R, G, B) \in [0, 1]$:
+$$C = \begin{cases} 12.92 \cdot C_{\text{linear}} & \text{if } C_{\text{linear}} \le 0.0031308 \\ 1.055 \cdot C_{\text{linear}}^{1/2.4} - 0.055 & \text{otherwise} \end{cases} \quad \forall C \in \{R, G, B\}$$
 
 ---
 
@@ -155,8 +169,15 @@ $$\theta_{\text{end}} = \theta_{\text{start}} + \min(2\pi - 10^{-6}, 2\pi \cdot 
 ### 7.1 Spline Overshoot Phenomenon
 Standard Hermite or Catmull-Rom cubic splines through milestone points $(x_k, y_k)$ suffer from Runge's phenomenon or local extrema overshoot, causing progress curves to dip below $0\%$ or exceed $100\%$.
 
-### 7.2 Monotonicity Necessary and Sufficient Conditions
-Let secant slope be $\Delta_k = \frac{y_{k+1} - y_k}{x_{k+1} - x_k}$. Let tangents at points $k$ and $k+1$ be $d_k$ and $d_{k+1}$. Define:
+### 7.2 Monotonicity Conditions & Division-by-Zero Guard
+Let secant slope be $\Delta_k = \frac{y_{k+1} - y_k}{x_{k+1} - x_k}$.
+
+**Division-by-Zero Guard Invariant:**  
+If $\Delta_k = 0$ (consecutive milestone points have identical values), the slope is zero, and we immediately set:
+$$d_k = 0, \quad d_{k+1} = 0$$
+This eliminates division-by-zero singularities during flat progress stretches.
+
+When $\Delta_k \ne 0$, let tangents at points $k$ and $k+1$ be $d_k$ and $d_{k+1}$. Define:
 $$\alpha_k = \frac{d_k}{\Delta_k}, \quad \beta_k = \frac{d_{k+1}}{\Delta_k}$$
 
 Fritsch & Carlson (1980) proved that the spline is strictly monotonic on $[x_k, x_{k+1}]$ if and only if $(\alpha_k, \beta_k)$ lies within a convex region bounded by:

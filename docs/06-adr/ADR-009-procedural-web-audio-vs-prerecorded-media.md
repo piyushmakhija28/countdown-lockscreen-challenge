@@ -18,6 +18,7 @@ However, playing audio in web applications on mobile devices introduces severe c
 1. **Network Overhead & Asset Bloat:** Pre-recorded `.mp3` files add $40\text{--}150\text{ KB}$ to initial load size and fail completely when offline.
 2. **Mobile Autoplay Policy Rejection:** Modern browsers (iOS Safari and Android Chrome) strictly block `AudioContext` from starting or resuming without an active user gesture (touch/click). If a user loads a countdown link with 10 seconds remaining and watches passively, an unprimed `ctx.resume()` will throw `NotAllowedError: AudioContext was not allowed to start`, causing an unhandled promise rejection that breaks the celebration sequence.
 3. **Audio Session Invalidation on iOS:** When the phone locks or receives a call, the `AudioContext` transitions to `'interrupted'` state, requiring re-priming.
+4. **Resampling Overhead & Speaker Clipping:** Fixed sample-rate buffers trigger software resamplers on mismatched outputs (44.1kHz vs 48kHz Bluetooth), and stacked polyphonic chords cause digital clipping.
 
 ---
 
@@ -25,12 +26,13 @@ However, playing audio in web applications on mobile devices introduces severe c
 - **Zero Asset Overhead ($0\text{ KB}$):** No additional media files in git repository or deployment bundles.
 - **100% Offline Resilience:** Synthesizes sound mathematically via Web Audio oscillators without network calls.
 - **Autoplay Policy Resilience:** Handles unprompted countdown expiration gracefully with gesture priming and soft fallback.
+- **Peak Limiting & Hardware Sample-Rate Match:** Dynamically matches `ctx.sampleRate` and limits peaks via `DynamicsCompressorNode`.
 - **Zero Main Thread Jitter:** Sound scheduling executes asynchronously in the browser audio thread.
 
 ---
 
 ## 3. Decision & 4-State Audio Lifecycle
-We chose **Procedural Web Audio API Synthesis with Gesture-Gated Priming and Soft Degradation**.
+We chose **Procedural Web Audio API Synthesis with Gesture-Gated Priming, Dynamic Sample Rate, Peak Limiter, and Soft Degradation**.
 
 ```
 +---------------------------------------------------------------------------------------------------+
@@ -39,7 +41,7 @@ We chose **Procedural Web Audio API Synthesis with Gesture-Gated Priming and Sof
 | State             | Trigger                    | System Behavior                                  |
 +-------------------+----------------------------+--------------------------------------------------+
 | 1. `LOCKED`       | Initial application boot   | Context uninitialized or suspended.              |
-| 2. `UNLOCKED`     | First user tap/touch/click | Primes hardware with silent 1-sample buffer.     |
+| 2. `UNLOCKED`     | First user tap/touch/click | Primes hardware with native sample-rate buffer.  |
 | 3. `INTERRUPTED`  | Phone call / lock screen   | Hardware output suspended by OS audio manager.   |
 | 4. `DEGRADED`     | Expiration while `LOCKED`  | Suppresses chime; triggers haptics & badge.      |
 +-------------------+----------------------------+--------------------------------------------------+
@@ -47,29 +49,30 @@ We chose **Procedural Web Audio API Synthesis with Gesture-Gated Priming and Sof
 
 ---
 
-## 4. Architectural Implementation Blueprint (`AudioChimeService.js`)
+## 4. Architectural Implementation Blueprint (`AudioService.js`)
 
-```typescript
+```javascript
 /**
- * Procedural harmonic victory chime synthesizer with autoplay priming.
+ * Procedural harmonic victory chime synthesizer with autoplay priming and dynamics compression.
  */
-export class AudioChimeService {
-  private ctx: AudioContext | null = null;
-  private isUnlocked: boolean = false;
-  private isPendingPlayback: boolean = false;
+export class AudioService {
+  #ctx = null;
+  #limiterNode = null;
+  #isUnlocked = false;
+  #isPendingPlayback = false;
 
   constructor() {
-    this.registerGestureListeners();
+    this.#registerGestureListeners();
   }
 
-  private registerGestureListeners(): void {
+  #registerGestureListeners() {
     const events = ['pointerdown', 'touchstart', 'keydown'];
     const unlockHandler = async () => {
       await this.unlockAudioContext();
-      if (this.isUnlocked) {
+      if (this.#isUnlocked) {
         events.forEach((evt) => window.removeEventListener(evt, unlockHandler));
-        if (this.isPendingPlayback) {
-          this.isPendingPlayback = false;
+        if (this.#isPendingPlayback) {
+          this.#isPendingPlayback = false;
           await this.playVictoryChime();
         }
       }
@@ -79,45 +82,64 @@ export class AudioChimeService {
     );
   }
 
-  public async unlockAudioContext(): Promise<boolean> {
+  /**
+   * Unlocks and primes AudioContext with dynamic sample-rate silent buffer.
+   *
+   * @returns {Promise<boolean>}
+   */
+  async unlockAudioContext() {
     try {
-      if (!this.ctx) {
-        const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+      if (!this.#ctx) {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
         if (!AudioCtx) return false;
-        this.ctx = new AudioCtx();
+        this.#ctx = new AudioCtx();
+
+        // Dynamics Compressor Peak Limiter to prevent speaker clipping
+        this.#limiterNode = this.#ctx.createDynamicsCompressor();
+        this.#limiterNode.threshold.setValueAtTime(-3, this.#ctx.currentTime);
+        this.#limiterNode.knee.setValueAtTime(30, this.#ctx.currentTime);
+        this.#limiterNode.ratio.setValueAtTime(12, this.#ctx.currentTime);
+        this.#limiterNode.attack.setValueAtTime(0.003, this.#ctx.currentTime);
+        this.#limiterNode.release.setValueAtTime(0.25, this.#ctx.currentTime);
+        this.#limiterNode.connect(this.#ctx.destination);
       }
 
-      if (this.ctx.state === 'suspended' || (this.ctx.state as string) === 'interrupted') {
-        await this.ctx.resume();
+      if (this.#ctx.state === 'suspended' || this.#ctx.state === 'interrupted') {
+        await this.#ctx.resume();
       }
 
-      // Play 1-sample silent buffer to prime mobile hardware
-      const buffer = this.ctx.createBuffer(1, 1, 22050);
-      const source = this.ctx.createBufferSource();
+      // Play 1-sample silent buffer matching native hardware sampleRate
+      const buffer = this.#ctx.createBuffer(1, 1, this.#ctx.sampleRate);
+      const source = this.#ctx.createBufferSource();
       source.buffer = buffer;
-      source.connect(this.ctx.destination);
+      source.connect(this.#limiterNode);
       source.start(0);
 
-      this.isUnlocked = this.ctx.state === 'running';
-      return this.isUnlocked;
+      this.#isUnlocked = this.#ctx.state === 'running';
+      return this.#isUnlocked;
     } catch {
-      this.isUnlocked = false;
+      this.#isUnlocked = false;
       return false;
     }
   }
 
-  public async playVictoryChime(): Promise<boolean> {
-    if (!this.ctx || this.ctx.state !== 'running') {
+  /**
+   * Synthesizes celebratory major chord (C5, E5, G5, C6) through the peak limiter.
+   *
+   * @returns {Promise<boolean>}
+   */
+  async playVictoryChime() {
+    if (!this.#ctx || this.#ctx.state !== 'running') {
       const unlocked = await this.unlockAudioContext();
       if (!unlocked) {
-        this.isPendingPlayback = true;
+        this.#isPendingPlayback = true;
         window.dispatchEvent(new CustomEvent('audio:autoplay-blocked'));
         return false;
       }
     }
 
     try {
-      const ctx = this.ctx!;
+      const ctx = this.#ctx;
       const chord = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
       const now = ctx.currentTime;
 
@@ -128,13 +150,13 @@ export class AudioChimeService {
         osc.type = 'sine';
         osc.frequency.setValueAtTime(freq, now + idx * 0.08);
 
-        // Exponential ramps (non-zero minimum to prevent Web Audio singularity)
+        // Exponential volume decay envelope
         gain.gain.setValueAtTime(0.0001, now + idx * 0.08);
         gain.gain.exponentialRampToValueAtTime(0.18, now + idx * 0.08 + 0.04);
         gain.gain.exponentialRampToValueAtTime(0.0001, now + idx * 0.08 + 1.20);
 
         osc.connect(gain);
-        gain.connect(ctx.destination);
+        gain.connect(this.#limiterNode); // Route to compressor limiter
 
         osc.start(now + idx * 0.08);
         osc.stop(now + idx * 0.08 + 1.25);
@@ -149,6 +171,17 @@ export class AudioChimeService {
       return true;
     } catch {
       return false;
+    }
+  }
+
+  /**
+   * Closes audio context and cleans up audio hardware nodes.
+   */
+  dispose() {
+    if (this.#ctx) {
+      this.#ctx.close().catch(() => {});
+      this.#ctx = null;
+      this.#limiterNode = null;
     }
   }
 }

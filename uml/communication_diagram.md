@@ -3,10 +3,10 @@
 ```mermaid
 graph LR
     User((User)) -->|1: Enters Goal & Deadline| UI[AppUI View]
-    UI -->|2: Invokes decomposeGoal| Gemini[GeminiClient]
+    UI -->|2: Invokes decomposeGoal| Gemini[GeminiAiClient]
     Gemini -->|3: Returns structured milestones| UI
     UI -->|4: Dispatches action SET_MILESTONES| Store[StateStore]
-    Store -->|5: Notifies state change| Engine[TimeEngine]
+    Store -->|5: Notifies state change| Engine[DualClockTimeEngine]
     Engine -->|6: Emits 60fps tick events| UI
     User -->|7: Requests Wallpaper Download| UI
     UI -->|8: render(state, options)| Canvas[CanvasRenderer]
