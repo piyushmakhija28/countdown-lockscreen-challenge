@@ -1,4 +1,4 @@
-# Level 4: Low-Level Design — Package Structure & Code Blueprint
+# Level 4: Low-Level Design — Package Structure & Target Implementation Blueprint
 
 **Document ID:** `DOC-LLD-07-PACKAGE-STRUCTURE`  
 **Project:** `countdown-lockscreen-challenge`  
@@ -6,42 +6,105 @@
 **Author:** Piyush Makhija (Lead Systems Architect & Developer)  
 **Reviewer:** Architecture Review Board  
 **Status:** APPROVED  
-**Standard:** Level 2.3 Documentation Governance (Modular Package Architecture)
+**Standard:** Level 2.2 Documentation Governance (Modular Package Architecture)
+
+> [!NOTE]  
+> **Engineering Phase Status:** This document specifies the comprehensive **Target Implementation Architecture (Sprint 2–4 Delivery)**. The repository currently represents **Sprint 1 Complete (Enterprise Architecture & Level 2.2 Documentation Governance Suite)**, with source code scaffolding scheduled for immediate implementation.
 
 ---
 
-## 1. Directory Structure & File Map
+## 1. Directory Structure & Complete Repository Map
 
 ```
 countdown-lockscreen-challenge/
 ├── .github/
 │   └── workflows/
 │       └── ci.yml                     # GitHub Actions CI/CD to GitHub Pages
-├── docs/                              # Level 2.2 Deep Architecture & Governance
-│   ├── 00-problem-statement.md
-│   ├── 01-prd.md
-│   ├── 02-hld.md
-│   ├── 03-api-contract.md
-│   ├── 04-competition-and-platform-research.md
-│   ├── 05-srs.md
-│   ├── 06-adr/                        # ADR-001 through ADR-010 (MADR 3.0)
-│   ├── 07-architecture-tradeoffs-and-faq.md
-│   ├── 08-handshake-submission-package.md # Official Contest Submission Deliverables
-│   ├── ui-ux/                         # Design tokens, ergonomics, a11y
-│   ├── lld/                           # Low-level design 01-11 (Classes, Sequences, Patterns, Security, Math, Micro-Arch)
-│   ├── devops/                        # Docker, CI/CD, hosting specs
-│   ├── security/                      # STRIDE, OWASP, input sanitization
-│   ├── resilience/                    # Bulkhead, retry, error catalog
-│   ├── observability/                 # Telemetry, Core Web Vitals, review
-│   ├── testing/                       # Test strategy, triad test cases, load
-│   └── management/                    # WBS, service orchestration DAG, traceability
+├── docs/                              # Level 2.2 Deep Architecture & Governance (53 Specs)
+│   ├── 00-problem-statement.md        # ISO/IEC/IEEE 29148 Problem Statement & Invariants
+│   ├── 01-prd.md                      # PRD, Personas, Journey Maps & Mission Traceability
+│   ├── 02-hld.md                      # High-Level Design, C4 Models & Dual-Engine Architecture
+│   ├── 03-api-contract.md             # Gemini 3.8 Flash Schema, URL Codec & Contracts
+│   ├── 04-competition-and-platform-research.md # 7-Page PDF Teardown, 4x25% Rubric Math & OS Specs
+│   ├── 05-srs.md                      # Canonical Software Requirements Specification
+│   ├── 06-adr/                        # Architecture Decision Records (ADR-001 through ADR-010)
+│   │   ├── ADR-001-architecture-style-and-runtime.md
+│   │   ├── ADR-002-rendering-engine-canvas-vs-dom.md
+│   │   ├── ADR-003-state-serialization-and-sharing.md
+│   │   ├── ADR-004-high-dpi-mobile-export-strategy.md
+│   │   ├── ADR-005-glassmorphism-and-styling-engine.md
+│   │   ├── ADR-006-privacy-first-local-storage-model.md
+│   │   ├── ADR-007-time-engine-and-milestone-chronometry.md
+│   │   ├── ADR-008-static-deployment-and-pwa-topology.md
+│   │   ├── ADR-009-procedural-web-audio-vs-prerecorded-media.md
+│   │   └── ADR-010-leaky-bucket-history-guard-vs-synchronous-pushstate.md
+│   ├── 07-architecture-tradeoffs-and-faq.md # Tradeoff Matrices, Failure Modes & Judge FAQ
+│   ├── 08-handshake-submission-package.md # Official Contest Submission Package & Deliverables
+│   ├── competition-rules-summary.md   # Official Contest Rules Teardown & Legal Verification
+│   ├── lockscreen-design-strategy.md  # 1.8s Glanceability Index & Technical Moats Playbook
+│   ├── ui-ux/                         # UI/UX Specifications
+│   │   ├── 01-design-system-and-tokens.md
+│   │   ├── 02-lockscreen-safe-zones-ergonomics.md
+│   │   └── 03-accessibility-wcag-apca.md
+│   ├── lld/                           # Low-Level Design (LLD-01 through LLD-11)
+│   │   ├── 01-class-and-object-design.md
+│   │   ├── 02-dynamic-interaction-sequences.md
+│   │   ├── 03-state-machine-lifecycle.md
+│   │   ├── 04-concurrency-threading-model.md
+│   │   ├── 05-design-patterns-and-solid-principles.md
+│   │   ├── 06-exception-hierarchy-and-error-handling.md
+│   │   ├── 07-package-structure-and-code-blueprint.md
+│   │   ├── 08-system-design-vulnerability-audit.md
+│   │   ├── 09-pixel-perfect-mathematical-blueprint.md
+│   │   ├── 10-micro-architectural-implementation-details.md
+│   │   └── 11-deep-dive-design-patterns-and-security-architecture.md
+│   ├── devops/                        # DevOps Specifications
+│   │   ├── 01-docker-and-container-spec.md
+│   │   ├── 02-ci-cd-pipeline-spec.md
+│   │   └── 03-hosting-and-environment-spec.md
+│   ├── security/                      # Security Specifications
+│   │   ├── 01-threat-model-stride.md
+│   │   ├── 02-owasp-web-top10-audit.md
+│   │   ├── 03-credential-logging-governance.md
+│   │   └── 04-input-validation-and-sanitization-pipeline.md
+│   ├── resilience/                    # Resilience Specifications
+│   │   ├── 01-fault-tolerance-bulkhead.md
+│   │   ├── 02-timeout-and-retry-policy.md
+│   │   └── 03-error-catalogue-degradation.md
+│   ├── observability/                 # Observability Specifications
+│   │   ├── 01-structured-logging-telemetry.md
+│   │   ├── 02-health-probes-cold-start.md
+│   │   └── 03-production-readiness-review.md
+│   ├── testing/                       # Testing Specifications
+│   │   ├── 01-test-strategy-and-pyramid.md
+│   │   ├── 02-test-cases-catalog.md
+│   │   └── 03-performance-load-testing.md
+│   └── management/                    # Project Management Specifications
+│       ├── 01-wbs-and-sprint-backlog.md
+│       ├── 02-service-orchestration-dag.md
+│       └── 03-traceability-matrix.md
 ├── uml/                               # The 13 Canonical Mermaid UML Diagrams
-├── public/
+│   ├── activity_diagram.md
+│   ├── call_graph_diagram.md
+│   ├── class_diagram.md
+│   ├── communication_diagram.md
+│   ├── component_diagram.md
+│   ├── composite_diagram.md
+│   ├── deployment_diagram.md
+│   ├── interaction_diagram.md
+│   ├── object_diagram.md
+│   ├── package_diagram.md
+│   ├── sequence_diagram.md
+│   ├── state_diagram.md
+│   └── usecase_diagram.md
+├── public/                            # Target Public PWA Distribution Assets
 │   ├── favicon.ico
 │   ├── manifest.json                  # PWA Web App Manifest
 │   └── sw.js                          # Cache-first Service Worker
-├── src/                               # Application Source Code
+├── src/                               # Target Application Source Code (Sprint 2 Delivery)
 │   ├── index.html                     # Main application entry point
+│   ├── assets/
+│   │   └── fonts/                     # Self-hosted WOFF2 fonts (Inter, JetBrains Mono)
 │   ├── css/
 │   │   ├── tokens.css                 # 8pt grid & CSS custom properties
 │   │   ├── glassmorphism.css          # Glassmorphic backdrop filters
@@ -50,31 +113,33 @@ countdown-lockscreen-challenge/
 │       ├── config/
 │       │   └── themes.js              # Theme definitions & color tokens
 │       ├── core/
-│       │   ├── TimeEngine.js          # Drift-compensated countdown engine
-│       │   ├── ZeroAllocationTickEngine.js # Pre-allocated GC-free tick engine
+│       │   ├── DualClockTimeEngine.js # Drift-compensated hybrid chronometer
 │       │   ├── MilestoneManager.js    # Checkpoint sequencing & progress
 │       │   ├── UrlStateService.js     # Base64 URL hash serialization
-│       │   └── HistoryQuotaGuard.js   # 300ms leaky bucket history rate limiter
+│       │   ├── TokenBucketHistoryGuard.js # Token-bucket history rate limiter
+│       │   └── InputSanitizer.js      # Unicode NFKC & Bidi Trojan Source shield
 │       ├── ai/
-│       │   ├── GeminiClient.js        # Google Gemini 3.8 Flash SDK client
+│       │   ├── GeminiClient.js        # Google Gemini 3.8 Flash SDK client (Header auth)
 │       │   └── HeuristicGenerator.js  # Deterministic offline fallback
 │       ├── canvas/
-│       │   ├── CanvasRenderer.js      # 1170x2532 2D rasterizer
-│       │   ├── CanvasTextWrapper.js   # Greedy word-wrapping & font fit engine
-│       │   ├── ParticleEngine.js      # Float32Array zero-allocation celebration physics
+│       │   ├── CanvasRenderer.js      # High-DPI 2D rasterizer
+│       │   ├── AdaptiveBufferAllocator.js # Dual-constraint WebKit GPU texture allocator
+│       │   ├── ResponsiveLayoutEngine.js # Tri-modal responsive layout engine
+│       │   ├── CanvasTextWrapper.js   # Bidi isolation & text wrapper
+│       │   ├── ParticleEngine.js      # Float32Array celebration physics
 │       │   └── SafeZoneOverlay.js     # Lock screen simulator overlay
 │       ├── services/
-│       │   ├── AudioChimeService.js   # Web Audio procedural sound synthesis
+│       │   ├── AudioChimeService.js   # Autoplay-primed procedural Web Audio
 │       │   └── HapticService.js       # Vibration API tactile patterns
 │       └── app.js                     # Root view controller & event bindings
-├── tests/                             # Test Suite
-│   ├── unit/                          # TimeEngine, UrlState unit tests
-│   └── integration/                   # Canvas export & Gemini fallbacks
+├── tests/                             # Target Test Suite (Sprint 3 Delivery)
+│   ├── unit/                          # Unit tests
+│   └── integration/                   # Integration tests
 ├── .gitignore                         # Level 2.2 strict doc exclusions
-├── VERSION                            # Single source of truth (1.0.0)
-├── CHANGELOG.md                       # Keep a Changelog standard
-├── CLAUDE.md                          # Project developer guidelines
-└── README.md                          # Main project playbook
+├── VERSION                            # Single source of truth version string (1.1.0)
+├── CHANGELOG.md                       # Keep a Changelog release history
+├── CLAUDE.md                          # Claude Code developer instructions
+└── README.md                          # Master project playbook
 ```
 
 ---
@@ -83,33 +148,6 @@ countdown-lockscreen-challenge/
 
 To maintain strict acyclic dependencies ($D \le 0.15$):
 - `core/` modules have zero dependencies on `canvas/` or `ai/`.
-- `ai/` modules depend only on `core/types`.
-- `canvas/` modules depend only on `core/TimeEngine` and `config/themes`.
+- `ai/` modules depend only on `core/types` and communicate with Gemini strictly via `x-goog-api-key` HTTP headers.
+- `canvas/` modules depend only on `core/DualClockTimeEngine` and `config/themes`.
 - `app.js` is the sole orchestrator wiring modules together, ensuring strict inward-pointing dependencies conforming to Clean Architecture.
-
----
-
-## 3. Mathematical Rigor & Geometry Integration (`DOC-LLD-09`)
-
-All low-level graphics, transforms, and chronometric state machines must strictly adhere to the closed-form algebraic formulations derived in `docs/lld/09-pixel-perfect-mathematical-blueprint.md`:
-1. **Coordinate Pipeline:** Affine TRS matrix mapping with $O(1)$ inverse unprojection.
-2. **Sub-Pixel Quantization:** $y_{\text{snapped}} = \lfloor y \cdot \text{DPR} + 0.5 \rfloor / \text{DPR}$.
-3. **Color Blending:** Oklab perceptual color space matrix pipeline eliminating sRGB gray dead zones.
-4. **Milestone Waves:** Fritsch-Carlson monotone cubic spline interpolation ensuring $\alpha_k^2 + \beta_k^2 \le 9$.
-5. **Ergonomic Safe Zones:** Fitts's Law index of difficulty $ID \le 3.5\text{ bits}$ on mobile viewports.
-6. **OLED AOD Protection:** Continuous procedural micro-orbital shifting with $R = 2.0\text{px}$ and $T = 3600\text{s}$.
-
----
-
-## 4. Micro-Architectural Implementation Details & Edge-Case Hazards (`DOC-LLD-10`)
-
-All component implementations, event loops, canvas routines, and memory management must strictly comply with the 40 micro-architectural invariants detailed in `docs/lld/10-micro-architectural-implementation-details.md`:
-1. **DOM & Canvas Events:** `{ passive: false }` on touchmove, unified `pointercancel` state machine, and `touch-action: manipulation` (`LLD-EV-01` to `03`).
-2. **Context & Pixel Operations:** RAII scoped `withCanvasContext()` wrapper, offscreen `destination-in` rounded corner clipping, and safe text bounding-box metrics (`LLD-CV-01` to `04`).
-3. **Chronometry:** Monotonic display time clamping, strict zero threshold triggering, and zero-allocation two-digit LUT (`LLD-TM-01` to `03`).
-4. **AI & Network Resilience:** Full jitter exponential backoff on 429 and XML delimiter escaping (`LLD-AI-01` to `02`).
-5. **Storage & PWA:** Safari private browsing storage probe, forward schema migration, and byte-to-byte service worker cache-busting (`LLD-ST-01` to `03`).
-6. **V8 JIT Optimization:** Monomorphic struct constructors, packed array splicing, and detached typed-array cloning (`LLD-V8-01` to `03`).
-7. **CSS & Glassmorphism:** Single composite frosted glass layer, dynamic `calc(1px / dpr)` hairline borders, and stacking context isolation (`LLD-CS-01` to `03`).
-8. **Asynchronous Execution:** Microtask loop freeze avoidance via RAF/requestIdleCallback, clean AbortError handling, and monotonic upload tokens (`LLD-AS-01` to `03`).
-

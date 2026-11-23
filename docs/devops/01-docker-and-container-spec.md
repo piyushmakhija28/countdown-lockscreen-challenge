@@ -6,11 +6,13 @@
 **Author:** Piyush Makhija (Lead Systems Architect & Developer)  
 **Reviewer:** Architecture Review Board  
 **Status:** APPROVED  
-**Standard:** Level 2.3 Documentation Governance (Multi-Stage Hardened Container Architecture)
+**Standard:** Level 2.2 Documentation Governance (Multi-Stage Hardened Container Architecture)
 
 ---
 
 ## 1. Multi-Stage Production Dockerfile
+
+The container image is built using a two-stage Alpine-based multi-stage architecture to produce a minimal, non-root, hardened static web server:
 
 ```dockerfile
 # ==============================================================================
@@ -36,7 +38,7 @@ FROM nginx:1.27-alpine AS production
 LABEL maintainer="Piyush Makhija <contact@piyushmakhija.dev>"
 LABEL org.opencontainers.image.title="Countdown Lock Screen Challenge"
 LABEL org.opencontainers.image.description="Handshake AI Skills Studio X Google Countdown Lock Screen & Wallpaper Generator"
-LABEL org.opencontainers.image.version="1.0.0"
+LABEL org.opencontainers.image.version="1.1.0"
 
 # Remove default nginx static welcome pages
 RUN rm -rf /usr/share/nginx/html/*
@@ -78,43 +80,48 @@ server {
     root /usr/share/nginx/html;
     index index.html;
 
-    # Gzip Compression Optimization
+    # Gzip & Brotli Compression Optimization
     gzip on;
     gzip_vary on;
     gzip_min_length 1024;
     gzip_proxied expired no-cache no-store private auth;
-    gzip_types text/plain text/css text/xml text/javascript application/x-javascript application/xml application/json image/svg+xml;
+    gzip_types text/plain text/css text/xml text/javascript application/x-javascript application/xml application/json image/svg+xml font/woff2;
 
-    # Security Headers (OWASP Hardening)
+    # Strict OWASP & CSP Level 3 Security Headers
     add_header X-Frame-Options "DENY" always;
     add_header X-Content-Type-Options "nosniff" always;
-    add_header X-XSS-Protection "1; mode=block" always;
     add_header Referrer-Policy "strict-origin-when-cross-origin" always;
-    add_header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' https://generativelanguage.googleapis.com;" always;
+    add_header Content-Security-Policy "default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; connect-src 'self' https://generativelanguage.googleapis.com; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'; upgrade-insecure-requests; block-all-mixed-content;" always;
+
+    # Cache-Control Strategy
+    location ~* \.(?:html)$ {
+        add_header Cache-Control "no-cache, no-store, must-revalidate" always;
+    }
+
+    location ~* \.(?:css|js|woff2|png|svg|ico)$ {
+        add_header Cache-Control "public, max-age=31536000, immutable" always;
+    }
 
     # Health Probe
     location /health {
         access_log off;
         return 200 "healthy\n";
     }
-
-    # Static Assets Caching
-    location /src/ {
-        expires 30d;
-        add_header Cache-Control "public, no-transform";
-    }
-
-    # Single Page Application Ingress
-    location / {
-        try_files $uri $uri/ /index.html;
-    }
 }
 ```
 
 ---
 
-## 3. Container Security & CIS Benchmark Compliance
+## 3. Container Resource & Multi-Architecture Build Matrix
 
-- **Non-Root Execution:** Runs strictly under the `nginx` unprivileged user (`UID 101`).
-- **Read-Only Root Filesystem Compatible:** Ephemeral temp caches mounted under tmpfs.
-- **Vulnerability Scanning:** Automated Trivy scan in CI pipeline asserts **0 Critical and 0 High CVEs**.
+```
++------------------------------------+---------------------------------------+
+| Resource Attribute                 | Production Specification Bounds       |
++------------------------------------+---------------------------------------+
+| Target Architectures               | `linux/amd64`, `linux/arm64`          |
+| Container Base Image               | `nginx:1.27-alpine` (< 45 MB)         |
+| Memory Ceiling                     | Hard limit: 64 MB; Reservation: 32 MB |
+| CPU Ceiling                        | 0.25 vCPU limit; 0.10 vCPU reserved   |
+| Process Privilege                  | Non-root (`USER nginx`, UID 101)      |
++------------------------------------+---------------------------------------+
+```

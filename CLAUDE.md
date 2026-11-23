@@ -10,30 +10,41 @@ This repository contains the design, code, and documentation for the **Handshake
 ## Architecture & Structure
 ```
 countdown-lockscreen-challenge/
-├── .gitignore               # Ignored files & Level 2.2 doc exclusions
-├── VERSION                  # Single source of truth version (1.0.0)
-├── CHANGELOG.md             # Keep a Changelog release history
-├── CLAUDE.md                # Developer instructions & context
-├── README.md                # Main documentation & challenge playbook
-├── docs/                    # Architectural specifications & requirements
-│   ├── 00-problem-statement.md
-│   ├── 01-prd.md
-│   ├── 02-hld.md
-│   ├── 03-api-contract.md
-│   ├── 04-competition-and-platform-research.md
-│   ├── 05-srs.md            # Canonical Software Requirements Specification
-│   ├── 06-adr/              # Architecture Decision Records
-│   ├── lld/                 # Low-level design & mathematical blueprints
-│   └── ...                  # Specialized engineering subsystems
-└── src/                     # Source code (web app / wallpaper generator)
-    ├── index.html           # Main application entry point
-    ├── css/                 # Modern styling & design tokens
-    └── js/                  # Real-time countdown & canvas export logic
+├── .gitignore                         # Ignored files & Level 2.2 doc exclusions
+├── VERSION                            # Single source of truth version (1.1.0)
+├── CHANGELOG.md                       # Keep a Changelog release history
+├── CLAUDE.md                          # Developer instructions & context
+├── README.md                          # Main documentation & challenge playbook
+├── docs/                              # Level 2.2 Deep Architecture & Governance (53 Specs)
+│   ├── 00-problem-statement.md        # Problem Statement, Invariants & Ground Truth
+│   ├── 01-prd.md                      # PRD, User Personas & Journey Maps
+│   ├── 02-hld.md                      # High-Level Design, C4 Models & Dual Engine
+│   ├── 03-api-contract.md             # Gemini 3.8 Flash Schema, URL Codec & APIs
+│   ├── 04-competition-and-platform-research.md # 7-Page PDF Teardown & Rubric Math
+│   ├── 05-srs.md                      # Authoritative Software Requirements Specification
+│   ├── 06-adr/                        # Architecture Decision Records (ADR-001 to ADR-010)
+│   ├── 07-architecture-tradeoffs-and-faq.md # Tradeoff Matrices & Judge FAQ
+│   ├── 08-handshake-submission-package.md # Official Contest Submission Package
+│   ├── competition-rules-summary.md   # Official Contest Rules Teardown
+│   ├── lockscreen-design-strategy.md  # 1.8s Glanceability Index & Technical Moats
+│   ├── ui-ux/                         # Design System, Safe Zones & Accessibility (3 specs)
+│   ├── lld/                           # Low-Level Design & Mathematical Blueprints (11 specs)
+│   ├── devops/                        # Docker Container, CI/CD & Edge Hosting (3 specs)
+│   ├── security/                      # STRIDE, OWASP Top 10, Secrets & Validation (4 specs)
+│   ├── resilience/                    # Bulkheads, Retry Jitter & Error Degradation (3 specs)
+│   ├── observability/                 # Telemetry, Health Probes & PRR Review (3 specs)
+│   ├── testing/                       # Testing Strategy, Triad Catalog & Load Benchmarks (3 specs)
+│   └── management/                    # WBS Backlog, Orchestration DAG & RTM (3 specs)
+├── uml/                               # The 13 Canonical Mermaid UML Diagrams
+└── src/                               # Target Application Source Code (Sprint 2 Delivery)
+    ├── index.html                     # Main application entry point
+    ├── css/                           # Modern styling & design tokens
+    └── js/                            # Real-time countdown & canvas export logic
 ```
 
 ## Development Guidelines
-- **Strict Level 2.2 Governance:** Root directory strictly contains only 4 project management files: `README.md`, `CLAUDE.md`, `VERSION`, `CHANGELOG.md`. All architectural, functional, and requirement specifications (including `05-srs.md`) reside strictly in `docs/` to preserve a clean single source of truth.
-- **Level 2.2 Docstrings-Only:** Every public function and class must include contract docstrings specifying inputs, outputs, and behavior. Avoid redundant inline commentary narrating trivial statements.
+- **Strict Level 2.2 Governance:** Root directory strictly contains only 5 project management files: `README.md`, `CLAUDE.md`, `VERSION`, `CHANGELOG.md`, and `.gitignore`. All 53 architectural, functional, and requirement specifications reside strictly in `docs/` and all 13 diagrams in `uml/` to preserve a clean single source of truth.
+- **Sprint Phasing Status:** Sprint 1 (Enterprise Architecture & Level 2.2 Documentation Governance Suite) is 100% complete and approved. `src/` represents the upcoming Sprint 2 target implementation delivery blueprint.
+- **Level 2.2 Docstrings-Only:** Every public function and class must include contract docstrings specifying inputs, outputs, errors, and invariants. Redundant inline commentary narrating trivial statements is strictly banned.
 - **Ergonomics First:** Every visual design must respect phone lock screen constraints: top 25-30% reserved for system clock/date/widgets, middle 50% for countdown & milestones, bottom 10-15% for system indicators.
 - **Git Commit Standards:** Use conventional commit messages (`feat:`, `fix:`, `docs:`, `refactor:`, `test:`).
-

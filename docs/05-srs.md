@@ -1,4 +1,4 @@
-# Level 5: Software Requirements Specification (SRS)
+﻿# Level 5: Software Requirements Specification (SRS)
 
 **Document ID:** `DOC-05-SRS`  
 **Project:** `countdown-lockscreen-challenge`  
@@ -6,7 +6,7 @@
 **Author:** Piyush Makhija (Lead Systems Architect & Developer)  
 **Reviewer:** Architecture Review Board  
 **Status:** APPROVED  
-**Standard:** Level 2.3 Documentation Governance (ISO/IEC/IEEE 29148 Standard)
+**Standard:** Level 2.2 Documentation Governance (ISO/IEC/IEEE 29148 Standard)
 
 ---
 
@@ -52,7 +52,7 @@ Each functional requirement is formally specified with unique identifier, descri
 - **Requirement:** The system shall generate a tailored, psychologically empowering daily affirmation string ($\le 120$ characters) matching the user's specific goal domain.
 - **Preconditions:** Successful Gemini or heuristic milestone generation.
 - **Output:** String rendered below milestones on the preview and wallpaper canvas.
-- **Verification Method:** Inspection & Test (`TC-POS-02`).
+- **Verification Method:** Inspection & Test (`TC-POS-03`).
 
 ### FR-05: Drift-Compensated Real-Time Chronometer
 - **Requirement:** The system shall compute real-time remaining temporal units (Days, Hours, Minutes, Seconds) updated on every browser animation frame ($16.6\text{ms}$).
@@ -61,52 +61,52 @@ Each functional requirement is formally specified with unique identifier, descri
   - $\text{Hours} = \lfloor (\Delta t \pmod{86400000}) / 3600000 \rfloor$
   - $\text{Minutes} = \lfloor (\Delta t \pmod{3600000}) / 60000 \rfloor$
   - $\text{Seconds} = \lfloor (\Delta t \pmod{60000}) / 1000 \rfloor$
-- **Verification Method:** Test (`TC-POS-03`).
+- **Verification Method:** Test (`TC-POS-04`).
 
 ### FR-06: Zero-Drift Clock Synchronization
-- **Requirement:** The countdown ticker shall synchronize against hardware `performance.now()` deltas to eliminate cumulative time drift across background tab throttling.
+- **Requirement:** The countdown ticker shall synchronize against universal UTC epoch timestamps with visibilitychange re-anchoring to eliminate cumulative time drift across device sleep and background tab throttling.
 - **Mathematical Bound:** Cumulative timing drift $\lim_{n \to \infty} \sum e(t_n) = 0$.
-- **Verification Method:** Test (`TC-EDGE-02`).
+- **Verification Method:** Test (`TC-POS-05`, `TC-EDGE-01`).
 
 ### FR-07: Interactive Milestone Management
 - **Requirement:** The user shall be able to add, edit, delete, and toggle completion checkmarks on intermediate milestones in real time.
 - **Processing:** State store updates milestone `completed: boolean` flag; triggers dynamic progress recalculation.
-- **Verification Method:** Test (`TC-POS-04`).
+- **Verification Method:** Test (`TC-POS-06`).
 
 ### FR-08: Progress Metric Derivation
 - **Requirement:** The system shall calculate overall goal completion percentage combining elapsed time and completed milestone checkpoints:
   
   $$\text{Progress \%} = 0.5 \left( \frac{t_{\text{now}} - t_{\text{start}}}{t_{\text{deadline}} - t_{\text{start}}} \right) + 0.5 \left( \frac{N_{\text{completed}}}{N_{\text{total}}} \right)$$
 
-- **Verification Method:** Analysis & Test.
+- **Verification Method:** Analysis & Test (`TC-POS-07`).
 
 ### FR-09: Lock Screen Ergonomic Simulator Overlay
 - **Requirement:** The system shall provide an interactive visual overlay representing iOS (Dynamic Island, system clock, lock screen widgets) and Android UI chrome.
-- **Verification Method:** Demonstration (`TC-POS-05`).
+- **Verification Method:** Demonstration (`TC-POS-08`).
 
 ### FR-10: Upper Safe-Zone Reservation Enforcement
 - **Requirement:** The rendering engine shall maintain at least a $28\%$ vertical top margin ($Y \ge 708\text{px}$ on a $2532\text{px}$ canvas) free of high-contrast text, preventing collision with device clocks.
-- **Verification Method:** Test (`TC-POS-06`).
+- **Verification Method:** Test (`TC-POS-08`).
 
 ### FR-11: High-DPI Wallpaper Rasterization
 - **Requirement:** The system shall render a pixel-perfect $1170 \times 2532$ portrait wallpaper using an HTML5 Canvas 2D context.
-- **Verification Method:** Test (`TC-POS-07`).
+- **Verification Method:** Test (`TC-POS-09`).
 
 ### FR-12: 2x Canvas Supersampling
 - **Requirement:** The canvas rendering engine shall execute at $2\times$ scale ($2340 \times 5064\text{px}$) and downsample to $1170 \times 2532\text{px}$ to eliminate sub-pixel font rasterization artifacts.
-- **Verification Method:** Test (`TC-POS-08`).
+- **Verification Method:** Test (`TC-POS-09`, `TC-EDGE-03`).
 
 ### FR-13: Thematic Preset Selector
 - **Requirement:** The user shall be able to switch between Cyber Obsidian, Deep Focus Zen, and Aurora Botanical visual palettes with instant DOM and Canvas token updates.
-- **Verification Method:** Test (`TC-POS-09`).
+- **Verification Method:** Test (`TC-POS-11`, `TC-POS-12`).
 
 ### FR-14: Stateless URL Hash State Sharing
 - **Requirement:** The system shall serialize the complete user configuration into a Base64 URL hash (`#v1=...`) and restore it upon page load without server calls.
-- **Verification Method:** Test (`TC-POS-10`, `TC-NEG-03`).
+- **Verification Method:** Test (`TC-POS-13`, `TC-POS-14`).
 
 ### FR-15: Direct 1-Click Binary Image Export
 - **Requirement:** The system shall provide an instant 1-click download button exporting the generated lock screen as a standard PNG or JPEG image blob.
-- **Verification Method:** Demonstration (`TC-POS-11`).
+- **Verification Method:** Demonstration (`TC-POS-10`).
 
 ### FR-16: Procedural Web Audio Victory Chime
 - **Requirement:** Upon countdown expiration ($\Delta t \le 0\text{ms}$), the system shall synthesize an in-browser major chord chime (C5-E5-G5-C6) using procedural Web Audio oscillators, with dynamic `sampleRate` adaptation and immediate node disconnection on `ended` to prevent memory leaks.
@@ -149,27 +149,27 @@ Each functional requirement is formally specified with unique identifier, descri
 +-------------------------------------------------------------------------------------------------------+
 |                                    REQUIREMENTS TRACEABILITY MATRIX                                   |
 +---------+--------------------+---------------------+----------------------+---------------------------+
-| Req ID  | PRD Feature Link   | HLD Component       | LLD Class / File     | Test Case ID              |
+| Req ID  | PRD Feature Link   | HLD Component       | Target Implementation| Test Case ID              |
 +---------+--------------------+---------------------+----------------------+---------------------------+
-| FR-01   | F-02 Countdown     | InputController     | TimeEngine.ts        | TC-POS-01, TC-NEG-01      |
-| FR-02   | F-01 Gemini AI     | GeminiGateway       | GeminiClient.ts      | TC-POS-02, TC-EDGE-01     |
-| FR-03   | F-01 Fallback      | HeuristicEngine     | HeuristicGen.ts      | TC-NEG-02                 |
-| FR-04   | F-01 Affirmation   | GeminiGateway       | GeminiClient.ts      | TC-POS-02                 |
-| FR-05   | F-02 Chronometer   | TimeEngine          | TimeEngine.ts        | TC-POS-03                 |
-| FR-06   | F-02 Zero Drift    | TimeEngine          | TimeEngine.ts        | TC-EDGE-02                |
-| FR-07   | F-03 Milestones    | MilestoneStore      | MilestoneMgr.ts      | TC-POS-04                 |
-| FR-08   | F-03 Progress Calc | MilestoneStore      | MilestoneMgr.ts      | TC-POS-04                 |
-| FR-09   | F-04 Safe Zone     | SimulatorOverlay    | SafeZoneOverlay.ts   | TC-POS-05                 |
-| FR-10   | F-04 28% Margin    | CanvasCompositor    | CanvasRenderer.ts    | TC-POS-06                 |
-| FR-11   | F-05 1170x2532     | CanvasCompositor    | CanvasRenderer.ts    | TC-POS-07                 |
-| FR-12   | F-05 2x Supersample| CanvasCompositor    | CanvasRenderer.ts    | TC-POS-08                 |
-| FR-13   | F-06 Themes        | ThemeController     | ThemeConfig.ts       | TC-POS-09                 |
-| FR-14   | F-07 URL Hash      | UrlSerializer       | UrlStateService.ts   | TC-POS-10, TC-NEG-03      |
-| FR-15   | F-05 Download      | BlobExporter        | CanvasRenderer.ts    | TC-POS-11                 |
-| FR-16   | F-05 Audio Chime   | AudioService        | AudioChimeService.ts | TC-POS-16                 |
-| FR-17   | F-05 Haptics       | HapticService       | HapticService.ts     | TC-POS-17                 |
-| FR-18   | F-07 History Guard | HistoryGuard        | HistoryQuotaGuard.ts | TC-EDGE-11                |
-| FR-19   | F-05 Web Share     | ShareService        | CanvasRenderer.ts    | TC-NEG-11                 |
+| FR-01   | F-02 Countdown     | IngressController   | js/core/InputSanitizer.js | TC-POS-01, TC-NEG-01 |
+| FR-02   | F-01 Gemini AI     | GeminiGateway       | js/ai/GeminiClient.js     | TC-POS-02, TC-EDGE-01|
+| FR-03   | F-01 Fallback      | HeuristicEngine     | js/ai/HeuristicGenerator.js| TC-NEG-04, TC-NEG-05|
+| FR-04   | F-01 Affirmation   | GeminiGateway       | js/ai/GeminiClient.js     | TC-POS-03            |
+| FR-05   | F-02 Chronometer   | DualClockTimeEngine | js/core/DualClockTimeEngine.js| TC-POS-04        |
+| FR-06   | F-02 Zero Drift    | DualClockTimeEngine | js/core/DualClockTimeEngine.js| TC-POS-05, TC-EDGE-01|
+| FR-07   | F-03 Milestones    | MilestoneStore      | js/core/MilestoneManager.js| TC-POS-06           |
+| FR-08   | F-03 Progress Calc | MilestoneStore      | js/core/MilestoneManager.js| TC-POS-07           |
+| FR-09   | F-04 Safe Zone     | SimulatorOverlay    | js/canvas/SafeZoneOverlay.js| TC-POS-08          |
+| FR-10   | F-04 28% Margin    | LayoutEngine        | js/canvas/ResponsiveLayoutEngine.js| TC-POS-08   |
+| FR-11   | F-05 1170x2532     | AdaptiveAllocator   | js/canvas/AdaptiveBufferAllocator.js| TC-POS-09 |
+| FR-12   | F-05 2x Supersample| AdaptiveAllocator   | js/canvas/AdaptiveBufferAllocator.js| TC-POS-09, TC-EDGE-03|
+| FR-13   | F-06 Themes        | ThemeController     | js/config/themes.js       | TC-POS-11, TC-POS-12 |
+| FR-14   | F-07 URL Hash      | StateSerializer     | js/core/UrlStateService.js | TC-POS-13, TC-POS-14 |
+| FR-15   | F-05 Download      | BlobExporter        | js/canvas/CanvasRenderer.js| TC-POS-10           |
+| FR-16   | F-05 Audio Chime   | AudioService        | js/services/AudioChimeService.js| TC-POS-16, TC-NEG-10|
+| FR-17   | F-05 Haptics       | HapticService       | js/services/HapticService.js| TC-POS-17          |
+| FR-18   | F-07 History Guard | TokenBucketGuard    | js/core/TokenBucketHistoryGuard.js| TC-NEG-11, TC-EDGE-10|
+| FR-19   | F-05 Web Share     | ShareService        | js/canvas/CanvasRenderer.js| TC-NEG-11           |
 +---------+--------------------+---------------------+----------------------+---------------------------+
 ```
 
@@ -206,5 +206,6 @@ To maintain a zero-infrastructure, client-side serverless architecture:
 - **Mathematical Blueprint:** `docs/lld/09-pixel-perfect-mathematical-blueprint.md` (`DOC-LLD-09`) defines closed-form mathematical equations for 2D Affine TRS transforms, DPR sub-pixel quantization, Oklab perceptual color space, Fritsch-Carlson monotone cubic splines, Fitts's Law ergonomics, and OLED micro-orbital shifting.
 - **Micro-Architectural Implementation Details:** `docs/lld/10-micro-architectural-implementation-details.md` (`DOC-LLD-10`) specifies 40 granular micro-architectural implementation hazards across 14 engineering categories, covering V8 hidden-class optimizations, canvas RAII wrappers, Safari private browsing storage fallbacks, and mobile IME dismissal.
 - **System Vulnerability Audit:** `docs/lld/08-system-design-vulnerability-audit.md` (`DOC-LLD-08`) covers the exhaustive 100-vulnerability resilience suite across 44 architectural dimensions.
+- **Deep-Dive Design Patterns & Security Architecture:** `docs/lld/11-deep-dive-design-patterns-and-security-architecture.md` (`DOC-LLD-11`) specifies GoF patterns, fixed-timestep game loops, and client-side zero-trust security hardening.
 
 

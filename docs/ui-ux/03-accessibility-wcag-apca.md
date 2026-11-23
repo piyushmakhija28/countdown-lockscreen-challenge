@@ -1,4 +1,4 @@
-# Level 3: Accessibility, WCAG 2.1 & APCA Contrast Engineering
+﻿# Level 3: Accessibility, WCAG 2.1 & APCA Contrast Engineering
 
 **Document ID:** `DOC-UI-03-ACCESSIBILITY-APCA`  
 **Project:** `countdown-lockscreen-challenge`  
@@ -6,7 +6,7 @@
 **Author:** Piyush Makhija (Lead Systems Architect & Developer)  
 **Reviewer:** Architecture Review Board  
 **Status:** APPROVED  
-**Standard:** Level 2.3 Documentation Governance (W3C WCAG 2.1 AAA & APCA Standard)
+**Standard:** Level 2.2 Documentation Governance (W3C WCAG 2.1 AAA & APCA Standard)
 
 ---
 

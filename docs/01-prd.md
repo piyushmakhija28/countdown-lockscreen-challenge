@@ -1,4 +1,4 @@
-# Level 1: Product Requirements Document (PRD)
+﻿# Level 1: Product Requirements Document (PRD)
 
 **Document ID:** `DOC-01-PRD`  
 **Project:** `countdown-lockscreen-challenge`  
@@ -6,7 +6,7 @@
 **Author:** Piyush Makhija (Lead Systems Architect & Developer)  
 **Reviewer:** Architecture Review Board  
 **Status:** APPROVED  
-**Standard:** Level 2.3 Documentation Governance (ISO/IEC/IEEE 29148 Standard)
+**Standard:** Level 2.2 Documentation Governance (ISO/IEC/IEEE 29148 Standard)
 
 ---
 

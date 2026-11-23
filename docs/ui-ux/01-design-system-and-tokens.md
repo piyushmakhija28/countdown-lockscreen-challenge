@@ -1,4 +1,4 @@
-# Level 3: UI/UX Design System & Design Tokens Specification
+﻿# Level 3: UI/UX Design System & Design Tokens Specification
 
 **Document ID:** `DOC-UI-01-DESIGN-SYSTEM-TOKENS`  
 **Project:** `countdown-lockscreen-challenge`  
@@ -6,7 +6,7 @@
 **Author:** Piyush Makhija (Lead Systems Architect & Developer)  
 **Reviewer:** Architecture Review Board  
 **Status:** APPROVED  
-**Standard:** Level 2.3 Documentation Governance (Mathematical Spatial & Typographic Grid)
+**Standard:** Level 2.2 Documentation Governance (Mathematical Spatial & Typographic Grid)
 
 ---
 

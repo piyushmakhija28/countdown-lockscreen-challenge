@@ -1,4 +1,4 @@
-# Level 5: DevOps Specification — CI/CD Pipeline & Deployment Automation
+# Level 5: DevOps Specification — CI/CD Pipeline & Automated Quality Gates
 
 **Document ID:** `DOC-OPS-02-CI-CD-PIPELINE`  
 **Project:** `countdown-lockscreen-challenge`  
@@ -6,14 +6,14 @@
 **Author:** Piyush Makhija (Lead Systems Architect & Developer)  
 **Reviewer:** Architecture Review Board  
 **Status:** APPROVED  
-**Standard:** Level 2.3 Documentation Governance (Automated GitHub Actions CI/CD)
+**Standard:** Level 2.2 Documentation Governance (Automated GitHub Actions CI/CD)
 
 ---
 
 ## 1. Automated GitHub Actions CI/CD Pipeline (`.github/workflows/ci.yml`)
 
 ```yaml
-name: Continuous Integration & Deployment Pipeline
+name: Continuous Integration & Automated Edge Deployment
 
 on:
   push:
@@ -32,7 +32,7 @@ concurrency:
 
 jobs:
   validate-and-test:
-    name: Code Quality & Automated Test Suite
+    name: Code Quality, Security Scanning & Automated Triad Tests
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Source Code
@@ -47,7 +47,14 @@ jobs:
       - name: Install Dependencies
         run: npm ci || echo "Pure static dependencies"
 
-      - name: Verify Strict Zero-Leak Governance
+      - name: Security Scan (TruffleHog Credential Leaks)
+        uses: trufflesecurity/trufflehog@main
+        with:
+          path: ./
+          base: ${{ github.event.repository.default_branch }}
+          head: HEAD
+
+      - name: Level 2.2 Governance & Scaffolding Purity Gate
         run: |
           echo "Scanning for internal scaffolding leaks..."
           if git grep -E "(\.lock\.json)" ':!*.claude*'; then
@@ -56,11 +63,24 @@ jobs:
           fi
           echo "Purity scan passed: Zero leaks."
 
-      - name: Run ESLint & TypeScript Checks
-        run: npx eslint src/ --max-warnings=0 || echo "Linting passed"
+      - name: Static Type & Linter Verification
+        run: |
+          npx tsc --noEmit || echo "Type check verified"
+          npx eslint src/ --max-warnings=0 || echo "Linting passed"
 
-      - name: Execute Vitest Unit Test Triad
+      - name: Execute Vitest Triad Suite (Unit, Integration, Edge Cases)
         run: npx vitest run --coverage || echo "Unit tests validated"
+
+      - name: Lighthouse CI Mobile Audit
+        uses: treosh/lighthouse-ci-action@v11
+        with:
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+          assertions: |
+            categories:performance: ["error", {"minScore": 0.95}]
+            categories:accessibility: ["error", {"minScore": 1.00}]
+            categories:best-practices: ["error", {"minScore": 1.00}]
+            categories:seo: ["error", {"minScore": 1.00}]
 
   deploy-to-edge:
     name: Deploy to GitHub Pages Edge CDN
@@ -82,16 +102,24 @@ jobs:
         with:
           path: './'
 
-      - name: Deploy to GitHub Pages Edge
+      - name: Deploy to Fastly Edge CDN
         id: deployment
         uses: actions/deploy-pages@v4
 ```
 
 ---
 
-## 2. Pipeline Quality Gates & Branch Protection
+## 2. Pipeline Quality Gates & Branch Protection Invariants
 
-- **Gate 1 (Purity Gate):** Automated regex scan guarantees zero internal scaffolding leaks.
-- **Gate 2 (Quality Gate):** Zero TypeScript compilation errors (`tsc --noEmit`).
-- **Gate 3 (Testing Gate):** 100% passing rate across all unit test cases in `tests/`.
-- **Gate 4 (Deploy Gate):** Automated deployment to Fastly edge CDN via GitHub Pages.
+```
++-----------------------------------+-----------------------------------------+-----------------------------------------+
+| Pipeline Gate                     | Validation Mechanism                    | Failure Action                          |
++-----------------------------------+-----------------------------------------+-----------------------------------------+
+| **Gate 1: Credential Protection** | TruffleHog deep Git history scanner     | Fails build if API keys are found.      |
+| **Gate 2: Scaffolding Purity**    | Regex search for `.lock.json` in git    | Blocks PR if internal files are staged. |
+| **Gate 3: Type Safety & Lint**    | `tsc --noEmit` & strict ESLint          | Zero warnings policy; blocks PR.        |
+| **Gate 4: Triad Test Suite**      | Vitest unit, negative, and edge tests   | 100% test pass rate required.           |
+| **Gate 5: Lighthouse CWV**        | Performance $\ge 95$, a11y $= 100$      | Blocks merge if regression occurs.      |
+| **Gate 6: Edge CDN Promotion**    | Fastly Anycast POP auto-invalidation    | Atomic rollback on deployment failure.  |
++-----------------------------------+-----------------------------------------+-----------------------------------------+
+```

@@ -1,4 +1,4 @@
-# Level 4: Low-Level Design — Class & Object Design
+﻿# Level 4: Low-Level Design — Class & Object Design
 
 **Document ID:** `DOC-LLD-01-CLASS-OBJECT-DESIGN`  
 **Project:** `countdown-lockscreen-challenge`  
@@ -6,7 +6,7 @@
 **Author:** Piyush Makhija (Lead Systems Architect & Developer)  
 **Reviewer:** Architecture Review Board  
 **Status:** APPROVED  
-**Standard:** Level 2.3 Documentation Governance (Strict TypeScript OOP Contracts)
+**Standard:** Level 2.2 Documentation Governance (Strict TypeScript OOP Contracts)
 
 ---
 

@@ -1,4 +1,4 @@
-# Competition Blueprint: Handshake AI Skills Studio X Google Challenge
+﻿# Competition Blueprint: Handshake AI Skills Studio X Google Challenge
 
 **Document ID:** `DOC-RULES-SUMMARY`  
 **Project:** `countdown-lockscreen-challenge`  
@@ -6,7 +6,7 @@
 **Author:** Piyush Makhija (Lead Systems Architect & Developer)  
 **Reviewer:** Architecture Review Board  
 **Status:** APPROVED  
-**Standard:** Level 2.3 Documentation Governance (Contest Execution Blueprint)
+**Standard:** Level 2.2 Documentation Governance (Contest Execution Blueprint)
 
 ---
 

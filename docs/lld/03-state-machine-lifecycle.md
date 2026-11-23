@@ -1,4 +1,4 @@
-# Level 4: Low-Level Design — State Machine & Lifecycle Specification
+﻿# Level 4: Low-Level Design — State Machine & Lifecycle Specification
 
 **Document ID:** `DOC-LLD-03-STATE-MACHINE`  
 **Project:** `countdown-lockscreen-challenge`  
@@ -6,7 +6,7 @@
 **Author:** Piyush Makhija (Lead Systems Architect & Developer)  
 **Reviewer:** Architecture Review Board  
 **Status:** APPROVED  
-**Standard:** Level 2.3 Documentation Governance (Formal Finite State Machine)
+**Standard:** Level 2.2 Documentation Governance (Formal Finite State Machine)
 
 ---
 

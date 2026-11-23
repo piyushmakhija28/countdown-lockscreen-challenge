@@ -1,4 +1,4 @@
-# Level 4: Low-Level Design — Dynamic Interaction Sequences
+﻿# Level 4: Low-Level Design — Dynamic Interaction Sequences
 
 **Document ID:** `DOC-LLD-02-DYNAMIC-SEQUENCES`  
 **Project:** `countdown-lockscreen-challenge`  
@@ -6,7 +6,7 @@
 **Author:** Piyush Makhija (Lead Systems Architect & Developer)  
 **Reviewer:** Architecture Review Board  
 **Status:** APPROVED  
-**Standard:** Level 2.3 Documentation Governance (Formal Dynamic Sequence Modeling)
+**Standard:** Level 2.2 Documentation Governance (Formal Dynamic Sequence Modeling)
 
 ---
 

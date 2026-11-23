@@ -1,4 +1,4 @@
-# Strategic Playbook: Creating a Winning Lock Screen Experience
+﻿# Strategic Playbook: Creating a Winning Lock Screen Experience
 
 **Document ID:** `DOC-PLAYBOOK-WINNING-STRATEGY`  
 **Project:** `countdown-lockscreen-challenge`  
@@ -6,7 +6,7 @@
 **Author:** Piyush Makhija (Lead Systems Architect & Developer)  
 **Reviewer:** Architecture Review Board  
 **Status:** APPROVED  
-**Standard:** Level 2.3 Documentation Governance (Strategic Contest Playbook)
+**Standard:** Level 2.2 Documentation Governance (Strategic Contest Playbook)
 
 ---
 

@@ -6,38 +6,36 @@
 **Author:** Piyush Makhija (Lead Systems Architect & Developer)  
 **Reviewer:** Architecture Review Board  
 **Status:** APPROVED  
-**Standard:** Level 2.3 Documentation Governance (Positive, Negative, Edge-Case Triad Standard)
+**Standard:** Level 2.2 Documentation Governance (Positive, Negative, Edge-Case Triad Standard)
 
 ---
 
-## 1. Positive Test Scenarios (15 Happy-Path Cases)
+## 1. Positive Test Scenarios (17 Happy-Path Cases)
 
 Conforming to `~/.claude/rules/35-positive-testing-standards.md`:
 
 ```
-+---------------------------------------------------------------------------------------------------------+
-|                                    POSITIVE TEST SCENARIOS (HAPPY PATH)                                 |
-+-----------+-----------------------------------+-----------------------------------+---------------------+
-| Test ID   | Scenario Name                     | Input Data                        | Expected Outcome    |
-+-----------+-----------------------------------+-----------------------------------+---------------------+
-| TC-POS-01 | Valid Future Date Ingress         | Date = now + 30d, "Google SWE"    | Countdown initiated.|
-| TC-POS-02 | Gemini AI Decomposition           | Valid prompt & online network     | Returns 4 milestones|
-| TC-POS-03 | Affirmation Synthesis             | Career goal string                | Affirmation <=120ch |
-| TC-POS-04 | 60 FPS Chronometer Ticking        | Running ticker loop               | Days/Hrs/Mins/Secs  |
-| TC-POS-05 | Zero Cumulative Drift Over Time   | RAF ticks across 3600 frames      | Timing drift = 0ms  |
-| TC-POS-06 | Milestone Checkpoint Toggle       | Click milestone 1 checkbox        | Completed = true    |
-| TC-POS-07 | Dynamic Progress Percentage Calc  | 2 of 4 milestones checked         | Progress = 50.0%    |
-| TC-POS-08 | Lock Screen Safe-Zone Preview     | Toggle overlay switch             | Top 28% guide drawn |
-| TC-POS-09 | 2x Supersampled Wallpaper Raster  | Canvas dimension 2340x5064        | Resampled to 1170x25|
-| TC-POS-10 | Instant PNG Blob Download         | Click "Download Wallpaper"        | File blob exported  |
-| TC-POS-11 | Thematic Switch to Zen            | Select "Deep Focus Zen"           | Amber palette set   |
-| TC-POS-12 | Thematic Switch to Botanical      | Select "Aurora Botanical"         | Mint palette set    |
-| TC-POS-13 | Base64 URL Hash Serialization     | User state snapshot               | Hash <= 450 chars   |
-| TC-POS-14 | URL Hash Deserialization & Mount  | Open link with valid #v1= hash    | State hydrated      |
-| TC-POS-15 | Offline Service Worker Caching    | Network offline, reload page      | App loads from SW   |
-| TC-POS-16 | Web Audio Procedural Chime        | Timer hits 0ms, AudioContext active| Plays major chord, 0 leak|
-| TC-POS-17 | Haptic Vibration Pattern Trigger  | Milestone toggle / Victory pattern | navigator.vibrate invoked|
-+-----------+-----------------------------------+-----------------------------------+---------------------+
++-----------+-----------------------------------+-----------------------------------+-----------------------------------+
+| Test ID   | Scenario Name                     | Input Data / Action               | Expected Outcome (Assert)         |
++-----------+-----------------------------------+-----------------------------------+-----------------------------------+
+| TC-POS-01 | Valid Future Date Ingress         | Date = now + 30d, "Google SWE"    | Validates; starts chronometer.    |
+| TC-POS-02 | Gemini AI Decomposition           | Valid prompt & online network     | Returns 3-5 milestones in JSON.   |
+| TC-POS-03 | Affirmation Synthesis             | Career goal string                | Affirmation string <= 120 chars.  |
+| TC-POS-04 | 60 FPS Chronometer Ticking        | Running ticker loop               | Emits Days/Hours/Minutes/Seconds. |
+| TC-POS-05 | Zero Cumulative Drift Over Time   | RAF ticks across 3600 frames      | Timing drift = 0ms.               |
+| TC-POS-06 | Milestone Checkpoint Toggle       | Click milestone 1 checkbox        | Completed = true; progress reruns.|
+| TC-POS-07 | Dynamic Progress Percentage Calc  | 2 of 4 milestones checked         | Progress = 50.0%.                 |
+| TC-POS-08 | Lock Screen Safe-Zone Preview     | Toggle overlay switch             | Top 28% and bottom 18% guides.    |
+| TC-POS-09 | Adaptive Canvas Wallpaper Raster  | Canvas dimension 1170x2532        | AdaptiveBufferAllocator executes. |
+| TC-POS-10 | Instant PNG Blob Download         | Click "Download Wallpaper"        | File blob exported (< 350ms).     |
+| TC-POS-11 | Thematic Switch to Zen            | Select "Deep Focus Zen"           | Amber palette set across tokens.  |
+| TC-POS-12 | Thematic Switch to Botanical      | Select "Aurora Botanical"         | Mint palette set across tokens.   |
+| TC-POS-13 | Base64 URL Hash Serialization     | User state snapshot               | Hash <= 450 chars; #v1= prefix.   |
+| TC-POS-14 | URL Hash Deserialization & Mount  | Open link with valid #v1= hash    | State hydrated cleanly.           |
+| TC-POS-15 | Offline Service Worker Caching    | Network offline, reload page      | App loads from CacheStorage.      |
+| TC-POS-16 | Web Audio Procedural Chime        | Timer hits 0ms, context primed    | Plays major chord (C5-E5-G5-C6).  |
+| TC-POS-17 | Haptic Vibration Pattern Trigger  | Milestone toggle / VictoryPattern | navigator.vibrate([100,50,100]).  |
++-----------+-----------------------------------+-----------------------------------+-----------------------------------+
 ```
 
 ---
@@ -47,49 +45,44 @@ Conforming to `~/.claude/rules/35-positive-testing-standards.md`:
 Conforming to `~/.claude/rules/36-negative-testing-standards.md`:
 
 ```
-+---------------------------------------------------------------------------------------------------------+
-|                                    NEGATIVE TEST SCENARIOS (ERROR HANDLING)                             |
-+-----------+-----------------------------------+-----------------------------------+---------------------+
-| Test ID   | Scenario Name                     | Fault Injection                   | Expected Outcome    |
-+-----------+-----------------------------------+-----------------------------------+---------------------+
-| TC-NEG-01 | Past Deadline Input               | Date = now - 24 hours             | Form validation err |
-| TC-NEG-02 | Empty Goal Title Input            | Goal = "   " (blank)              | Input rejected      |
-| TC-NEG-03 | Excessively Long Goal Title       | Goal length = 120 chars           | Truncated to 60 char|
-| TC-NEG-04 | Gemini API Returns HTTP 429 Quota | Mock HTTP 429 Rate Limit          | Silent Heuristic FB |
-| TC-NEG-05 | Gemini API Latency Timeout        | Network stall > 4000ms            | Timeout & Heuristic |
-| TC-NEG-06 | Corrupted Base64 URL Hash         | #v1=Corrupt-Malformed-Bytes       | Loads default state |
-| TC-NEG-07 | XSS Payload in Goal Title         | <script>alert(1)</script>         | HTML entity escaped |
-| TC-NEG-08 | Invalid Target Date String Format | Date = "invalid-date-format"      | Rejects with toast  |
-| TC-NEG-09 | Out-of-Bounds Theme ID            | Theme = "malicious_theme"         | Defaults to Obsidian|
-| TC-NEG-10 | Canvas Memory Allocation Failure  | High memory pressure simulated    | Fallback to 1x scale|
-| TC-NEG-11 | Web Share Cancellation Fallback   | User swipes down share sheet      | AbortError silenced / modal|
-+-----------+-----------------------------------+-----------------------------------+---------------------+
++-----------+-----------------------------------+-----------------------------------+-----------------------------------+
+| Test ID   | Scenario Name                     | Fault Injection                   | Expected Outcome (Assert)         |
++-----------+-----------------------------------+-----------------------------------+-----------------------------------+
+| TC-NEG-01 | Past Deadline Input               | Date = now - 24 hours             | Throws ERR_PAST_DATE; UI hint.    |
+| TC-NEG-02 | Empty Goal Title Input            | Goal = "   " (blank)              | Throws ERR_TITLE_EMPTY; focus set.|
+| TC-NEG-03 | Excessively Long Goal Title       | Goal length = 120 chars           | Throws ERR_LENGTH_OUT_OF_BOUNDS.  |
+| TC-NEG-04 | Gemini API Returns HTTP 429 Quota | Mock HTTP 429 Rate Limit          | Trips Breaker; calls Heuristic.   |
+| TC-NEG-05 | Gemini API Latency Timeout        | Network stall > 4000ms            | Timeout; falls back to Heuristic. |
+| TC-NEG-06 | Corrupted Base64 URL Hash         | #v1=Corrupt-Malformed-Bytes       | Reverts safely to default state.  |
+| TC-NEG-07 | Decompression Bomb Ingress        | 1KB Base64 expanding to > 32KB    | Rejects payload; throws bomb err. |
+| TC-NEG-08 | Prototype Pollution Vector in Hash| {"__proto__": {"polluted": true}} | Stripped by recursive reviver.    |
+| TC-NEG-09 | HTML / XSS Injection in Goal Title| "<script>alert(1)</script>"       | Whitelist rejects forbidden chars.|
+| TC-NEG-10 | Web Audio Autoplay Rejection      | Expiration with unprimed context  | Catches NotAllowed; soft fallback.|
+| TC-NEG-11 | WebKit replaceState Quota Exceed  | > 100 rapid input changes in 30s  | TokenBucket limits to <= 60 calls.|
++-----------+-----------------------------------+-----------------------------------+-----------------------------------+
 ```
 
 ---
 
-## 3. Edge-Case Test Scenarios (12 Boundary Conditions)
+## 3. Edge-Case Scenarios (12 Boundary Conditions)
 
 Conforming to `~/.claude/rules/37-edge-case-testing-standards.md`:
 
 ```
-+---------------------------------------------------------------------------------------------------------+
-|                                    EDGE-CASE TEST SCENARIOS (BOUNDARY VALUES)                           |
-+-----------+-----------------------------------+-----------------------------------+---------------------+
-| Test ID   | Scenario Name                     | Boundary Condition                | Expected Outcome    |
-+-----------+-----------------------------------+-----------------------------------+---------------------+
-| TC-EDGE-01| Countdown Expiration to Zero      | Target reaches exactly 0s         | Ticker halts at 0;  |
-|           |                                   |                                   | Celebration state   |
-| TC-EDGE-02| Daylight Savings Time Transition  | Deadline crosses DST changeover   | UTC epoch invariant |
-| TC-EDGE-03| Leap Year February 29 Target      | Deadline = 2028-02-29             | Correct day math    |
-| TC-EDGE-04| Ultra-Short Deadline (< 2 hours)  | Deadline = now + 90 minutes       | Formats 0d 1h 30m   |
-| TC-EDGE-05| Multi-Year Deadline (> 4 years)   | Deadline = now + 1500 days        | Digits auto-scale   |
-| TC-EDGE-06| Background Tab Sleep (8 hours)    | Simulated suspension & resume     | Re-aligns in 1 tick |
-| TC-EDGE-07| Unicode & Multi-byte Emojis       | Goal: "🚀 Land Google Internship"| Canvas renders glyph|
-| TC-EDGE-08| Extreme Mobile DPR Scale (DPR 3.5)| High-density flagship device      | Clamped to 2x max   |
-| TC-EDGE-09| Zero Milestones Completed (0%)    | Brand new goal                    | Progress ring = 0%  |
-| TC-EDGE-10| All Milestones Completed (100%)   | User marks all 4 checkpoints      | Progress ring = 100%|
-| TC-EDGE-11| Safari 100-Call Quota Debounce    | 500 keystrokes in 10s             | <= 33 calls; 0 SecurityErr|
-| TC-EDGE-12| Web Audio Autoplay Gesture Unlock | First touchstart on window        | AudioContext resumed running|
-+-----------+-----------------------------------+-----------------------------------+---------------------+
++-----------+-----------------------------------+-----------------------------------+-----------------------------------+
+| Test ID   | Scenario Name                     | Edge-Case Condition               | Expected Outcome (Assert)         |
++-----------+-----------------------------------+-----------------------------------+-----------------------------------+
+| TC-EDGE-01| Device Sleep Across 4 Hours       | OS throttles RAF; tab re-awakens  | Re-anchors to Date.now() in 0ms.  |
+| TC-EDGE-02| Daylight Saving Time Jump         | Countdown crosses DST transition  | Absolute UTC milliseconds intact. |
+| TC-EDGE-03| WebKit 16.7M Pixel Ceiling Clamp  | Canvas requested at 3x DPR        | DPR clamped to <= 2.0 (11.8M px). |
+| TC-EDGE-04| Legacy 4096px Max Dimension       | Canvas allocated on iPhone SE     | Max dimension clamped <= 4096px.  |
+| TC-EDGE-05| Foldable Inner Display (1.2:1 AR) | Device aspect ratio R < 1.70      | Selects Dual-Column Split layout. |
+| TC-EDGE-06| Ultra-Tall Phone (23.1:9 AR)      | Device aspect ratio R >= 2.15     | Selects Compact Single-Column.    |
+| TC-EDGE-07| Indic Devanagari Matra Shaping    | Goal title contains "हिंदी लक्ष्य" | Programmatic SVG shapes text.     |
+| TC-EDGE-08| Arabic RTL Bidi Run Inversion     | Goal title contains "12 يوم"      | Unicode Bidi formatting intact.   |
+| TC-EDGE-09| Display P3 Wide Gamut Active      | Modern OLED display P3 match      | Canvas initializes display-p3.    |
+| TC-EDGE-10| Tab Closed Within 300ms of Edit   | User closes tab immediately       | Preserved via sessionStorage sync.|
+| TC-EDGE-11| Immediate Share Button Click      | User edits & clicks Share in 10ms | getFreshUrl() flushes latest state|
+| TC-EDGE-12| Battery Low Power Mode (< 20%)    | Battery Status API reports low    | Releases wake lock; saves battery.|
++-----------+-----------------------------------+-----------------------------------+-----------------------------------+
 ```

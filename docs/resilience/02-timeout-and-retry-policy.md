@@ -6,37 +6,109 @@
 **Author:** Piyush Makhija (Lead Systems Architect & Developer)  
 **Reviewer:** Architecture Review Board  
 **Status:** APPROVED  
-**Standard:** Level 2.3 Documentation Governance (Exponential Backoff & Circuit Breaker)
+**Standard:** Level 2.2 Documentation Governance (Exponential Backoff & Circuit Breaker)
 
 ---
 
-## 1. Exponential Backoff with Decorrelated Jitter Formulation
+## 1. Full Jitter Exponential Backoff Formulation
 
-When retrying transient network errors (HTTP 500, 502, 503, 504), retries obey the **Full Jitter Exponential Backoff algorithm**:
+Transient network errors (HTTP 500, 502, 503, 504) are retried according to the **Full Jitter Exponential Backoff algorithm**:
 
 $$t_{\text{sleep}} = \text{random}(0, \min(t_{\max}, t_0 \cdot 2^{\text{attempt}}))$$
 
 Where:
-- Initial base delay $t_0 = 500\text{ms}$.
+- Base delay $t_0 = 500\text{ms}$.
 - Maximum backoff ceiling $t_{\max} = 3000\text{ms}$.
 - Maximum retry count $N_{\text{max}} = 2$.
-- Total allowed cumulative wait time $\le 4000\text{ms}$.
+- Cumulative request timeout ceiling $\le 4000\text{ms}$.
 
-If retries are exhausted or if HTTP 429 (Rate Limit) is received, the retry loop aborts immediately to avoid user-perceived lag, and routes seamlessly to `HeuristicGenerator`.
+If HTTP 429 (Rate Limit) is received, retries abort immediately, tripping the Circuit Breaker and falling back seamlessly to `HeuristicGenerator`.
 
 ---
 
-## 2. Circuit Breaker State Machine
+## 2. Production Circuit Breaker Implementation
 
-```mermaid
-stateDiagram-v2
-    [*] --> CLOSED : Initial Normal State
-    CLOSED --> OPEN : 2 Consecutive Failures (Trip Breaker)
-    OPEN --> HALF_OPEN : Cool-off Period Elapsed (60 seconds)
-    HALF_OPEN --> CLOSED : Probe Request Succeeds
-    HALF_OPEN --> OPEN : Probe Request Fails
+```typescript
+export type CircuitState = 'CLOSED' | 'OPEN' | 'HALF_OPEN';
+
+/**
+ * Enterprise Circuit Breaker protecting Google Gemini API integration.
+ */
+export class CircuitBreaker {
+  private state: CircuitState = 'CLOSED';
+  private failureCount: number = 0;
+  private nextAttemptEpoch: number = 0;
+
+  constructor(
+    private readonly failureThreshold: number = 2,
+    private readonly coolOffPeriodMs: number = 60000
+  ) {}
+
+  public async execute<T>(action: () => Promise<T>, fallback: () => T): Promise<T> {
+    if (this.state === 'OPEN') {
+      if (Date.now() > this.nextAttemptEpoch) {
+        this.state = 'HALF_OPEN';
+      } else {
+        return fallback();
+      }
+    }
+
+    try {
+      const result = await action();
+      this.onSuccess();
+      return result;
+    } catch (err: unknown) {
+      this.onFailure();
+      return fallback();
+    }
+  }
+
+  private onSuccess(): void {
+    this.failureCount = 0;
+    this.state = 'CLOSED';
+  }
+
+  private onFailure(): void {
+    this.failureCount++;
+    if (this.failureCount >= this.failureThreshold || this.state === 'HALF_OPEN') {
+      this.state = 'OPEN';
+      this.nextAttemptEpoch = Date.now() + this.coolOffPeriodMs;
+    }
+  }
+}
 ```
 
-- **CLOSED:** All AI decomposition requests route to Google Gemini.
-- **OPEN:** Gemini requests are short-circuited; requests route directly to `HeuristicGenerator` without network round-trips.
-- **HALF_OPEN:** A single canary request tests Gemini availability.
+---
+
+## 3. Production Retry with Jitter Utility
+
+```typescript
+/**
+ * Wraps an asynchronous operation with full-jitter exponential backoff.
+ */
+export async function withRetryAndJitter<T>(
+  operation: (signal: AbortSignal) => Promise<T>,
+  timeoutMs: number = 4000,
+  maxRetries: number = 2
+): Promise<T> {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+
+  try {
+    for (let attempt = 0; attempt <= maxRetries; attempt++) {
+      try {
+        return await operation(controller.signal);
+      } catch (err: unknown) {
+        if (attempt === maxRetries || (err as any)?.status === 429) {
+          throw err;
+        }
+        const backoff = Math.random() * Math.min(3000, 500 * Math.pow(2, attempt));
+        await new Promise((resolve) => setTimeout(resolve, backoff));
+      }
+    }
+    throw new Error('Retries exhausted');
+  } finally {
+    clearTimeout(timer);
+  }
+}
+```

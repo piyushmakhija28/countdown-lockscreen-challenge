@@ -6,15 +6,26 @@
 **Author:** Piyush Makhija (Lead Systems Architect & Developer)  
 **Reviewer:** Architecture Review Board  
 **Status:** APPROVED  
-**Standard:** Level 2.3 Documentation Governance (ISO/IEC/IEEE 29148 Standard)
+**Standard:** Level 2.2 Documentation Governance (ISO/IEC/IEEE 29148 Standard)
 
 ---
 
 ## 1. External AI Service Contract: Google Gemini 3.8 Flash
 
-The application leverages the **Google Gemini API** (Gemini 3.8 Flash model) via the official `@google/genai` modern SDK for zero-latency backward deadline decomposition and psychological motivational synthesis.
+The application integrates with the **Google Gemini API** (Gemini 3.8 Flash model) via the official `@google/genai` modern SDK or direct HTTPS REST fetch for retrograde deadline planning and affirmation synthesis.
 
-### 1.1 System Instruction & Context Prompt
+### 1.1 Header Authentication Invariant
+To prevent cleartext credential leaks in CDN access logs, proxy caches, or browser history:
+- The Google Gemini API key is **strictly transmitted via HTTP request headers**:
+  ```http
+  POST /v1beta/models/gemini-1.5-flash:generateContent HTTP/1.1
+  Host: generativelanguage.googleapis.com
+  Content-Type: application/json
+  x-goog-api-key: <API_KEY>
+  ```
+- Passing the API key via URL query parameter (`?key=...`) is strictly prohibited.
+
+### 1.2 System Instruction & Context Prompt
 ```typescript
 export const GEMINI_SYSTEM_INSTRUCTION = `
 You are an elite productivity strategist and cognitive behavioral coach specializing in backward goal decomposition (retrograde planning).
@@ -28,7 +39,7 @@ You must strictly return valid JSON conforming to the requested schema with zero
 `;
 ```
 
-### 1.2 Formal OpenAPI 3.1 / JSON Schema (`MilestonePlanResponse`)
+### 1.3 Formal OpenAPI 3.1 / JSON Schema (`MilestonePlanResponse`)
 ```json
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
@@ -104,16 +115,6 @@ You must strictly return valid JSON conforming to the requested schema with zero
 }
 ```
 
-### 1.3 Token Economics & Cost Model
-- **Input Context:** System prompt ($112\text{ tokens}$) + User goal and date ($48\text{ tokens}$) + Schema overhead ($160\text{ tokens}$) $\approx 320\text{ tokens}$.
-- **Output Generation:** Structured JSON ($140\text{--}190\text{ tokens}$) $\approx 165\text{ tokens}$.
-- **Total Consumption per Ingress:** $\approx 485\text{ tokens}$.
-- **Cost Formulation:**
-
-$$\text{Cost per Call} = (320 \times \$0.075 / 10^6) + (165 \times \$0.30 / 10^6) = \$0.0000735 \text{ USD}$$
-
-At $10,000$ active contestant executions, total inference expenditure is merely **$\$0.735\text{ USD}$**, demonstrating exceptional economic viability.
-
 ---
 
 ## 2. Deterministic Heuristic Fallback Engine Algorithm
@@ -136,7 +137,6 @@ export function generateHeuristicMilestones(
   const totalMs = deadline.getTime() - now.getTime();
   const totalDays = Math.max(1, Math.floor(totalMs / (1000 * 60 * 60 * 24)));
 
-  // Quarter-interval partition: 75% left, 50% left, 25% left, 0 days left
   const offsets = [
     Math.round(totalDays * 0.75),
     Math.round(totalDays * 0.50),
@@ -175,29 +175,21 @@ export function generateHeuristicMilestones(
 Adhering strictly to `~/.claude/rules/06-typescript-standards.md` (zero `any`, immutable contracts):
 
 ```typescript
-/**
- * Nominal branded types to prevent accidental unit confusion.
- */
 export type EpochMilliseconds = number & { readonly __brand: unique symbol };
 export type Percentage = number & { readonly __brand: unique symbol };
 export type ThemeId = 'cyber_obsidian' | 'deep_focus_zen' | 'aurora_botanical';
+export type LayoutRegime = 'ultra_tall' | 'standard_portrait' | 'wide_foldable';
 
-/**
- * Immutable chronometric snapshot emitted on every animation frame.
- */
 export interface TimeRemaining {
   readonly days: number;
   readonly hours: number;
   readonly minutes: number;
   readonly seconds: number;
   readonly totalMilliseconds: EpochMilliseconds;
-  readonly progressPercent: Percentage; // 0.0 to 100.0
+  readonly progressPercent: Percentage;
   readonly isExpired: boolean;
 }
 
-/**
- * Milestone item domain entity.
- */
 export interface MilestoneItem {
   readonly id: string;
   readonly step: number;
@@ -206,40 +198,28 @@ export interface MilestoneItem {
   readonly isCompleted: boolean;
 }
 
-/**
- * Core TimeEngine contract for drift-compensated execution.
- */
 export interface ITimeEngine {
-  startTicker(deadline: Date, onTick: (remaining: TimeRemaining) => void): void;
+  startTicker(deadline: Date, onTick: (remaining: TimeRemaining) => void, onExpire: () => void): void;
   stopTicker(): void;
+  reanchorClocks(wallEpoch: number, monoTime: number): void;
   calculateRemaining(deadline: Date, referenceDate?: Date): TimeRemaining;
 }
 
-/**
- * Milestone management contract.
- */
-export interface IMilestoneManager {
-  getMilestones(): readonly MilestoneItem[];
-  addMilestone(title: string, targetDate: Date): void;
-  toggleMilestone(id: string): void;
-  reorderMilestones(orderedIds: readonly string[]): void;
-  calculateProgress(): Percentage;
+export interface IAudioChimeService {
+  unlockAudioContext(): Promise<boolean>;
+  playVictoryChime(): Promise<boolean>;
 }
 
-/**
- * High-DPI Wallpaper rendering parameters.
- */
 export interface WallpaperRenderOptions {
-  readonly width: number;           // Standard: 1170
-  readonly height: number;          // Standard: 2532
-  readonly supersampleRatio: number;// Standard: 2.0 (Buffer: 2340x5064)
+  readonly width: number;
+  readonly height: number;
+  readonly aspectRatio: number;
+  readonly layoutRegime: LayoutRegime;
+  readonly supersampleRatio: number;
   readonly themeId: ThemeId;
   readonly showSafeZoneOverlay: boolean;
 }
 
-/**
- * Wallpaper rendering engine contract.
- */
 export interface IWallpaperRenderer {
   renderToCanvas(
     options: WallpaperRenderOptions,
@@ -264,7 +244,7 @@ export interface IWallpaperRenderer {
 ## 4. URL Hash Serialization Protocol (`#v1=`)
 
 ### 4.1 Specification & Size Budget
-To enable frictionless sharing and contest submission without server storage, all user parameters are encoded directly in `window.location.hash`.
+To enable frictionless sharing without server storage, state is encoded directly in `window.location.hash`.
 
 $$\text{Encoded Hash Length } L_{\text{hash}} \le 2048\text{ characters} \quad (\text{IE/Edge/Mobile Safari Safe})$$
 
@@ -285,6 +265,7 @@ $$\text{Encoded Hash Length } L_{\text{hash}} \le 2048\text{ characters} \quad (
 }
 ```
 
-### 4.3 Encode / Decode Mathematical Logic
-- **Compression:** JSON stringified $\to$ `TextEncoder` $\to$ Uint8Array $\to$ `btoa` Base64 (URL safe: `+` replaced with `-`, `/` with `_`, padding `=` stripped).
-- **Integrity Validation:** If decoding throws `URIError` or fails schema parsing, the application recovers to default state gracefully without crashing.
+### 4.3 Safe Deserialization & Decompression Bomb Guard
+- **Decompression Bomb Shield:** Decompressed JSON payload is capped at $32\text{ KB}$.
+- **Prototype Pollution Shield:** The native JSON reviver strips `__proto__`, `constructor`, and `prototype` keys across all nesting depths.
+- **Constant-Time Verification:** State integrity checksums are verified via bitwise constant-time comparison (`constantTimeEquals`) to eliminate side-channel timing leaks.
