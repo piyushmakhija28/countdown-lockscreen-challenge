@@ -8,7 +8,7 @@
 **Reviewer:** Architecture Review Board  
 **Status:** APPROVED  
 **Standard:** Level 2.2 Documentation Governance (First-Principles UI/UX Engineering)  
-**Version:** 2.3.5  
+**Version:** 2.3.6  
 
 ---
 

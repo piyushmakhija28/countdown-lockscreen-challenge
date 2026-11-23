@@ -1,5 +1,19 @@
 # Changelog
 
+## [2.3.6] - 2026-11-23
+
+### Added
+- **GitHub Sprint Tracking Issues Codification (#12, #13, #14, #15):**
+  - Formulated Issue #12 for Sprint 2 (Core Domain, State Architecture & Resilient Storage - 10 SP).
+  - Formulated Issue #13 for Sprint 3 (Google Gemini 3.8 Flash SDK, 9-Stage Canvas 2D Engine & Thematic Tokens - 11 SP).
+  - Formulated Issue #14 for Sprint 4 (Tri-Modal Sensory Immersion, Ergonomic UI Shell & PWA Edge Deployment - 11 SP).
+  - Formulated Issue #15 for Sprint 5 (Automated Triad Test Suite, Soak Verification & Lighthouse CI Audit - 8 SP).
+  - Linked GitHub Issue references directly into `docs/management/01-wbs-and-sprint-backlog.md` roadmap and work packages table.
+
+### Changed
+- **Repository-Wide Version Synchronization (`v2.3.6`):**
+  - Unified all 66 specs in `docs/`, `VERSION`, `SRS.md`, `docs/05-srs.md` (verified exact SHA256 match), `README.md`, and `CLAUDE.md` to `2.3.6`.
+
 ## [2.3.5] - 2026-11-23
 
 ### Added
