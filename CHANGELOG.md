@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Root Directory Clean Governance:** Removed redundant root `SRS.md`, enforcing strict governance where the root directory contains strictly the 4 project management files (`README.md`, `CLAUDE.md`, `VERSION`, `CHANGELOG.md`) and all specifications live exclusively under `docs/`.
 
 ### Added
+- **40 Micro-Architectural Implementation Hazards & Edge-Case Details (`DOC-LLD-10` across 14 Categories):**
+  - Exhaustive 40-item micro-architectural specification detailing failure mechanisms, exact TypeScript/CSS code patterns, and verification matrices in `docs/lld/10-micro-architectural-implementation-details.md`.
+  - Categories: DOM/Canvas event loops (passive touch listeners, 300ms tap elimination, pointercancel), Canvas 2D context RAII wrappers & clip frill prevention, time/chronometry monotonic clamping & two-digit LUT, AI token backoff & XML delimiter sanitization, Safari private browsing quota probes & JSON schema forward migration, Web Audio node disconnection & sample rate normalization, file export blob management, V8 monomorphic shape preservation & packed array invariants, frosted glass GPU layer consolidation, microtask starvation prevention, and mobile keyboard IME handling.
 - **Cross-Device Pixel-Perfect Mathematical Blueprint (`DOC-LLD-09` across 10 Modules):**
   - Synthesized comprehensive mathematical design blueprint deriving all quantitative calculations from first principles.
   - Module 1: 2D Affine Transform Pipeline ($M = T \cdot R \cdot S$) and $O(1)$ closed-form algebraic inverse screen unprojection.

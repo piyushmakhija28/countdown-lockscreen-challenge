@@ -27,7 +27,7 @@ countdown-lockscreen-challenge/
 │   ├── 06-adr/                        # ADR-001 through ADR-008 (MADR 3.0)
 │   ├── 07-architecture-tradeoffs-and-faq.md
 │   ├── ui-ux/                         # Design tokens, ergonomics, a11y
-│   ├── lld/                           # Low-level design 01-09 (Classes, Sequences, Audit, Math Blueprint)
+│   ├── lld/                           # Low-level design 01-10 (Classes, Sequences, Audit, Math Blueprint, Micro-Architecture)
 │   ├── devops/                        # Docker, CI/CD, hosting specs
 │   ├── security/                      # STRIDE, OWASP, input sanitization
 │   ├── resilience/                    # Bulkhead, retry, error catalog
@@ -90,4 +90,18 @@ All low-level graphics, transforms, and chronometric state machines must strictl
 4. **Milestone Waves:** Fritsch-Carlson monotone cubic spline interpolation ensuring $\alpha_k^2 + \beta_k^2 \le 9$.
 5. **Ergonomic Safe Zones:** Fitts's Law index of difficulty $ID \le 3.5\text{ bits}$ on mobile viewports.
 6. **OLED AOD Protection:** Continuous procedural micro-orbital shifting with $R = 2.0\text{px}$ and $T = 3600\text{s}$.
+
+---
+
+## 4. Micro-Architectural Implementation Details & Edge-Case Hazards (`DOC-LLD-10`)
+
+All component implementations, event loops, canvas routines, and memory management must strictly comply with the 40 micro-architectural invariants detailed in `docs/lld/10-micro-architectural-implementation-details.md`:
+1. **DOM & Canvas Events:** `{ passive: false }` on touchmove, unified `pointercancel` state machine, and `touch-action: manipulation` (`LLD-EV-01` to `03`).
+2. **Context & Pixel Operations:** RAII scoped `withCanvasContext()` wrapper, offscreen `destination-in` rounded corner clipping, and safe text bounding-box metrics (`LLD-CV-01` to `04`).
+3. **Chronometry:** Monotonic display time clamping, strict zero threshold triggering, and zero-allocation two-digit LUT (`LLD-TM-01` to `03`).
+4. **AI & Network Resilience:** Full jitter exponential backoff on 429 and XML delimiter escaping (`LLD-AI-01` to `02`).
+5. **Storage & PWA:** Safari private browsing storage probe, forward schema migration, and byte-to-byte service worker cache-busting (`LLD-ST-01` to `03`).
+6. **V8 JIT Optimization:** Monomorphic struct constructors, packed array splicing, and detached typed-array cloning (`LLD-V8-01` to `03`).
+7. **CSS & Glassmorphism:** Single composite frosted glass layer, dynamic `calc(1px / dpr)` hairline borders, and stacking context isolation (`LLD-CS-01` to `03`).
+8. **Asynchronous Execution:** Microtask loop freeze avoidance via RAF/requestIdleCallback, clean AbortError handling, and monotonic upload tokens (`LLD-AS-01` to `03`).
 

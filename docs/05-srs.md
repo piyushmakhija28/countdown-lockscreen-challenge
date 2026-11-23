@@ -184,6 +184,7 @@ To maintain a zero-infrastructure, client-side serverless architecture:
 
 ## 7. Architectural & Mathematical Blueprint Cross-References
 - **Mathematical Blueprint:** `docs/lld/09-pixel-perfect-mathematical-blueprint.md` (`DOC-LLD-09`) defines closed-form mathematical equations for 2D Affine TRS transforms, DPR sub-pixel quantization, Oklab perceptual color space, Fritsch-Carlson monotone cubic splines, Fitts's Law ergonomics, and OLED micro-orbital shifting.
+- **Micro-Architectural Implementation Details:** `docs/lld/10-micro-architectural-implementation-details.md` (`DOC-LLD-10`) specifies 40 granular micro-architectural implementation hazards across 14 engineering categories, covering V8 hidden-class optimizations, canvas RAII wrappers, Safari private browsing storage fallbacks, and mobile IME dismissal.
 - **System Vulnerability Audit:** `docs/lld/08-system-design-vulnerability-audit.md` (`DOC-LLD-08`) covers the exhaustive 100-vulnerability resilience suite across 44 architectural dimensions.
 
 
