@@ -48,6 +48,7 @@ By uniting **Google Gemini 3.8 Flash's backward planning intelligence** with **m
 4. **Three Curated Glassmorphic Themes:** Cyber Obsidian (pure OLED dark with electric cyan/indigo), Deep Focus Zen (warm amber and midnight slate), and Aurora Botanical (emerald and mint).
 5. **Zero-PII Stateless Sharing (`#v1=`):** Encodes 100% of the countdown state into a compact Base64 URL hash protected by a 300ms leaky bucket rate limiter, enabling viral peer sharing with zero database tracking.
 6. **Multi-Sensory Immersion:** Features procedural Web Audio API harmonic victory chime synthesis (C5-E5-G5-C6), native haptic tactile feedback (`navigator.vibrate`), and zero-allocation celebration particle physics.
+7. **Real-Time Multi-Tab Synchronization & Victory Alarm Mutex:** Employs the native `BroadcastChannel` API for sub-50ms peer state convergence with an Echo-Shield filter, arbitrated by the W3C `Web Locks API` (`navigator.locks.request`) to guarantee strictly one tab synthesizes victory audio upon timer zero.
 ```
 
 ---

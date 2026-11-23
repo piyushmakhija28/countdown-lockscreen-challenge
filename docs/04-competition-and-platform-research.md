@@ -83,7 +83,7 @@ quadrantChart
     "Generic Web Countdowns": [0.10, 0.15]
 ```
 
-### 3.1 Detailed 12-Factor Feature Matrix
+### 3.1 Detailed 14-Factor Feature Matrix
 | Capability / Feature | Widgetsmith | Pretty Progress | Notion / Trello | Canva / Figma | Generic Web Timers | **Countdown Studio (Ours)** |
 |:---|:---:|:---:|:---:|:---:|:---:|:---:|
 | **Platform Compatibility** | iOS Only | iOS / Android | Desktop/App | Web / App | Web Only | **Universal Web + PWA** |
@@ -98,6 +98,8 @@ quadrantChart
 | **Offline Capability** | ✅ Offline | ✅ Offline | ⚠️ Limited | ❌ Online only | ❌ Online only | **✅ PWA + Heuristic Fallback** |
 | **Frictionless Shareable State** | ❌ None | ❌ None | ⚠️ Workspace | ⚠️ Share link | ❌ None | **✅ Compressed URL Hash (#v1=)** |
 | **Direct Competition Alignment** | ❌ None | ❌ None | ❌ None | ❌ None | ❌ None | **✅ Tailored for Handshake/Google** |
+| **Cross-Tab Real-Time State Sync** | ❌ None | ❌ None | ⚠️ WebSockets/DB | ⚠️ Cloud polling | ❌ None | **✅ Native BroadcastChannel (`FR-23`, `ADR-011`)** |
+| **Single-Instance Alarm Mutex** | ❌ None | ❌ None | ❌ None | ❌ None | ❌ None | **✅ W3C Web Locks API (`FR-24`, `ADR-012`)** |
 
 ---
 

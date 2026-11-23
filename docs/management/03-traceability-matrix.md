@@ -40,8 +40,8 @@
 | **FR-20**| F-04 Safe Zones/VP | LayoutEngine        | `js/canvas/ResponsiveLayoutEngine.js`<br/>`js/canvas/CanvasTextWrapper.js`| `TC-POS-08`, `TC-POS-18`, `TC-EDGE-05`, `TC-EDGE-06`, `TC-POS-112`, `TC-EDGE-12`|
 | **FR-21**| F-05 Confetti SoA  | ParticleEngine      | `js/canvas/ParticleEngine.js`| `TC-POS-19`, `TC-EDGE-18`, `TC-POS-110`, `TC-POS-111`|
 | **FR-22**| F-05 Font Barrier  | FontService         | `js/services/FontService.js` | `TC-POS-20`, `TC-EDGE-24`, `TC-POS-114`|
-| **FR-23**| F-07 Multi-Tab Sync| BroadcastChannel    | `js/core/StateStore.js`      | `TC-POS-115`                    |
-| **FR-24**| F-05 Alarm Mutex   | WebLocksMutex       | `js/services/AudioChimeService.js`| `TC-POS-116`                |
+| **FR-23**| F-07 Multi-Tab Sync| BroadcastChannel    | `js/core/StateStore.js`      | `TC-POS-115`, `TC-NEG-15`, `TC-EDGE-27`, `ADR-011`|
+| **FR-24**| F-05 Alarm Mutex   | WebLocksMutex       | `js/services/AudioChimeService.js`| `TC-POS-116`, `TC-NEG-16`, `TC-EDGE-28`, `ADR-012`|
 | **ROOT**  | Application Root   | Orchestrator Root   | `src/js/app.js` (`CountdownApp`)| `TC-POS-01` through `TC-POS-20` |
 +---------+--------------------+---------------------+----------------------+-----------------------------------+
 ```
@@ -164,3 +164,34 @@
 | **TC-EDGE-26**           | Double-Precision IEEE | `DOC-LLD-08` (MA-01)   | Sub-millisecond chronometer math  |
 +--------------------------+-----------------------+------------------------+-----------------------------------+
 ```
+
+---
+
+## 7. System Invariants Bidirectional Traceability Matrix (INV-001 to INV-017)
+
+```
++-----------------------------------------------------------------------------------------------------------------------------------------------------+
+|                                               SYSTEM INVARIANTS BIDIRECTIONAL TRACEABILITY MATRIX                                                   |
++---------+-----------------------------------+---------------------------------------+---------------------+----------------------+------------------+
+| Inv ID  | Mathematical Invariant Title      | Verification Formulation              | Governing Spec      | Implementing Class   | Verification ID  |
++---------+-----------------------------------+---------------------------------------+---------------------+----------------------+------------------+
+| INV-001 | Sub-Pixel Snapping                | abs(y_snap * DPR - round(y_snap*DPR))=0| DOC-LLD-09          | CanvasRenderer.js    | TC-POS-09        |
+| INV-002 | Oklab Gamut Preservation          | L* in [0,1], a*,b* in [-0.5,0.5]      | DOC-LLD-09          | themes.js            | TC-EDGE-23       |
+| INV-003 | Monotone Spline Slope             | y'(x) >= 0.00000 for all x in [0,1]   | DOC-LLD-09          | CanvasRenderer.js    | TC-EDGE-13       |
+| INV-004 | Aspect Ratio Isotropy             | abs(scaleX - scaleY) == 0.00000       | DOC-LLD-09          | ResponsiveLayout.js  | TC-POS-18        |
+| INV-005 | Fitts's Law Ergonomic Difficulty  | log2(1 + 2D/W) <= 3.50000 bits        | DOC-UI-02           | SafeZoneOverlay.js   | TC-EDGE-14       |
+| INV-006 | OLED Micro-Orbital Bounding       | sqrt(dx^2 + dy^2) <= 2.00000 px       | DOC-LLD-09          | CanvasRenderer.js    | TC-EDGE-25       |
+| INV-007 | Mazur Hyperbolic Urgency Limit    | V(D) -> A = 100 as D -> 0             | DOC-LLD-09          | MilestoneManager.js  | TC-POS-07        |
+| INV-008 | Arc Boundary Singularity Guard    | theta_end - theta_start <= 2*PI - 1e-6| DOC-LLD-09          | CanvasRenderer.js    | TC-POS-113       |
+| INV-009 | Thermal GPU Frame Clamp           | FPS_idle <= 15.0000 FPS               | DOC-LLD-09          | DualClockTimeEngine  | TC-POS-04        |
+| INV-010 | Inverse Transform Precision       | norm(M * M^-1 - I) <= 1e-12           | DOC-LLD-09          | CanvasRenderer.js    | TC-EDGE-26       |
+| INV-011 | Symplectic Particle Terminal Vel  | lim_{t->inf} ||v(t)|| <= 738.00 px/s  | DOC-LLD-09          | ParticleEngine.js    | TC-POS-110       |
+| INV-012 | Zero-Duration Arc Guard           | P == 1.00000 when t_total <= 0        | DOC-LLD-09          | DualClockTimeEngine  | TC-POS-100       |
+| INV-013 | Dual-Constraint GPU Ceiling       | S* <= min(DPR, S_area, S_edge)        | DOC-LLD-09, ADR-004 | AdaptiveBufferAlloc  | TC-POS-09        |
+| INV-014 | Oklab Chroma Bisection Guard      | F(alpha_final) == 1, dE <= 0.001      | DOC-LLD-09          | themes.js            | TC-POS-11        |
+| INV-015 | Cross-Font Fallback Floor         | S_effective >= S_floor = 10px         | DOC-LLD-09          | FontService.js       | TC-EDGE-24       |
+| INV-016 | Single-Instance Victory Mutex     | LocksHeld(alarm) <= 1                 | DOC-LLD-01, ADR-012 | AudioChimeService.js | TC-POS-116       |
+| INV-017 | Multi-Tab Eventual Consistency    | Delta t_sync <= 50ms, sender != self  | DOC-LLD-01, ADR-011 | StateStore.js        | TC-POS-115       |
++---------+-----------------------------------+---------------------------------------+---------------------+----------------------+------------------+
+```
+

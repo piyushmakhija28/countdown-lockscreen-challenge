@@ -296,6 +296,10 @@ export class StateStore {
   #actionQueue = [];
   /** @type {number} */
   #reentrancyDepth = 0;
+  /** @type {BroadcastChannel | null} */
+  #syncChannel = null;
+  /** @type {string} */
+  #instanceId = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2);
   /** @type {number} */
   static MAX_REENTRANCY_DEPTH = 10;
 
@@ -308,11 +312,6 @@ export class StateStore {
     this.#state = deepFreeze(structuredClone(initialState));
   }
 
-  /**
-   * Retrieves a deeply frozen immutable snapshot of current state.
-   *
-   * @returns {Readonly<CountdownState>}
-   */
   /**
    * Initializes BroadcastChannel listener for multi-tab synchronization.
    * Filters out cyclic self-broadcasts via unique tab instanceId.
@@ -328,8 +327,24 @@ export class StateStore {
     };
   }
 
+  /**
+   * Retrieves a deeply frozen immutable snapshot of current state.
+   *
+   * @returns {Readonly<CountdownState>}
+   */
   getState() {
     return this.#state;
+  }
+
+  /**
+   * Closes active BroadcastChannel connection and releases IPC resources.
+   */
+  destroy() {
+    if (this.#syncChannel) {
+      this.#syncChannel.close();
+      this.#syncChannel = null;
+    }
+    this.#subscribers.clear();
   }
 
   /**
@@ -791,11 +806,6 @@ export class AudioChimeService {
   async unlockAudioContext() {}
 
   /**
-   * Synthesizes celebratory major chord chime (C5-E5-G5-C6) with peak compression.
-   *
-   * @returns {Promise<boolean>} Resolves true if sound played, false if audio blocked or unavailable
-   */
-  /**
    * Arbitrates single-instance victory audio chime via Web Locks API mutex.
    * Guarantees strictly one tab plays celebratory audio across multi-tab sessions.
    *
@@ -815,6 +825,11 @@ export class AudioChimeService {
     }
   }
 
+  /**
+   * Synthesizes celebratory major chord chime (C5-E5-G5-C6) with peak compression.
+   *
+   * @returns {Promise<boolean>} Resolves true if sound played, false if audio blocked or unavailable
+   */
   async playVictoryChime() {}
 
   /**

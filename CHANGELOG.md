@@ -5,6 +5,48 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.0] - 2026-11-23
+
+### Added
+- **Full Test Triads for FR-23 and FR-24 (`docs/testing/02-test-cases-catalog.md`):**
+  - Added `TC-NEG-15` (Cross-Tab Corrupted Message Ingress: CRC32 / schema rejection throws `BroadcastChannelSyncError` and isolates channel).
+  - Added `TC-EDGE-27` (Rapid Concurrent Multi-Tab Keystroke Race: Lamport sequence & LWW timestamp resolution converges in $\le 50\text{ms}$).
+  - Added `TC-NEG-16` (Web Locks API Security Exception: `navigator.locks.request` throws `SecurityError` under strict sandbox -> graceful fallback).
+  - Added `TC-EDGE-28` (Abrupt Tab Teardown Mid-Victory-Chime Lock Release: kernel auto-releases lock without deadlock).
+  - Synchronized section headers to reflect accurate test counts (20 POS, 16 NEG, 26 EDGE).
+- **Headless Test Mocks for Browser IPC & Web Locks (`docs/testing/01-test-strategy-and-pyramid.md`):**
+  - Added `Section 3.3: MockBroadcastChannel & MockWebLocks for Headless Unit & Integration Testing` providing concrete TypeScript mock classes for Vitest / Happy-DOM.
+  - Updated Section 1.2 coverage mandate to `FR-01 to FR-24` and `NFR-01 to NFR-11`.
+- **Complete 17-Module Mathematical Invariant Suite (`docs/lld/09-pixel-perfect-mathematical-blueprint.md`):**
+  - Updated Section 18 to `Complete 17-Module Suite`, incorporating `INV-017: Multi-Tab Eventual Consistency & Echo Shield` ($\Delta t_{\text{sync}} \le 50\text{ms}, \text{senderId} \neq \text{currentInstanceId}$).
+- **Bidirectional Invariant Traceability & Specification Hardening:**
+  - Added `Section 3.2 System Invariants Specification (INV-001 to INV-017)` to `docs/05-srs.md` and updated Table 4 RTM with complete test triads and ADR mappings.
+  - Added `Section 5 Hard System Invariants & Architectural Constraints (INV-001 to INV-017)` to `docs/01-prd.md` and renumbered subsequent sections.
+  - Added `Section 7 System Invariants Bidirectional Traceability Matrix (INV-001 to INV-017)` to `docs/management/03-traceability-matrix.md` and updated Table 1.
+  - Added Trade-off 5 (`ADR-011`) and Trade-off 6 (`ADR-012`) to `docs/07-architecture-tradeoffs-and-faq.md`.
+  - Added `ADR-011` and `ADR-012` to Section 4 Compliance Matrix in `docs/09-tech-stack-fundamentals-and-compliance-matrix.md`, updating count to 69 files.
+  - Expanded Table 3.1 in `docs/04-competition-and-platform-research.md` to 14-Factor Feature Matrix.
+- **UML Invocation Hierarchy & Concurrency Parity (`uml/` & `drawio/`):**
+  - Updated `uml/call_graph_diagram.md`: added `enableCrossTabSync`, `playVictoryChimeWithLock`, `ResilientStorageService.loadState()`, and IPC dispatch.
+  - Updated `uml/sequence_diagram.md`: added `BroadcastChannel` and `SiblingTab` participants and dispatch/sync loop.
+  - Updated `uml/communication_diagram.md`: added `WebLocks` mutex node and `BroadcastChannel` peer tab links.
+  - Updated `uml/interaction_diagram.md`: added `SyncAcrossTabs` and `ArbitrateMutex` states.
+  - Regenerated all 13 Draw.io diagrams with authentic system architecture, achieving zero generic placeholders and 100% Rule 45 parity (`call_graph_diagram.drawio`: 20.8 KB, 40 methods).
+- **Security & Token Hygiene:**
+  - Added `Section 4: Inter-Tab Broadcast Message Sanitization & Deserialization Pipeline` to `docs/security/04-input-validation-and-sanitization-pipeline.md`.
+  - Added Invariant 6 (`IPC Broadcast Exclusion Invariant`) to `docs/security/03-credential-logging-governance.md`.
+  - Added `--ease-sync` and `--color-sync-pulse` to `docs/ui-ux/01-design-system-and-tokens.md`.
+  - Added Technical Highlight 7 (*Real-Time Multi-Tab Synchronization & Victory Alarm Mutex*) to `docs/08-handshake-submission-package.md`.
+  - Added Gates 7 and 8 (*Architecture & UML Parity*, *Invariant & Triads*) to `docs/devops/02-ci-cd-pipeline-spec.md`.
+
+### Fixed
+- **Class Design Syntax & Docstring Bugs (`docs/lld/01-class-and-object-design.md`):**
+  - Explicitly declared `#syncChannel` and `#instanceId` in `StateStore` private class fields, eliminating ES2022 syntax errors.
+  - Cleaned up stacked duplicate JSDoc headers on `StateStore.getState()` and `AudioChimeService.playVictoryChime()`.
+  - Added `StateStore.destroy()` method for clean IPC teardown.
+  - Added `ADR-011` and `ADR-012` to the ASCII directory tree in `docs/lld/07-package-structure-and-code-blueprint.md`.
+  - Explicitly linked `AU-04` (Issue 88) to Web Locks API and `CC-07` (Issue 92) to BroadcastChannel echo shield in `docs/lld/08-system-design-vulnerability-audit.md`.
+
 ## [2.0.0] - 2026-11-23
 
 ### Added

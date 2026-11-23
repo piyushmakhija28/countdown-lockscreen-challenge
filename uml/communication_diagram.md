@@ -10,10 +10,13 @@ graph LR
     Gemini -->|6: Returns milestones JSON| UI
     UI -->|7: dispatch SET_GOAL| Store[StateStore]
     Store -->|8: pushStateUpdate| Guard[TokenBucketHistoryGuard]
+    Store -->|8b: broadcast SYNC_STATE| BC[BroadcastChannel]
+    BC -->|8c: onmessage| Peer[Peer Tab StateStore]
     Guard -->|9: serialize| URLCodec[UrlStateService]
     Store -->|10: setDeadline| Engine[DualClockTimeEngine]
     Engine -->|11: onTick 60fps| UI
-    Engine -->|12: onExpire| Audio[AudioChimeService]
+    Engine -->|12: onExpire| Mutex[Web Locks API]
+    Mutex -->|12b: lock granted| Audio[AudioChimeService]
     Engine -->|13: onExpire| Haptic[HapticService]
     User -->|14: Requests Wallpaper| UI
     UI -->|15: solveScale| Alloc[AdaptiveBufferAllocator]

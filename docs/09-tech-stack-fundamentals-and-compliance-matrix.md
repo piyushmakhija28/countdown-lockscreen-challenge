@@ -287,11 +287,11 @@ The following 50 verification points represent the concrete implementation crite
 
 ## 4. Cross-Document Compliance Matrix
 
-The following comprehensive matrix verifies and certifies that every single specification across the repository's 67 documents aligns with the 10 Technical Fundamental Pillars:
+The following comprehensive matrix verifies and certifies that every single specification across the repository's 69 documents aligns with the 10 Technical Fundamental Pillars:
 
 ```
 +--------------------------------------------------------------------------------------------------------------------+
-|                                      CROSS-DOCUMENT COMPLIANCE MATRIX (ALL 67 FILES)                               |
+|                                      CROSS-DOCUMENT COMPLIANCE MATRIX (ALL 69 FILES)                               |
 +-------------------------------------------------------------------+-----------------------------------+------------+
 | Document Path                                                     | Covered Technical Pillars         | Compliance |
 +-------------------------------------------------------------------+-----------------------------------+------------+
@@ -313,6 +313,8 @@ The following comprehensive matrix verifies and certifies that every single spec
 | docs/06-adr/ADR-008-static-deployment-and-pwa-topology.md         | P-01, P-10                        | CERTIFIED  |
 | docs/06-adr/ADR-009-procedural-web-audio-vs-prerecorded-media.md   | P-07                              | CERTIFIED  |
 | docs/06-adr/ADR-010-leaky-bucket-history-guard.md                 | P-09                              | CERTIFIED  |
+| docs/06-adr/ADR-011-cross-tab-state-synchronization.md           | P-09, P-10                        | CERTIFIED  |
+| docs/06-adr/ADR-012-web-locks-single-instance-alarm-mutex.md     | P-07, P-10                        | CERTIFIED  |
 | docs/07-architecture-tradeoffs-and-faq.md                         | ALL PILLARS (P-01 through P-10)   | CERTIFIED  |
 | docs/08-handshake-submission-package.md                           | P-01, P-02, P-03, P-04, P-06      | CERTIFIED  |
 | docs/09-tech-stack-fundamentals-and-compliance-matrix.md (THIS DOC)| ALL PILLARS (P-01 through P-10)   | CERTIFIED  |
@@ -358,7 +360,7 @@ The following comprehensive matrix verifies and certifies that every single spec
 | uml/component_diagram.md                                          | P-01, P-03, P-06, P-07, P-10      | CERTIFIED  |
 | uml/composite_diagram.md                                          | P-01, P-03, P-04, P-08            | CERTIFIED  |
 | uml/deployment_diagram.md                                         | P-01, P-06, P-10                  | CERTIFIED  |
-| interaction_diagram.md                                            | P-01, P-05, P-06, P-07, P-09      | CERTIFIED  |
+| uml/interaction_diagram.md                                        | P-01, P-05, P-06, P-07, P-09      | CERTIFIED  |
 | uml/object_diagram.md                                             | P-01, P-05, P-06, P-09            | CERTIFIED  |
 | uml/package_diagram.md                                            | P-01, P-03, P-06, P-07, P-10      | CERTIFIED  |
 | uml/sequence_diagram.md                                           | P-01, P-03, P-05, P-06, P-09      | CERTIFIED  |

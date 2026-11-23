@@ -72,6 +72,50 @@
 
 ---
 
+### 1.5 Trade-off 5: Inter-Tab State Synchronization — Native BroadcastChannel vs. StorageEvent vs. SharedWorker (ADR-011)
+
+```
++-------------------------------------------------------------------------------------------------------------------+
+|                                  INTER-TAB SYNCHRONIZATION EVALUATION MATRIX                                      |
++--------------------------+----------+--------------------+---------------------+-----------------+----------------+
+| Evaluation Criteria      | Weight   | BroadcastChannel   | StorageEvent        | SharedWorker    | WebSockets     |
++--------------------------+----------+--------------------+---------------------+-----------------+----------------+
+| Latency (< 50ms)         | 30%      | 5/5 (< 5ms IPC)    | 3/5 (15-40ms disk)  | 4/5 (10ms)      | 2/5 (150ms net)|
+| Zero Disk IO Overhead    | 25%      | 5/5 (In-memory IPC)| 1/5 (Sync flash write)| 5/5 (RAM only)| 5/5 (RAM only) |
+| Serverless Architecture  | 25%      | 5/5 ($0.00 infra)  | 5/5 ($0.00 infra)   | 5/5 ($0.00 infra)| 1/5 (Host cost)|
+| Mobile Browser Support   | 20%      | 5/5 (Evergreen 97%)| 5/5 (Legacy)        | 2/5 (iOS Safari ❌)| 5/5 (100%)    |
++--------------------------+----------+--------------------+---------------------+-----------------+----------------+
+| Weighted Total Score     | 100%     | 5.00 / 5.0         | 3.35 / 5.0          | 4.15 / 5.0      | 3.10 / 5.0     |
++--------------------------+----------+--------------------+---------------------+-----------------+----------------+
+```
+
+- **Selected:** **Native `BroadcastChannel` API with Echo-Shield Filter (`ADR-011`, `INV-017`)**.
+- **Rationale:** Native `BroadcastChannel` provides zero-overhead, memory-mapped IPC directly between same-origin browsing contexts without polluting flash storage or triggering disk writes. An instance ID header (`senderId`) prevents cyclic echo storms.
+
+---
+
+### 1.6 Trade-off 6: Distributed Victory Alarm Mutex — Web Locks API vs. LocalStorage Spin-Lock vs. Leader Election (ADR-012)
+
+```
++-------------------------------------------------------------------------------------------------------------------+
+|                                 DISTRIBUTED ALARM ARBITRATION EVALUATION MATRIX                                   |
++--------------------------+----------+--------------------+---------------------+-----------------+----------------+
+| Evaluation Criteria      | Weight   | Web Locks API      | LocalStorage Lock   | Leader Election | Unsynchronized |
++--------------------------+----------+--------------------+---------------------+-----------------+----------------+
+| Deadlock Immunity        | 30%      | 5/5 (Kernel auto)  | 2/5 (Stale locks)   | 3/5 (Split-brain)| 5/5 (No lock)  |
+| Non-Blocking Arbitration | 25%      | 5/5 (ifAvailable)  | 2/5 (CPU spin loop) | 3/5 (Async delay)| 5/5 (Instant)  |
+| Acoustic Safety (0 Clip) | 25%      | 5/5 (Strict 1 tab) | 3/5 (Race window)   | 4/5 (Quorum lag)| 1/5 (Loud clash)|
+| Implementation Simplicity| 20%      | 5/5 (Native W3C)   | 2/5 (Heartbeat poll)| 1/5 (Raft/Bully)| 5/5 (Zero code)|
++--------------------------+----------+--------------------+---------------------+-----------------+----------------+
+| Weighted Total Score     | 100%     | 5.00 / 5.0         | 2.25 / 5.0          | 2.85 / 5.0      | 3.75 / 5.0     |
++--------------------------+----------+--------------------+---------------------+-----------------+----------------+
+```
+
+- **Selected:** **W3C `Web Locks API` (`navigator.locks.request` with `{ ifAvailable: true }`) (`ADR-012`, `INV-016`)**.
+- **Rationale:** Web Locks API delegates mutual exclusion to the underlying browser process manager. If the tab holding the lock crashes or closes, the kernel automatically frees the lock with zero stale lock hazard, guaranteeing strictly one tab triggers celebratory audio.
+
+---
+
 ## 2. Technical & Architectural Frequently Asked Questions (FAQ)
 
 ### Q1: Why do we generate a static wallpaper rather than an iOS Live Activity or Android Widget?

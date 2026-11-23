@@ -3,10 +3,13 @@
 ```mermaid
 graph TD
     AppInit[app.js: initializeApp] --> StoreInit[StateStore.init]
+    AppInit --> SyncInit[StateStore.enableCrossTabSync]
     AppInit --> TimeInit[DualClockTimeEngine.startTicker]
     AppInit --> UrlInit[UrlStateService.deserialize]
     
     UrlInit -->|If Hash Present| StoreDispatch[StateStore.dispatch: SET_STATE]
+    UrlInit -->|If No Hash| StorageFallback[ResilientStorageService.loadState]
+    StorageFallback --> StoreDispatch
     
     UserAction[User Clicks Generate with Gemini] --> HandleSubmit[app.js: handleGoalSubmit]
     HandleSubmit --> SanitizeInput[InputSanitizer.sanitizeTitle]
@@ -22,11 +25,15 @@ graph TD
     StoreDispatch --> TimeUpdate[DualClockTimeEngine.setDeadline]
     StoreDispatch --> HistoryPush[TokenBucketHistoryGuard.pushState]
     StoreDispatch --> RenderDOM[ViewRenderer.renderAll]
+    StoreDispatch --> IPCBroadcast[BroadcastChannel.postMessage]
     
     TimeInit --> RAFLoop[DualClockTimeEngine.tick]
     RAFLoop --> PerfNow[window.performance.now]
     RAFLoop --> CalcUnits[DualClockTimeEngine.calculateRemaining]
     CalcUnits --> UpdateTickerDOM[ViewRenderer.updateTicker]
+    CalcUnits -->|If Delta <= 0| AlarmLock[AudioChimeService.playVictoryChimeWithLock]
+    AlarmLock --> WebLocksReq[navigator.locks.request]
+    WebLocksReq -->|Lock Granted| PlayChime[AudioChimeService.playVictoryChime]
     
     UserExport[User Clicks Download Wallpaper] --> HandleExport[app.js: handleExportClick]
     HandleExport --> AllocScale[AdaptiveBufferAllocator.solveScale]

@@ -27,6 +27,11 @@ stateDiagram-v2
         WatchCountdownTick --> ToggleSafeZones
         ToggleSafeZones --> SwitchAestheticTheme
         SwitchAestheticTheme --> CheckMilestoneDone
+        CheckMilestoneDone --> SyncPeerTabs: BroadcastChannel dispatch
+        SyncPeerTabs --> WatchCountdownTick: State Converged
+        WatchCountdownTick --> ArbitrateAlarm: Delta <= 0ms
+        ArbitrateAlarm --> PlayVictoryChime: Web Locks Mutex Acquired
+        ArbitrateAlarm --> SuppressChime: Mutex Contended
     }
     
     PreviewScreen --> ExportWallpaper: Click Download

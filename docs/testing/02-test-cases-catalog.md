@@ -10,7 +10,7 @@
 
 ---
 
-## 1. Positive Test Scenarios (17 Happy-Path Cases)
+## 1. Positive Test Scenarios (20 Happy-Path Cases)
 
 Conforming to `~/.claude/rules/35-positive-testing-standards.md`:
 
@@ -43,7 +43,7 @@ Conforming to `~/.claude/rules/35-positive-testing-standards.md`:
 
 ---
 
-## 2. Negative Test Scenarios (14 Error-Path Cases)
+## 2. Negative Test Scenarios (16 Error-Path Cases)
 
 Conforming to `~/.claude/rules/36-negative-testing-standards.md`:
 
@@ -65,12 +65,14 @@ Conforming to `~/.claude/rules/36-negative-testing-standards.md`:
 | TC-NEG-12 | Uncompressed Payload Exceeds 32KB | Base64 state payload > 32768 B    | Throws ERR_PAYLOAD_TOO_LARGE.     |
 | TC-NEG-13 | Object Prototype Poison Ingress   | constructor.prototype pollution   | Reviver strips polluted keys.     |
 | TC-NEG-14 | Gemini AI Content Filter Safety   | Toxic prompt triggers SAFETY block| Throws ERR_AI_SAFETY_BLOCK.       |
+| TC-NEG-15 | Cross-Tab Corrupted Message Ingress| Corrupted JSON / CRC32 mismatch   | Throws BroadcastChannelSyncError. |
+| TC-NEG-16 | Web Locks Security Exception      | navigator.locks throws SecurityErr | Soft single-tab fallback without unhandled rejection. |
 +-----------+-----------------------------------+-----------------------------------+-----------------------------------+
 ```
 
 ---
 
-## 3. Edge-Case Scenarios (24 Boundary Conditions)
+## 3. Edge-Case Scenarios (26 Boundary Conditions)
 
 Conforming to `~/.claude/rules/37-edge-case-testing-standards.md`:
 
@@ -102,6 +104,8 @@ Conforming to `~/.claude/rules/37-edge-case-testing-standards.md`:
 | TC-EDGE-22| Fail-Fast AI Rate Limit Breaker   | HTTP 429 response received        | Circuit breaker trips immediately.|
 | TC-EDGE-23| Theme Contrast WCAG AAA Invariant | Theme C Mint on Forest Background | Contrast ratio >= 7.15:1 verified.|
 | TC-EDGE-24| Canvas Web Font FOIT Elimination  | Web font not yet cached           | FontService awaits readiness gate.|
+| TC-EDGE-27| Concurrent Multi-Tab Keystroke Race| Simultaneous edits in 2 tabs      | Lamport timestamp & LWW resolve race in <= 50ms. |
+| TC-EDGE-28| Abrupt Tab Teardown Mid-Victory Lock| Active alarm tab killed abruptly   | Browser kernel auto-releases lock; no deadlock. |
 +-----------+-----------------------------------+-----------------------------------+-----------------------------------+
 ```
 

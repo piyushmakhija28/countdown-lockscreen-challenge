@@ -183,7 +183,33 @@ journey
 
 ---
 
-## 5. Non-Functional Requirements & Performance SLAs
+## 5. Hard System Invariants & Architectural Constraints (INV-001 to INV-017)
+
+The application design is mathematically bounded by 17 immutable system invariants guaranteeing sub-pixel precision, zero-drift timing, zero-PII privacy, and multi-tab coordination:
+
+| Invariant ID | Formulation / Constraint | Physical / Psychological Rationale |
+|:---|:---|:---|
+| **INV-001** | $|y_{\text{snap}} \cdot \text{DPR} - \text{round}(y_{\text{snap}} \cdot \text{DPR})| = 0.00000$ | Quantizes vertical layout to physical device pixels, eliminating text blur. |
+| **INV-002** | $L^* \in [0, 1], a^*, b^* \in [-0.5, 0.5]$ | Preserves Oklab gamut bounds; prevents chromatic clipping on OLED displays. |
+| **INV-003** | $y'(x) \ge 0.00000 \quad \forall x \in [0, 1]$ | Fritsch-Carlson monotone cubic spline guarantees zero progress bar overshoot. |
+| **INV-004** | $|\text{scaleX} - \text{scaleY}| = 0.00000$ | Enforces isotropic 2D affine scaling; prevents circular widgets from warping. |
+| **INV-005** | $\text{ID} = \log_2(1 + 2D/W) \le 3.50000\text{ bits}$ | Fitts's Law threshold ensuring one-handed thumb ergonomics on mobile. |
+| **INV-006** | $\sqrt{\Delta x^2 + \Delta y^2} \le 2.00000\text{ px}$ | Micro-orbital shifting prevents static OLED phosphor burn-in on lock screens. |
+| **INV-007** | $V(D) \to A = 100 \text{ as } D \to 0$ | Mazur hyperbolic urgency model bounds motivation curve asymptotically. |
+| **INV-008** | $\theta_{\text{end}} - \theta_{\text{start}} \le 2\pi - 10^{-6}$ | Prevents arc singularity and self-intersection in circular progress canvas. |
+| **INV-009** | $\text{FPS}_{\text{idle}} \le 15.0000$ | Clamps frame rate during static preview; conserves device battery and thermals. |
+| **INV-010** | $\|M \cdot M^{-1} - I\| \le 10^{-12}$ | Double-precision matrix inversion precision; eliminates floating-point drift. |
+| **INV-011** | $\lim_{t \to \infty} \|v(t)\| \le 738.00\text{ px/s}$ | Symplectic particle physics terminal velocity clamp preventing runaway motion. |
+| **INV-012** | $P = 1.00000 \text{ when } t_{\text{total}} \le 0$ | Zero-duration goal guard eliminating IEEE 754 NaN division errors. |
+| **INV-013** | $S^* \le \min(\text{DPR}, S_{\text{area}}, S_{\text{edge}})$ | Adaptive buffer solver limits canvas backing store to WebKit 16.7MP ceiling. |
+| **INV-014** | $F(\alpha_{\text{final}}) = 1$ | Oklab chroma bisection preserves hue angle $h$ within $\Delta E \le 0.001$. |
+| **INV-015** | $S_{\text{effective}} \ge S_{\text{floor}} = 10\text{px}$ | Cross-font fallback minimum size prevents text collision under system font. |
+| **INV-016** | $\text{LocksHeld}(\text{alarm}) \le 1$ | Web Locks API mutex guarantees single-tab victory audio playback. |
+| **INV-017** | $\Delta t_{\text{sync}} \le 50\text{ms}, \text{senderId} \neq \text{instanceId}$ | BroadcastChannel sync converges within 50ms while discarding cyclic echoes. |
+
+---
+
+## 6. Non-Functional Requirements & Performance SLAs
 
 | NFR ID | Category | Metric / Requirement | Target SLA | Verification Method |
 |:---|:---|:---|:---|:---|
@@ -201,7 +227,7 @@ journey
 
 ---
 
-## 6. Edge Cases & Degraded UX Handling
+## 7. Edge Cases & Degraded UX Handling
 
 | Edge Case ID | Scenario | Potential Impact | System Mitigation & Recovery Strategy |
 |:---|:---|:---|:---|
@@ -214,7 +240,7 @@ journey
 
 ---
 
-## 7. Product Release Roadmap
+## 8. Product Release Roadmap
 
 ```mermaid
 gantt

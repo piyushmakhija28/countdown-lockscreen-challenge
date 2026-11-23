@@ -37,7 +37,9 @@ countdown-lockscreen-challenge/
 │   │   ├── ADR-007-time-engine-and-milestone-chronometry.md
 │   │   ├── ADR-008-static-deployment-and-pwa-topology.md
 │   │   ├── ADR-009-procedural-web-audio-vs-prerecorded-media.md
-│   │   └── ADR-010-leaky-bucket-history-guard-vs-synchronous-pushstate.md
+│   │   ├── ADR-010-leaky-bucket-history-guard-vs-synchronous-pushstate.md
+│   │   ├── ADR-011-cross-tab-state-synchronization.md
+│   │   └── ADR-012-web-locks-single-instance-alarm-mutex.md
 │   ├── 07-architecture-tradeoffs-and-faq.md # Tradeoff Matrices, Failure Modes & Judge FAQ
 │   ├── 08-handshake-submission-package.md # Official Contest Submission Package & Deliverables
 │   ├── 09-tech-stack-fundamentals-and-compliance-matrix.md # Technical Stack Fundamentals & Compliance Matrix

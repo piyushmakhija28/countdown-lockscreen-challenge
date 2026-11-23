@@ -10,6 +10,8 @@ sequenceDiagram
     participant RateLimiter as GeminiRateLimiter
     participant Gemini as GeminiAiClient
     participant Store as StateStore
+    participant BC as BroadcastChannel
+    participant SiblingTab as Peer Browser Tab
     participant Ticker as DualClockTimeEngine
     participant Worker as WorkerTickerAdapter
     participant WebLocks as Navigator Web Locks
@@ -42,6 +44,9 @@ sequenceDiagram
     end
     
     App->>Store: dispatch(SET_GOAL_AND_MILESTONES)
+    Store->>BC: postMessage({ type: 'SYNC_STATE_V1', senderId, state })
+    BC-->>SiblingTab: onmessage(event) [senderId !== instanceId]
+    SiblingTab->>SiblingTab: dispatch(HYDRATE_EXTERNAL)
     Store->>Ticker: startTicker(deadline)
     
     alt Tab Foreground (Active)

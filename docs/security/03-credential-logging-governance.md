@@ -12,14 +12,15 @@
 
 ## 1. Ephemeral Client-Side Google Gemini API Key Governance
 
-To allow arbitrary users, contestants, and judges to optionally supply their own Google Gemini API key (Bring-Your-Own-Key model) while guaranteeing complete protection against credential leaks, the application implements five architectural invariants:
+To allow arbitrary users, contestants, and judges to optionally supply their own Google Gemini API key (Bring-Your-Own-Key model) while guaranteeing complete protection against credential leaks, the application implements six architectural invariants:
 
-### 1.1 The Five Credential Security Invariants
+### 1.1 The Six Credential Security Invariants
 1. **Header Transmission Invariant:** The Google Gemini API key is strictly transmitted via the `x-goog-api-key` HTTP request header. It is **strictly forbidden** from being passed as a URL query parameter (`?key=...`), preventing cleartext key leakage in CDN access logs, proxy caches, or browser history.
 2. **Private Memory Closure Retention:** The API key is stored exclusively within private lexical closures inside `GeminiAiClient`. It is never attached to the global `window` object or exported to shared modules.
 3. **Zero Persistence Invariant:** The API key is **NEVER** serialized or written to `localStorage`, `sessionStorage`, `IndexedDB`, cookies, or Service Worker cache stores. Closing the browser tab completely zeroizes the key from memory.
 4. **URL Hash Exclusion Invariant:** The state serializer (`UrlStateService`) strictly filters out credentials. The `#v1=` URL state payload contains only the goal title, deadline timestamp, theme ID, and milestone offsets.
 5. **Immediate Input Scavenging:** Upon entry in the settings modal, the input element value is immediately transferred to memory and wiped from the DOM element (`input.value = ''`), preventing credential extraction via browser autofill snapshots or extensions.
+6. **IPC Broadcast Exclusion Invariant:** Inter-tab messages broadcast over `BroadcastChannel('countdown_lockscreen_sync')` strictly serialize goal metrics, deadline, theme, and milestone states. API keys, authorization headers, and session tokens are strictly excluded from IPC broadcast payloads, ensuring peer tabs never receive or forward unencrypted credentials across renderer contexts.
 
 ### 1.2 Enterprise Secret Redaction Engine
 

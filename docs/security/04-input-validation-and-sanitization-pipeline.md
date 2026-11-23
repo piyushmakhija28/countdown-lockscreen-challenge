@@ -431,3 +431,28 @@ export class PersistentGeminiRateLimiter {
   }
 }
 ```
+
+---
+
+## 4. Inter-Tab Broadcast Message Sanitization & Deserialization Pipeline
+
+Incoming IPC events received via `BroadcastChannel('countdown_lockscreen_sync')` pass through an automated 4-tier defensive pipeline prior to ingestion into `StateStore`:
+
+```mermaid
+graph LR
+    IPC[Raw Broadcast MessageEvent] --> V1[1. Origin & Sender Isolation]
+    V1 --> V2[2. Structural Schema & Type Assertion]
+    V2 --> V3[3. Prototype-Proof Reviver Object.create null]
+    V3 --> V4[4. StateStore.dispatch HYDRATE_EXTERNAL]
+```
+
+### 4.1 Defensive Ingress Constraints
+1. **Sender Self-Filter:** Discards events where `event.data.senderId === this.#instanceId` to eliminate cyclic broadcast storms (`INV-017`).
+2. **Structural Schema Assertion:** Validates that incoming payloads strictly possess mandatory properties:
+   - `type`: Must match string constant `'SYNC_STATE_V1'`
+   - `senderId`: Must be a non-empty string ($8 \le L \le 64$)
+   - `timestamp`: Integer timestamp within $[t_{\text{now}} - 60000, t_{\text{now}} + 5000]$
+   - `state`: Validated state object containing `goalTitle`, `targetEpochMs`, `themeId`, `milestones`
+3. **Prototype Poisoning Defense:** Deserialized state maps through `Object.create(null)` stripping prototype inheritance.
+4. **Exception Handling:** Corrupted or invalid payloads throw `BroadcastChannelSyncError` with error code `SYNC_CHANNEL_CORRUPTED` and are isolated without crashing the application event loop (`TC-NEG-15`).
+

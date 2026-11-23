@@ -439,7 +439,7 @@ This coupled extent invariant guarantees $0\text{px}$ gap or seam between adjace
 
 ---
 
-## 18. Verification & Rigor Invariant Matrix (Complete 16-Module Suite)
+## 18. Verification & Rigor Invariant Matrix (Complete 17-Module Suite)
 
 ```
 +-----------------------------------------------------------------------------------------------------------------+
@@ -463,5 +463,6 @@ This coupled extent invariant guarantees $0\text{px}$ gap or seam between adjace
 | 14 | Oklab Chroma Bisection      | F(alpha_final) == 1                   | Hue h preserved, dE <= 0.001 to gamut |
 | 15 | Cross-Font Fallback Floor   | S_effective >= S_floor = 10px         | Zero text overflow under fallback font |
 | 16 | Coupled Extent Seam Guard   | x_left,phys == x_right,prev,phys      | 0px physical seam between adjacent cards|
+| 17 | Multi-Tab Sync & Echo Shield| Delta t_sync <= 50ms, sender != self  | 100% event convergence, 0 echo cycles|
 +----+-----------------------------+---------------------------------------+--------------------------------------+
 ```

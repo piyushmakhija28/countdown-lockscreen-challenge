@@ -138,15 +138,19 @@ Each functional requirement is formally specified with unique identifier, descri
 
 ### FR-23: Cross-Tab State Synchronization via BroadcastChannel
 - **Requirement:** When the user modifies goal parameters, checks milestones, or switches themes in one browser tab, the system shall synchronize state across all concurrent tabs on the same origin via `BroadcastChannel('countdown_lockscreen_sync')` without causing recursive pushState loops.
-- **Verification Method:** Test (`TC-POS-115`).
+- **Verification Method:** Test (`TC-POS-115`, `TC-NEG-15`, `TC-EDGE-27`).
+- **Governing ADR:** `ADR-011`.
 
 ### FR-24: Single-Instance Victory Alarm Locking via Web Locks API
 - **Requirement:** Upon countdown expiration ($\Delta t \le 0$), the system shall request an exclusive lock via the Web Locks API (`navigator.locks.request('countdown_victory_alarm_lock', { ifAvailable: true })`) to ensure strictly one tab synthesizes celebratory audio, preventing double-amplitude acoustic clipping across duplicate tabs.
-- **Verification Method:** Test (`TC-POS-116`).
+- **Verification Method:** Test (`TC-POS-116`, `TC-NEG-16`, `TC-EDGE-28`).
+- **Governing ADR:** `ADR-012`.
 
 ---
 
-## 3. Non-Functional Requirements Specification (NFR-01 to NFR-11)
+## 3. Non-Functional Requirements & System Invariants Specification
+
+### 3.1 Non-Functional Requirements (NFR-01 to NFR-11)
 
 | NFR ID | Attribute | Specification & Acceptance Threshold | Verification Method |
 |:---|:---|:---|:---|
@@ -161,6 +165,31 @@ Each functional requirement is formally specified with unique identifier, descri
 | **NFR-09** | Ergonomics | Mobile touch targets adhere to Fitts's Law: minimum $44 \times 44\text{ pixels}$. | DOM geometry audit |
 | **NFR-10** | Code Quality | Clean TypeScript codebase with zero `any` types and $100\%$ docstring coverage. | `tsc --noEmit` & ESLint |
 | **NFR-11** | Security / Cache | Scoped Service Worker cache eviction ensuring 0 stale bundles & query parameter stripping. | Automated Cache Audit |
+
+---
+
+### 3.2 System Invariants Specification (INV-001 to INV-017)
+
+All implementations across the codebase must satisfy the following 17 hard mathematical and architectural system invariants:
+
+1. **`INV-001` (Sub-Pixel Snapping Invariant):** $|y_{\text{snap}} \cdot \text{DPR} - \text{round}(y_{\text{snap}} \cdot \text{DPR})| = 0.00000$ (Guarantees crisp typography on physical pixels).
+2. **`INV-002` (Oklab Gamut Preservation):** $L^* \in [0, 1], a^*, b^* \in [-0.5, 0.5]$ (Prevents gamut clipping in wide-gamut OLED color rendering).
+3. **`INV-003` (Monotone Spline Slope Invariant):** $y'(x) \ge 0.00000$ for all $x \in [0, 1]$ (Guarantees zero Fritsch-Carlson cubic overshoot).
+4. **`INV-004` (Aspect Ratio Isotropy Invariant):** $|\text{scaleX} - \text{scaleY}| = 0.00000$ (Eliminates elliptical icon distortion).
+5. **`INV-005` (Fitts's Law Ergonomic Difficulty):** $\text{ID} = \log_2(1 + 2D / W) \le 3.50000\text{ bits}$ (Guarantees one-handed thumb zone compliance).
+6. **`INV-006` (OLED Micro-Orbital Bounding):** $\sqrt{\Delta x^2 + \Delta y^2} \le 2.00000\text{ physical pixels}$ (Eliminates stationary phosphor burn-in).
+7. **`INV-007` (Mazur Hyperbolic Urgency Bound):** $V(D) \to A = 100$ asymptotically as $D \to 0$ (Prevents mathematical overflow at deadline).
+8. **`INV-008` (Arc Boundary Singularity Guard):** $\theta_{\text{end}} - \theta_{\text{start}} \le 2\pi - 10^{-6}$ (Prevents self-intersecting circular progress rendering).
+9. **`INV-009` (Thermal GPU Frame Clamp):** Idle preview $\text{FPS} \le 15.0000$ (Conserves mobile device battery and thermal envelope).
+10. **`INV-010` (Inverse Transform Precision):** $\|M \cdot M^{-1} - I\| \le 10^{-12}$ (Guarantees zero affine coordinate drift).
+11. **`INV-011` (Symplectic Particle Terminal Velocity):** $\lim_{t \to \infty} \|v(t)\| \le 738.00\text{ px/s}$ (Prevents infinite celebration physics acceleration).
+12. **`INV-012` (Zero-Duration Arc Guard):** Progress $P = 1.00000$ when $t_{\text{total}} \le 0$ (Eliminates IEEE 754 NaN division errors).
+13. **`INV-013` (Dual-Constraint Scale Ceiling):** Backing buffer area $\le 16.7\text{MP}$ and max edge $\le 4096\text{px}$ on iOS WebKit.
+14. **`INV-014` (Oklab Chroma Bisection Guard):** $F(\alpha_{\text{final}}) = 1$ preserving hue angle $h$ with $\Delta E \le 0.001$.
+15. **`INV-015` (Cross-Font Fallback Floor):** Effective font size $S_{\text{effective}} \ge S_{\text{floor}} = 10\text{px}$ (Zero text overflow under fallback font).
+16. **`INV-016` (Single-Instance Victory Audio Mutex):** Strictly $\le 1$ tab holds `countdown_victory_alarm_lock` at timer zero.
+17. **`INV-017` (Multi-Tab Eventual Consistency & Echo Shield):** Cross-tab synchronization converges within $\Delta t_{\text{sync}} \le 50\text{ms}$ with cyclic echoes suppressed via `senderId !== currentInstanceId`.
+
 
 ---
 
@@ -194,8 +223,8 @@ Each functional requirement is formally specified with unique identifier, descri
 | FR-20   | F-04 Safe Zones/VP | LayoutEngine        | js/canvas/ResponsiveLayoutEngine.js| TC-POS-08, TC-POS-18, TC-EDGE-05..06, TC-POS-112, TC-EDGE-12 |
 | FR-21   | F-05 Confetti SoA  | ParticleEngine      | js/canvas/ParticleEngine.js| TC-POS-19, TC-EDGE-18, TC-POS-110, TC-POS-111 |
 | FR-22   | F-05 Font Barrier  | FontService         | js/services/FontService.js | TC-POS-20, TC-EDGE-24, TC-POS-114 |
-| FR-23   | F-07 Multi-Tab Sync| BroadcastChannel    | js/core/StateStore.js      | TC-POS-115          |
-| FR-24   | F-05 Alarm Mutex   | WebLocksMutex       | js/services/AudioChimeService.js| TC-POS-116     |
+| FR-23   | F-07 Multi-Tab Sync| BroadcastChannel    | js/core/StateStore.js      | TC-POS-115, TC-NEG-15, TC-EDGE-27, ADR-011 |
+| FR-24   | F-05 Alarm Mutex   | WebLocksMutex       | js/services/AudioChimeService.js| TC-POS-116, TC-NEG-16, TC-EDGE-28, ADR-012 |
 +---------+--------------------+---------------------+----------------------+---------------------------+
 ```
 

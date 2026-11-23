@@ -240,10 +240,12 @@ To create tactile depth without sacrificing $60\text{ fps}$ smoothness, glassmor
 
 ## 5. Micro-Interaction & Animation Choreography
 
-- **Cubic-Bezier Easing Tokens:**
+- **Cubic-Bezier Easing & Sync Tokens:**
   - `--ease-out-cubic: cubic-bezier(0.33, 1, 0.68, 1)` (Used for dialog popups and slide-ins).
   - `--ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1)` (Used for milestone completion checkmark bounce).
   - `--ease-smooth: cubic-bezier(0.4, 0, 0.2, 1)` (Used for continuous progress ring sweep).
+  - `--ease-sync: cubic-bezier(0.16, 1, 0.3, 1)` (Used for cross-tab state convergence ripple).
+  - `--color-sync-pulse: rgba(0, 240, 255, 0.35)` (Cyan ambient halo on sibling tab state update).
 - **Countdown Pulse:**
   - On every second boundary, the seconds digit undergoes a $1.02\times$ scale transform with duration $150\text{ms}$, reinforcing temporal vitality.
 - **Milestone Toggle Interaction:**
