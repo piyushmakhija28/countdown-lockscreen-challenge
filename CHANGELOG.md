@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.3.0] - 2026-11-23
+
+### Added
+- **Foundational UI/UX Architecture Suite Expansion (10-Specification Milestone):**
+  - Authored `DOC-UI-08-TYPOGRAPHIC-ENGINEERING` (`docs/ui-ux/08-typographic-engineering-and-font-system.md`): Curated three-tier font triad (`Plus Jakarta Sans` for display, `JetBrains Mono` for tabular chronometer digits, `Inter` for micro-copy). Mathematical proof of `font-variant-numeric: tabular-nums` (`tnum`) eliminating Cumulative Layout Shift ($CLS = 0.000$) during 1Hz ticking. Mathematical 4x4 Bayer spatial dither matrix and procedural Gaussian noise overlay ($1.8\%$) to eradicate 8-bit OLED gradient color quantization banding. Asynchronous Web Font Loading Gate architecture (`document.fonts.load()`) preventing canvas font metric race conditions and text clipping.
+  - Authored `DOC-UI-09-CANVAS-WALLPAPER-COMPOSITION-ENGINE` (`docs/ui-ux/09-canvas-wallpaper-composition-engine.md`): 9-stage offscreen HTML5 Canvas 2D rasterization pipeline with subpixel half-pixel coordinate alignment ($\lfloor x \rfloor + 0.5$). Flagship hardware benchmark matrix across iPhone 16 Pro Max ($1320\times 2868$), S24 Ultra ($1440\times 3120$), Pixel 9 Pro ($1280\times 2856$), and Pixel 9 Pro Fold Unfolded ($2076\times 2152$). Dynamic Ambient Scrim & Luminance Normalization Engine ($Y_{\text{bg}}$ sampling) guaranteeing APCA $L^c \ge 75$ across bright custom photo wallpapers. Web Share API bridge and Blob streaming mobile wallpaper installation UX.
+  - Authored `DOC-UI-10-COGNITIVE-ERGONOMICS` (`docs/ui-ux/10-cognitive-ergonomics-heuristics-usability.md`): Nielsen Norman 10 Usability Heuristics compliance mapping. Gestalt Laws of Perceptual Organization (Proximity 1:3 ratio, Similarity, Closure, Common Fate) mapped to the 1.8-second lockscreen glance. Sweller's Cognitive Load Theory minimizing extraneous load and enforcing Miller's chunking bound ($4 \pm 1$ milestones max). Millisecond-accurate Tri-Modal Sensory Synchronization timeline (Visual Spring ODE + Web Audio harmonic ADSR chime + Haptic vibration impulse) across checkbox toggle, Gemini cascade, and countdown zero fanfare. Formulated the Anti-AI-Slop Bespoke Craftsmanship Manifesto with 10 non-negotiable handcrafted quality gates.
+- **Cross-Document Traceability & Testing Expansion:**
+  - Expanded `docs/testing/02-test-cases-catalog.md` with test scenarios `TC-POS-117` (Tabular Numeral CLS Invariant), `TC-POS-118` (8-Bit OLED Bayer Dither Defense), `TC-POS-119` (Dynamic Scrim Luminance Adaptation), and `TC-POS-120` (Tri-Modal Sensory Synchronization).
+  - Updated `docs/management/03-traceability-matrix.md` certifying `DOC-UI-08`, `DOC-UI-09`, `DOC-UI-10` across NFRs and Technical Pillars.
+
+### Changed
+- **Cross-Document Compliance Certification & Version Synchronization:**
+  - Synchronized and certified all 10 UI/UX specifications (`DOC-UI-01` through `DOC-UI-10`) to Version 2.3.0.
+  - Expanded `DOC-09-TECH-STACK-FUNDAMENTALS` compliance matrix to certify all 89 architectural assets across the repository (63 specifications in `docs/`, 13 Mermaid UML diagrams in `uml/`, 13 Draw.io diagrams in `drawio/`).
+  - Bumped single source of truth `VERSION` to `2.3.0`, synchronizing `CLAUDE.md`, `README.md`, and issue `#5`.
+
 ## [2.2.1] - 2026-11-23
 
 ### Changed

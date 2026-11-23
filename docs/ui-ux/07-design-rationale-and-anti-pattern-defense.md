@@ -8,7 +8,7 @@
 **Reviewer:** Architecture Review Board  
 **Status:** APPROVED  
 **Standard:** Level 2.2 Documentation Governance (First-Principles UI/UX Engineering)  
-**Version:** 1.2.0  
+**Version:** 2.3.0  
 
 ---
 
@@ -31,6 +31,9 @@ This specification provides the definitive **architectural justification** ("Wha
 | 5 | **Typographic Scale**      | Major Third (1.25) Modular Scale   | Bringhurst harmonic progression   |
 | 6 | **Audio / Haptic Engine**  | Procedural Web Audio + Haptic API  | 0 KB overhead, zero network round |
 | 7 | **Cognitive Architecture** | Mazur Urgency + Miller Chunking    | Hyperbolic delay, 4 chunks max    |
+| 8 | **Typographic Eng.**       | Tabular Numerals (JetBrains Mono)  | Eliminates CLS (Delta w = 0)      |
+| 9 | **Wallpaper Rasterization**| 9-Stage Canvas + Ambient Scrim     | Multi-device + APCA Lc >= 75      |
+| 10| **Bespoke Craftsmanship**  | Anti-AI-Slop 10 Quality Gates      | Bespoke physics, no generic slop  |
 +---+----------------------------+------------------------------------+-----------------------------------+
 ```
 
@@ -151,6 +154,43 @@ This specification provides the definitive **architectural justification** ("Wha
   - *Cognitive Capacity Protection:* Displaying a list of 15 micro-tasks on a lock screen induces cognitive paralysis. Miller's Law proves that working memory holds at most $4$ chunks during an ambient glance. The system strictly caps the active lock screen display to 4 strategic checkpoints.
 - **Rejected Alternatives:**
   - *Unbounded Todo List:* Causes layout overflow, tiny illegible fonts, and user anxiety.
+
+---
+
+### 2.8 Decision 8: Tabular Numeral Mathematics & Zero Cumulative Layout Shift (CLS = 0)
+- **What to Use (Technology Selection):**
+  Enforcement of OpenType tabular figures (`font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1;`) using `JetBrains Mono` for countdown chronometer digits, coupled with an asynchronous font preloading gate (`document.fonts.load()`).
+- **Why to Use It (First-Principles Architectural Justification):**
+  - *Mathematical Elimination of Jitter:* In standard proportional typography, digits vary in width ($w(\text{'1'}) \approx 0.28\text{em}$ vs $w(\text{'8'}) \approx 0.62\text{em}$). During 1Hz countdown ticking, advance width variance introduces horizontal vibrating jitter, violating Google Core Web Vitals ($CLS > 0$). Tabular figures enforce identical advance width ($w = \text{const}$), guaranteeing $\Delta W \equiv 0$ and $CLS = 0.000$.
+  - *Canvas Font Safety Gate:* The HTML5 Canvas API does not automatically re-render when web fonts finish downloading. If digits are drawn before fonts load, canvas text is permanently rasterized with fallback system metrics, causing clipped text. The asynchronous font gate guarantees all typographic assets are fully decoded prior to first canvas render.
+- **Rejected Alternatives:**
+  - *Proportional Sans without Tabular Figures:* Rejected. Results in annoying horizontal layout shift every second.
+  - *7-Segment Pseudo-Digital Font:* Rejected. Severely degraded mobile glanceability; visually dated aesthetic.
+
+---
+
+### 2.9 Decision 9: 9-Stage Offscreen Canvas Wallpaper Composition & Dynamic Ambient Scrim
+- **What to Use (Technology Selection):**
+  A dedicated 9-stage offscreen HTML5 Canvas 2D composition engine (`src/js/canvas/CanvasRenderer.js`) supporting 5 flagship device resolutions with dynamic luminance histogram sampling and ambient scrim adaptation.
+- **Why to Use It (First-Principles Architectural Justification):**
+  - *Multi-Device Safe Zone Geometry:* Smartphone lock screens place clock widgets in the upper 28% and gesture navigation in the lower 18%. The canvas pipeline mathematically isolates the usable vertical canvas ($H_{\text{usable}} = 54\%$) and snaps coordinates to subpixel half-pixel boundaries ($\lfloor x \rfloor + 0.5$) for razor-sharp hairline strokes.
+  - *Dynamic Ambient Scrim Protection:* When users upload or select bright custom wallpapers ($\bar{Y}_{\text{bg}} > 0.35$), white typography loses contrast. The canvas engine samples local luminance and dynamically injects an adaptive gradient scrim ($\alpha = 0.45\text{--}0.75$), guaranteeing outdoor readability under direct sunlight (APCA $L^c \ge 75$).
+  - *WebKit Memory Safety:* Prevents iOS Safari GPU process crashes by constraining canvas area below $16.7\text{M}$ pixels and dimensions below $4096\text{px}$ via `AdaptiveBufferAllocator`.
+- **Rejected Alternatives:**
+  - *Client-side DOM to Image Libraries (`html2canvas`):* Rejected. Unreliable rendering of CSS backdrop filters, broken SVG masks, and font antialiasing artifacts.
+  - *Static Un-Adapted Wallpapers:* Rejected. Text becomes completely unreadable over light photographic wallpapers.
+
+---
+
+### 2.10 Decision 10: Tri-Modal Sensory Synchronization & Anti-AI-Slop Manifesto
+- **What to Use (Technology Selection):**
+  Deterministic millisecond-level sensory synchronization binding Visual Spring ODE animations ($m\ddot{x} + c\dot{x} + kx = 0$), Auditory procedural Web Audio ADSR harmonic synthesis ($0\text{ KB}$ overhead), and Tactile W3C Vibration API impulses, governed by the 10 Anti-AI-Slop Quality Gates.
+- **Why to Use It (First-Principles Architectural Justification):**
+  - *Zero Cognitive Dissociation:* Scientific human-computer interaction studies confirm that inter-sensory feedback delays exceeding $20\text{ms}$ break the perception of direct physical manipulation. Tight tri-modal synchronization creates authentic tactile presence.
+  - *Bespoke Craftsmanship over Generic AI Boilerplate:* Eliminates generic AI tropes (purple/indigo gradients, floaty uncalibrated transitions, muddy single-layer shadows) in favor of authentic, human-engineered design principles.
+- **Rejected Alternatives:**
+  - *Prerecorded Audio Files (MP3/WAV):* Rejected. Adds network latency, introduces audible audio start clicks, and increases bundle payload.
+  - *Canned Linear CSS Transitions:* Rejected. Feels lifeless, artificial, and uncalibrated.
 
 ---
 

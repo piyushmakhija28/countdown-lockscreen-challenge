@@ -136,6 +136,10 @@ The 17 micro-architectural unit tests specified in `docs/lld/10-micro-architectu
 | TC-POS-114 | Canvas Font Readiness Gate        | FontService.ensureFontsLoaded() eliminates FOIT/FOUT.        |
 | TC-POS-115 | Cross-Tab Broadcast Channel Sync  | StateStore syncs state across tabs via BroadcastChannel.     |
 | TC-POS-116 | Web Locks Victory Alarm Mutex     | Web Locks API grants single-tab victory audio playback.      |
+| TC-POS-117 | Tabular Numeral CLS Invariant     | font-variant-numeric: tabular-nums eliminates ticking jitter |
+| TC-POS-118 | 8-Bit OLED Bayer Dither Defense   | 4x4 Bayer matrix breaks OLED gradient quantization banding.  |
+| TC-POS-119 | Dynamic Scrim Luminance Adapt     | Background Y_bg > 0.35 triggers adaptive scrim (APCA Lc>=75).|
+| TC-POS-120 | Tri-Modal Sensory Synchronization | Visual, audio, and haptic channels trigger within 20ms sync. |
 +------------+-----------------------------------+--------------------------------------------------------------+
 ```
 

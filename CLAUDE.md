@@ -11,12 +11,12 @@ This repository contains the design, code, and documentation for the **Handshake
 ```
 countdown-lockscreen-challenge/
 ├── .gitignore                         # Ignored files & Level 2.2 doc exclusions
-├── VERSION                            # Single source of truth version (2.2.1)
+├── VERSION                            # Single source of truth version (2.3.0)
 ├── CHANGELOG.md                       # Keep a Changelog release history
 ├── CLAUDE.md                          # Developer instructions & context
 ├── README.md                          # Main documentation & challenge playbook
 ├── drawio/                            # The 13 Canonical Draw.io XML Diagrams (Rule 45 Parity)
-├── docs/                              # Level 2.2 Deep Architecture & Governance (60 Specs)
+├── docs/                              # Level 2.2 Deep Architecture & Governance (63 Specs)
 │   ├── 00-problem-statement.md        # Problem Statement, Invariants & Ground Truth
 │   ├── 01-prd.md                      # PRD, User Personas & Journey Maps
 │   ├── 02-hld.md                      # High-Level Design, C4 Models & Dual Engine
@@ -28,7 +28,7 @@ countdown-lockscreen-challenge/
 │   ├── 08-handshake-submission-package.md # Official Contest Submission Package
 │   ├── competition-rules-summary.md   # Official Contest Rules Teardown
 │   ├── lockscreen-design-strategy.md  # 1.8s Glanceability Index & Technical Moats
-│   ├── ui-ux/                         # Deep-Dive UI/UX Architecture Suite (7 specs, Zero AI Slop)
+│   ├── ui-ux/                         # Deep-Dive UI/UX Architecture Suite (10 specs, Zero AI Slop)
 │   ├── lld/                           # Low-Level Design & Mathematical Blueprints (11 specs)
 │   ├── devops/                        # Docker Container, CI/CD & Edge Hosting (3 specs)
 │   ├── security/                      # STRIDE, OWASP Top 10, Secrets & Validation (4 specs)
