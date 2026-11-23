@@ -7,7 +7,7 @@
 **Reviewer:** Architecture Review Board  
 **Status:** APPROVED  
 **Standard:** Level 2.2 Documentation Governance (Systematic Error Catalogue)  
-**Version:** 2.3.0
+**Version:** 2.3.2
 
 ---
 
@@ -17,7 +17,7 @@ To guarantee that contestants, users, and evaluators never encounter a broken UI
 
 ---
 
-## 2. Comprehensive 20-Error Recovery Specification Matrix
+## 2. Comprehensive 30-Error Recovery Specification Matrix
 
 ```
 +-----------------------------------------------------------------------------------------------------------------------+
@@ -45,6 +45,16 @@ To guarantee that contestants, users, and evaluators never encounter a broken UI
 | 18 | `ERR_HIST_THROTTLE`      | LOW      | History Guard         | Smooth typing       | Enqueue in Token Bucket.     |
 | 19 | `ERR_CLIP_DENIED`        | LOW      | Clipboard Service     | Modal copy box      | Fall back to manual selection|
 | 20 | `ERR_SHARE_ABORT`        | LOW      | Web Share API         | Clean dismissal     | Silently catch AbortError.   |
+| 21 | `ERR_STATE_FROZEN`        | HIGH     | StateStore             | Error boundary       | Clone state snapshot, restore pristine tree.  |
+| 22 | `ERR_STATE_CYCLIC_DISPATCH`| CRITICAL | StateStore             | Loop trap            | Break recursive action dispatch chain.        |
+| 23 | `ERR_FONT_LOAD_FAILED`    | MEDIUM   | FontService            | System font fallback | Fall back to Inter / system sans-serif.       |
+| 24 | `ERR_HAPTIC_BLOCKED`      | LOW      | HapticService          | Silent bypass        | Discard vibration, continue visual animation. |
+| 25 | `ERR_FONT_UNAUTHORIZED`   | HIGH     | SafeFontEngine         | Security reject      | Reject injected font family, enforce whitelist|
+| 26 | `ERR_CANVAS_TAINTED`      | HIGH     | CanvasRenderer         | Clean retry          | Strip external bitmap, re-render vector assets|
+| 27 | `ERR_LOCK_TIMEOUT`        | MEDIUM   | WebLocksMutex          | Safe fallback        | Proceed with local single-tab audio playback. |
+| 28 | `ERR_BROADCAST_UNSUPPORTED`| LOW      | MultiTabSync           | Local isolation      | Fall back to single-tab storage events.       |
+| 29 | `ERR_AUDIO_AUTOPLAY_POLICY`| LOW      | AudioChimeService      | User gesture banner  | Show floating tap-to-unmute control banner.   |
+| 30 | `ERR_OFFSCREEN_UNSUPPORTED`| MEDIUM   | CanvasRenderer         | Main thread render   | Fall back to standard HTMLCanvasElement.      |
 +----+--------------------------+----------+-----------------------+---------------------+------------------------------+
 ```
 

@@ -7,7 +7,7 @@
 **Reviewer:** Architecture Review Board  
 **Status:** APPROVED  
 **Standard:** Level 2.2 Documentation Governance (Formal Dynamic Sequence Modeling)  
-**Version:** 2.3.0
+**Version:** 2.3.2
 
 ---
 
@@ -107,22 +107,36 @@ sequenceDiagram
     actor User as User
     participant View as PreviewView
     participant Canvas as CanvasRenderer
-    participant GPU as OffscreenCanvas Buffer (2340x5064)
     participant Alloc as AdaptiveBufferAllocator
+    participant Font as FontService
+    participant GPU as OffscreenCanvas Buffer
+    participant Scrim as AmbientScrimEngine
 
-    User->>View: Clicks "Download Wallpaper"
-    View->>Canvas: renderWallpaper(options, state, remaining)
-    Canvas->>Alloc: computeOptimalBuffer(1170, 2532)
-    Alloc-->>Canvas: Scale factor S <= 2.0 (<= 16.7M px)
-    Canvas->>GPU: Allocate 2340x5064 Context
-    Canvas->>GPU: Draw Radial Gradient Background
-    Canvas->>GPU: Render Safe-Zone Exclusions (Top 28% Clear)
-    Canvas->>GPU: Draw Hero Countdown Digits (Cyan/Amber/Mint)
-    Canvas->>GPU: Render Milestone Checkpoints & Affirmation
-    Canvas->>Canvas: toBlob("image/png")
-    Canvas-->>View: Return PNG Blob (< 350ms total)
+    User->>View: Clicks "Download Lock Screen Wallpaper"
+    View->>Canvas: renderToBlob(goal, profile, theme)
+    Canvas->>Alloc: computeOptimalBuffer(profile.width, profile.height)
+    Alloc-->>Canvas: Scale factor S* <= 2.0 (Area <= 16.7MP, MaxEdge <= 4096px)
+    Canvas->>Font: ensureFontsLoaded()
+    Font-->>Canvas: Fonts Ready (JetBrains Mono & Inter Decoded)
+    Canvas->>GPU: Allocate S* Buffer & Reset 2D Context
+    Note over Canvas,GPU: Stage 1: Background Palette Compositing
+    Canvas->>GPU: Stage 2: Bayer 4x4 Ordered Dither Gradient (Band Eliminator)
+    Canvas->>GPU: Stage 3: Safe-Zone Exclusion Bounds (Top 28% & Bottom 18% Clear)
+    Canvas->>GPU: Stage 4: Sample 256 Luminance Coordinates in Content Zone
+    GPU-->>Canvas: Mean Relative Luminance Y_bg
+    opt If Y_bg > 0.35 (High-Luminance Background)
+        Canvas->>Scrim: computeScrimGradient(Y_bg)
+        Scrim-->>Canvas: Alpha Ramp alpha(y) in [0.45, 0.75]
+        Canvas->>GPU: Stage 5: Composite Adaptive Scrim (APCA L^c >= 75 Guard)
+    end
+    Canvas->>GPU: Stage 6: Render OpenType Tabular Chronometer (tnum 1, CLS = 0.000)
+    Canvas->>GPU: Stage 7: Render Milestone Progress Cards & Checklist
+    Canvas->>GPU: Stage 8: Subpixel Half-Pixel Hairline Grid Snapping (floor(x) + 0.5)
+    Canvas->>GPU: Stage 9: Encode Lossless PNG Blob (canvas.convertToBlob)
+    GPU-->>Canvas: Lossless PNG Blob (100% Quality)
     Canvas->>Canvas: dispose() -> Set Dimensions 0x0 (Deallocate GPU Memory)
-    View-->>User: Trigger Automatic File Download
+    Canvas-->>View: Returns Blob (< 350ms total)
+    View-->>User: Triggers Web Share API or Standalone Save Modal
 ```
 
 ---
@@ -158,7 +172,9 @@ sequenceDiagram
     autonumber
     participant Ticker as DualClockTimeEngine
     participant Store as StateStore
+    participant Sensory as SensoryCoordinator
     participant Audio as AudioChimeService
+    participant Locks as WebLocksAPI
     participant Haptic as HapticService
     participant Particle as ParticleEngine
     participant View as CelebrationOverlayView
@@ -167,9 +183,19 @@ sequenceDiagram
     Ticker->>Ticker: Delta <= 0ms Detected (Threshold Invariant)
     Ticker->>Store: dispatch(GOAL_EXPIRED)
     Store->>Store: Transition FSM to CELEBRATING_EXPIRED
-    par Parallel Sensory Celebration
-        Store->>Audio: playVictoryChime() (Major Chord C5-E5-G5-C6)
-        Store->>Haptic: victoryPattern() ([100, 50, 100, 50, 250])
+    par Parallel Sensory Celebration (< 20ms Inter-Sensory Delta)
+        Store->>Sensory: triggerVictoryCelebration()
+        Sensory->>Haptic: victoryPattern() ([100, 50, 100, 50, 250]ms)
+        Sensory->>Audio: playVictoryChimeWithLock()
+        Audio->>Locks: navigator.locks.request('countdown_victory_alarm_lock', { ifAvailable: true })
+        alt Lock Acquired (Single Tab Winner)
+            Locks-->>Audio: Lock Granted
+            Audio->>Audio: Synthesize 4-Note Fanfare Chord (C4+E4+G4+C5)
+            Audio->>Locks: Release Lock
+        else Lock Busy (Secondary Duplicate Tab)
+            Locks-->>Audio: Lock Denied
+            Audio-->>Sensory: Silent Bypass (Zero Acoustic Clipping)
+        end
         Store->>Particle: startBurst(canvasContext, width, height)
         Store->>View: renderVictoryCard("Goal Achieved!")
     end

@@ -12,7 +12,7 @@ This repository contains the design, code, and documentation for the **Handshake
 countdown-lockscreen-challenge/
 ├── .gitignore                         # Ignored files & Level 2.2 doc exclusions
 ├── SRS.md                             # Authoritative ISO/IEC/IEEE 29148 Software Requirements Specification
-├── VERSION                            # Single source of truth version (2.3.0)
+├── VERSION                            # Single source of truth version (2.3.2)
 ├── CHANGELOG.md                       # Keep a Changelog release history
 ├── CLAUDE.md                          # Developer instructions & context
 ├── README.md                          # Main documentation & challenge playbook

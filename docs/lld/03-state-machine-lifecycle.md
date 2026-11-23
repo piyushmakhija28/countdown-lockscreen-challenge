@@ -7,7 +7,7 @@
 **Reviewer:** Architecture Review Board  
 **Status:** APPROVED  
 **Standard:** Level 2.2 Documentation Governance (Formal Finite State Machine)  
-**Version:** 2.3.1
+**Version:** 2.3.2
 
 ---
 
@@ -206,7 +206,7 @@ stateDiagram-v2
 
 ---
 
-## 4. Subsystem Finite State Machines
+## 8. Subsystem Finite State Machines
 
 ### 4.1 `FontReadinessFSM` (FOIT Barrier Gate)
 
@@ -215,7 +215,7 @@ stateDiagram-v2
     [*] --> UNLOADED
     UNLOADED --> PRELOADING : LOAD_FONTS (Inter, JetBrains Mono)
     PRELOADING --> READY : FONTS_RESOLVED (Elapsed < 150ms)
-    PRELOADING --> TIMEOUT_FALLBACK : TIMER_EXPIRED (Elapsed >= 150ms)
+    PRELOADING --> TIMEOUT_FALLBACK : TIMER_EXPIRED (Elapsed >= 2500ms)
     TIMEOUT_FALLBACK --> READY : SYSTEM_FONTS_MOUNTED
     READY --> [*]
 ```

@@ -7,7 +7,7 @@
 **Reviewer:** Architecture Review Board  
 **Status:** APPROVED  
 **Standard:** Level 2.2 Documentation Governance (OWASP Web Top 10 Standard)  
-**Version:** 2.3.0
+**Version:** 2.3.2
 
 ---
 
@@ -32,7 +32,7 @@ Every component of the Countdown Lock Screen architecture is systematically eval
 |   |                            |                 | (4) Programmatic DOM TextNode/createElementNS (no innerHTML|
 +---+----------------------------+-----------------+------------------------------------------------------------+
 |A04| Insecure Design            | MITIGATED       | Full STRIDE threat model, DREAD scoring, hard invariants   |
-|   |                            |                 | (INV-001 to INV-009), and mathematical safe-zone bounds.   |
+|   |                            |                 | (INV-001 to INV-020), and mathematical safe-zone bounds.   |
 +---+----------------------------+-----------------+------------------------------------------------------------+
 |A05| Security Misconfiguration  | MITIGATED       | Edge headers enforce HSTS, X-Content-Type-Options: nosniff,|
 |   |                            |                 | X-Frame-Options: DENY, and strict referrer policy.         |

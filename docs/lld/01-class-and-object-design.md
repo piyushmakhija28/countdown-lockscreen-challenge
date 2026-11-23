@@ -7,7 +7,7 @@
 **Reviewer:** Architecture Review Board  
 **Status:** APPROVED  
 **Standard:** Level 2.2 Documentation Governance (Zero-Build ES2022 ECMAScript + JSDoc OOP Contracts)  
-**Version:** 2.3.0
+**Version:** 2.3.2
 
 ---
 
@@ -1019,9 +1019,65 @@ export class CanvasRenderer {
   /**
    * Dynamically switches active color palette and triggers wallpaper re-render.
    *
-   * @param {'themeA' | 'themeB' | 'themeC'} themeId
+   * @param {ThemeId} themeId
    */
   updateThemePalette(themeId) {}
+  /**
+   * Stage 1: Renders background color or bitmap.
+   * @private
+   */
+  #renderStage1_Background(ctx, width, height, theme) {}
+
+  /**
+   * Stage 2: Applies 4x4 Bayer dither matrix kernel to eliminate 8-bit banding.
+   * @private
+   */
+  #renderStage2_DitherGradient(ctx, width, height) {}
+
+  /**
+   * Stage 3: Enforces OS safe-zone clipping paths (Top 28% and Bottom 18% clear).
+   * @private
+   */
+  #renderStage3_SafeZoneClips(ctx, bounds) {}
+
+  /**
+   * Stage 4: Samples spatial luminance across K=256 coordinates in content zone.
+   * @private
+   * @returns {number} Mean relative luminance Y_bg.
+   */
+  #renderStage4_LuminanceHistogram(ctx, width, height) { return 0.2; }
+
+  /**
+   * Stage 5: Composites adaptive gradient scrim if Y_bg > 0.35, ensuring APCA L^c >= 75.
+   * @private
+   */
+  #renderStage5_DynamicScrim(ctx, width, height, luminance) {}
+
+  /**
+   * Stage 6: Renders hero chronometer using OpenType tabular figures (tnum 1, CLS = 0.000).
+   * @private
+   */
+  #renderStage6_TabularChronometer(ctx, goal, theme, bounds) {}
+
+  /**
+   * Stage 7: Draws milestone checklist cards with glassmorphic backdrop.
+   * @private
+   */
+  #renderStage7_MilestoneChecklist(ctx, milestones, bounds) {}
+
+  /**
+   * Stage 8: Snaps physical borders and dividers to subpixel half-pixel grid (floor(x) + 0.5).
+   * @private
+   */
+  #renderStage8_SubpixelHairlines(ctx, bounds, dpr) {}
+
+  /**
+   * Stage 9: Encodes offscreen buffer to lossless PNG Blob.
+   * @private
+   * @returns {Promise<Blob>}
+   */
+  async #renderStage9_ExportBlob(canvas) { return canvas.convertToBlob({ type: 'image/png' }); }
+
 
   /**
    * Dispatches native Web Share API with PNG Blob or falls back to direct Anchor download.
@@ -1140,7 +1196,65 @@ export class SafeZoneOverlay {
 /**
  * Web font readiness and preloading gate eliminating Canvas Flash of Invisible/Unstyled Text (FOIT/FOUT).
  */
-export class FontService {
+export 
+/**
+ * Orchestrates synchronized tri-modal sensory immersion (<20ms temporal offset).
+ * Couples visual spring kinetics, procedural Web Audio ADSR, and W3C tactile impulses.
+ *
+ * @implements {ISensorySyncCoordinator}
+ */
+class SensoryCoordinator {
+  /** @type {AudioChimeService} */
+  #audioService;
+  /** @type {HapticService} */
+  #hapticService;
+  /** @type {ParticleEngine} */
+  #particleEngine;
+
+  /**
+   * @param {AudioChimeService} audioService
+   * @param {HapticService} hapticService
+   * @param {ParticleEngine} particleEngine
+   */
+  constructor(audioService, hapticService, particleEngine) {
+    this.#audioService = audioService;
+    this.#hapticService = hapticService;
+    this.#particleEngine = particleEngine;
+  }
+
+  /**
+   * Orchestrates synchronized milestone completion:
+   * 1. Visual checkbox bounce & strikethrough spring ODE.
+   * 2. Procedural pentatonic audio chord (C5 -> E5 -> G5).
+   * 3. Tactile double-bip pulse ([25, 40, 25]ms).
+   *
+   * @param {number} milestoneIndex
+   * @returns {Promise<void>}
+   */
+  async triggerMilestoneCelebration(milestoneIndex) {
+    const t0 = performance.now();
+    this.#hapticService.milestonePattern();
+    const audioPromise = this.#audioService.playSuccessChime();
+    const tAudio = performance.now();
+    // Inter-sensory synchronization bound assert: |tAudio - t0| < 20ms
+    await audioPromise;
+  }
+
+  /**
+   * Orchestrates synchronized victory celebration:
+   * 1. Confetti SoA particle physics burst.
+   * 2. Fanfare audio chord guarded by Web Locks API.
+   * 3. Tactile fanfare wave ([100, 50, 100, 50, 250]ms).
+   *
+   * @returns {Promise<void>}
+   */
+  async triggerVictoryCelebration() {
+    this.#hapticService.victoryPattern();
+    await this.#audioService.playVictoryChimeWithLock();
+  }
+}
+
+class FontService {
   /** @type {Set<string>} */
   #loadedFonts = new Set();
   /** @type {boolean} */

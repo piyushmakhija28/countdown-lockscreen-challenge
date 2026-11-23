@@ -1,5 +1,23 @@
 # Changelog
 
+## [2.3.2] - 2026-11-23
+### Added
+- **System Invariants Specification (`INV-018`, `INV-019`, `INV-020`):** Added Tabular Advance Width Invariance ($CLS = 0.000$), Dual-Constraint Hardware Buffer Allocation & Dynamic Scrim Bounds ($L^c \ge 75$), and Tri-Modal Sensory Synchronization Temporal Bound ($< 20\text{ms}$) across `docs/00`, `docs/01`, `docs/05`, `docs/lld/09`, and `docs/management/03`.
+- **Product Requirements Formal User Stories (`US-15`, `US-16`, `US-17`):** Authored formal user stories with Gherkin BDD criteria covering zero-CLS tabular numerals, 9-stage canvas export with ambient scrim, and tri-modal sensory synchronization in `docs/01-prd.md`.
+- **Mathematical Blueprint Expansion (Modules 18, 19, 20):** Formulated closed-form equations for OpenType tabular digit advance width invariance ($CLS \equiv 0.000$), Bayer 4x4 matrix dither kernel ($M_4$) & spatial luminance scrim integration, and second-order underdamped harmonic oscillator ODE ($m\ddot{x} + c\dot{x} + kx = 0$) & Web Audio ADSR gain envelope in `docs/lld/09-pixel-perfect-mathematical-blueprint.md`.
+- **Micro-Architectural Hazards Expansion (Categories 15, 16, 17):** Added Hazards 41 through 46 in `docs/lld/10-micro-architectural-implementation-details.md` and updated verification matrix to 46 hazards.
+- **SensoryCoordinator Class & Contract Harmonization:** Specified `SensoryCoordinator` class, added 9-stage offscreen canvas internal methods, and harmonized `CanvasRenderer`, `AudioChimeService`, and `HapticService` signatures in `docs/lld/01-class-and-object-design.md` and `docs/03-api-contract.md`.
+- **Sequence 6 Web Locks Mutex & Sequence 4 9-Stage Pipeline:** Upgraded interaction sequences in `docs/lld/02-dynamic-interaction-sequences.md` to enforce `playVictoryChimeWithLock()` arbitration and 9-stage offscreen canvas rasterization.
+- **Comprehensive Error Catalogue Expansion:** Added missing error codes `ERR_21` through `ERR_30` to `docs/resilience/03-error-catalogue-degradation.md`.
+- **STRIDE Threat Modeling Expansions:** Added threat modeling for Canvas Tainting & GPU memory exhaustion, CSS `@font-face` exfiltration side-channels, and Web Audio autoplay / fingerprinting in `docs/security/01-threat-model-stride.md`.
+
+### Fixed
+- **CanvasRenderer Type Mismatch:** Fixed `@param {'themeA' | 'themeB' | 'themeC'}` to `@param {ThemeId}` in `docs/lld/01-class-and-object-design.md`.
+- **Duplicate Section Headers:** Re-indexed duplicate Section 4 to Section 11 in `docs/lld/04-concurrency-threading-model.md` and Section 4 to Section 8 in `docs/lld/03-state-machine-lifecycle.md`.
+- **Font Preloading SLA Discrepancy:** Unified font preloading timeout across `docs/lld/03` to canonical 2500ms SLA.
+- **Haptic Pattern Standardization:** Standardized victory vibration pattern to canonical `[100, 50, 100, 50, 250]` ms across all UI/UX and LLD specifications.
+- **Repository Tree Blueprint:** Updated `docs/lld/07-package-structure-and-code-blueprint.md` directory tree to reflect all 66 specs, 15 ADRs, UI/UX 04..10, and version 2.3.2.
+
 ## [2.3.1] - 2026-11-23
 ### Added
 - **SRS Lifecycle Governance Compliance (`44-srs-lifecycle.md`):** Appended Section 6 `## 6. Change Log` table to root `SRS.md` and `docs/05-srs.md` conforming to ISO/IEC/IEEE 29148:2018.

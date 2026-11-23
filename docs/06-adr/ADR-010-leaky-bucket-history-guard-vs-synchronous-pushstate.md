@@ -8,7 +8,7 @@
 **Status:** APPROVED  
 **Date:** 2026-11-23  
 **Standard:** Level 2.2 Documentation Governance / MADR 3.0  
-**Version:** 2.3.0
+**Version:** 2.3.2
 
 ---
 

@@ -7,7 +7,7 @@
 **Reviewer:** Architecture Review Board  
 **Status:** APPROVED  
 **Standard:** Level 2.2 Documentation Governance (Strategic Contest Playbook)  
-**Version:** 2.3.0
+**Version:** 2.3.2
 
 ---
 
@@ -23,6 +23,9 @@ graph TD
     Win --> Moat2[2. Intelligent AI Retrograde Planning: Google Gemini 3.8 Flash]
     Win --> Moat3[3. Zero Visual Occlusion: Tri-Modal Responsive Safe-Zone Engine]
     Win --> Moat4[4. Zero Friction: 100% Stateless Edge PWA with Multi-Tab BroadcastChannel & Web Locks]
+    Win --> Moat5[5. OpenType Tabular Chronometry: Zero Cumulative Layout Shift CLS = 0.000]
+    Win --> Moat6[6. 9-Stage Offscreen Canvas Wallpaper Composition with Dynamic Ambient Scrim]
+    Win --> Moat7[7. Tri-Modal Sensory Immersion: Spring ODE, Procedural Web Audio & Haptics <20ms]
 ```
 
 ---

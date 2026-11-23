@@ -7,7 +7,7 @@
 **Reviewer:** Architecture Review Board  
 **Status:** APPROVED  
 **Standard:** Level 2.2 Documentation Governance (ISO/IEC/IEEE 29148 Standard)  
-**Version:** 2.3.0
+**Version:** 2.3.2
 
 ---
 
@@ -74,6 +74,9 @@ However, existing countdown apps and custom wallpaper generators fail ergonomica
 | **INV-015** | **Coupled Extent Zero-Seam Guard:** Adjacent glass cards share identical snapped physical edges. | $x_{\text{left,phys}} = x_{\text{right,prev,phys}} \implies \text{Seam} = 0\text{px}$ | Eliminates hairline background bleed between tiled glassmorphic cards. |
 | **INV-016** | **Single-Instance Victory Alarm Locking:** Strictly one tab synthesizes celebratory audio on timer expiry. | `navigator.locks.request('countdown_victory_alarm_lock', { ifAvailable: true })` | Prevents double-amplitude acoustic distortion across multi-tab sessions. |
 | **INV-017** | **Multi-Tab Eventual Consistency & Echo Shield:** Concurrent same-origin tabs converge state within 50ms without cyclic storms. | $\Delta t_{\text{sync}} \le 50\text{ms}, \quad \text{senderId} \neq \text{instanceId}$ | Native `BroadcastChannel('countdown_lockscreen_sync')` with UUID cycle filter. |
+| **INV-018** | **Tabular Advance Width Invariance & Zero Cumulative Layout Shift:** Countdown numerals maintain uniform glyph widths. | $\forall g_1, g_2 \in \{'0', \dots, '9'\}, \; w(g_1) = w(g_2) = W_{\text{cell}} \implies \Delta W \equiv 0 \implies CLS \equiv 0.000$ | OpenType `tabular-nums` / `tnum 1` eliminates 1Hz layout jitter and adjacent container movement. |
+| **INV-019** | **Dual-Constraint Hardware Buffer Allocation & Dynamic Scrim Luminance Bounds:** Canvas scale is bounded by GPU limits and background contrast. | $S^* = \min\left(2.0, \; \sqrt{\frac{16,777,216}{W \cdot H}}, \; \frac{4096}{\max(W, H)}\right), \quad \bar{Y}_{\text{bg}} > 0.35 \implies \alpha(y) \in [0.45, 0.75]$ | Area $\le 16.7\text{MP}$, edge $\le 4096\text{px}$ on iOS WebKit, with APCA $L^c \ge 75$ under sunlight. |
+| **INV-020** | **Tri-Modal Sensory Synchronization Temporal Bound:** Visual kinetic ODE, Web Audio ADSR, and haptic pulses fire in locked synchrony. | $|\Delta t_{\text{visual}} - \Delta t_{\text{audio}}| < 20\text{ms}, \quad |\Delta t_{\text{visual}} - \Delta t_{\text{haptic}}| < 20\text{ms}$ | Second-order underdamped harmonic oscillator ($m\ddot{x} + c\dot{x} + kx = 0$) coupled with procedural sound and haptics. |
 
 ---
 

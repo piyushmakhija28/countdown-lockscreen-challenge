@@ -7,7 +7,7 @@
 **Reviewer:** Architecture Review Board  
 **Status:** APPROVED  
 **Standard:** Level 2.2 Documentation Governance (Agile WBS 40 Story Points)  
-**Version:** 2.3.1
+**Version:** 2.3.2
 
 ---
 

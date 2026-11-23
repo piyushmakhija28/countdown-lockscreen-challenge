@@ -8,7 +8,7 @@
 **Reviewer:** Architecture Review Board  
 **Status:** APPROVED  
 **Standard:** Level 2.2 Documentation Governance (Kinetic Physics & Sensory Specification)  
-**Version:** 2.3.0  
+**Version:** 2.3.2  
 
 ---
 
@@ -218,7 +218,7 @@ Using the W3C Navigator Vibration API, physical impulses are synchronized with s
 | **Button Tap / Click**   | `[15]` ms           | Micro-Impulse     | Tactile acknowledgment of press    |
 | **Milestone Checkmark**  | `[25, 40, 25]` ms   | Double-Bip Pulse  | Dopamine validation of achievement |
 | **Theme Swatch Change**  | `[10]` ms           | Feather Touch     | Palette switch acknowledgment      |
-| **Countdown Complete**   | `[50, 60, 50, 100]` | Fanfare Vibration | Target deadline expiration victory |
+| **Countdown Complete**   | `[100, 50, 100, 50, 250]` ms | Fanfare Vibration | Target deadline expiration victory |
 +--------------------------+---------------------+-------------------+------------------------------------+
 ```
 

@@ -7,7 +7,7 @@
 **Reviewer:** Architecture Review Board  
 **Status:** APPROVED  
 **Standard:** Level 2.2 Documentation Governance (ISO/IEC/IEEE 29148 Standard)  
-**Version:** 2.3.0
+**Version:** 2.3.2
 
 ---
 
@@ -183,8 +183,57 @@ journey
 - **Functional Description:** Broadcasts milestone checkoffs, title edits, and theme modifications across all open tabs on the same origin via `BroadcastChannel('countdown_lockscreen_sync')`, and arbitrates celebratory chime playback via `navigator.locks.request('countdown_victory_alarm_lock', { ifAvailable: true })` so only one tab synthesizes audio upon timer zero (`FR-23`, `FR-24`).
 
 ---
+### F-13: OpenType Tabular Numeral Chronometry with Zero Cumulative Layout Shift (Zero CLS)
+- **Functional Description:** Enforces OpenType tabular figures (`font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1;`) across countdown chronometer digits, guaranteeing uniform glyph advance widths ($w(g_1) = w(g_2) = W_{\text{cell}}$) and mathematically eliminating layout shifts ($CLS \equiv 0.000$) during 1Hz state transitions (`FR-25`, `INV-018`, `ADR-013`).
 
-## 5. Hard System Invariants & Architectural Constraints (INV-001 to INV-017)
+### F-14: 9-Stage Offscreen Canvas Wallpaper Composition & Dynamic Ambient Scrim
+- **Functional Description:** Executes a 9-stage rasterization pipeline on an isolated OffscreenCanvas with adaptive buffer allocation ($S \le 2.0$, area $\le 16.7\text{MP}$, dimension $\le 4096\text{px}$). Samples 256 background luminance points in the content zone ($y \in [0.28H, 0.82H]$); if spatial relative luminance $\bar{Y}_{\text{bg}} > 0.35$, dynamically composites an adaptive gradient scrim ($\alpha \in [0.45, 0.75]$) ensuring APCA $L^c \ge 75$ under sunlight (`FR-26`, `FR-27`, `INV-019`, `ADR-014`).
+
+### F-15: Tri-Modal Sensory Synchronization for Milestones & Victory Immersion
+- **Functional Description:** Synchronizes visual spring kinetics ($m\ddot{x} + c\dot{x} + kx = 0, \zeta \approx 0.70$), procedural Web Audio ADSR harmonic chords ($C_5 \to E_5 \to G_5$ pentatonic chime and $C_4+E_4+G_4+C_5$ victory fanfare), and W3C Vibration API tactile pulses within a $<20\text{ms}$ inter-sensory offset window, zero external assets, and zero network latency (`FR-28`, `INV-020`, `ADR-015`).
+
+---
+
+## 4.1 Formal User Stories & BDD Acceptance Criteria (US-01 to US-17)
+
+### US-15: OpenType Tabular Numeral Chronometry with Zero CLS
+- **Story:** As a goal-oriented user glancing at my 1Hz countdown chronometer, I want the digits to maintain fixed advance widths so that adjacent labels, separators, and card boundaries never jitter or shift layout ($CLS = 0.000$).
+- **Gherkin Acceptance Criteria:**
+  ```gherkin
+  Scenario: 1Hz countdown tick maintains zero cumulative layout shift
+    Given the countdown chronometer is running at 1Hz
+    When a second elapses and the digit transitions from '1' to '0'
+    Then the advance width of the numeral container shall remain strictly identical
+    And the cumulative layout shift (CLS) reported by PerformanceObserver shall equal 0.000
+  ```
+
+### US-16: 9-Stage Canvas Wallpaper Export with Dynamic Ambient Scrim
+- **Story:** As a mobile user exporting a custom lock screen wallpaper, I want the canvas composition engine to adaptively tone-map high-luminance wallpapers and fit my flagship phone's native resolution without GPU memory crashes ($S \le 2.0$), ensuring text legibility ($L^c \ge 75$) under outdoor direct sunlight.
+- **Gherkin Acceptance Criteria:**
+  ```gherkin
+  Scenario: High-luminance background triggers adaptive ambient scrim
+    Given the user selects a custom wallpaper with relative luminance Y_bg > 0.35
+    When the user requests "Export Lock Screen Wallpaper"
+    Then the 9-stage canvas pipeline shall sample luminance across 256 sample coordinates
+    And composite a vertical gradient scrim with alpha between 0.45 and 0.75
+    And the resulting APCA text contrast L^c shall meet or exceed 75
+    And the allocated buffer area shall remain strictly <= 16,777,216 pixels
+  ```
+
+### US-17: Tri-Modal Sensory Synchronization for Milestones & Victory
+- **Story:** As an achiever completing milestones, I want coordinated visual spring kinetics, procedural Web Audio chimes, and tactile haptic pulses synchronized within $20\text{ms}$, so that I experience satisfying tactile reinforcement without network latency or asset bloat.
+- **Gherkin Acceptance Criteria:**
+  ```gherkin
+  Scenario: Milestone checkoff triggers deterministic tri-modal feedback
+    Given the user clicks a milestone checkbox
+    When the state store transitions the milestone to completed
+    Then the visual spring animation, procedural Web Audio chime, and haptic impulse shall trigger concurrently
+    And the measured temporal offset between sensory modalities shall be less than 20ms
+    And zero external audio files (.mp3, .wav) shall be fetched across the network
+  ```
+
+
+## 5. Hard System Invariants & Architectural Constraints (INV-001 to INV-020)
 
 The application design is mathematically bounded by 17 immutable system invariants guaranteeing sub-pixel precision, zero-drift timing, zero-PII privacy, and multi-tab coordination:
 

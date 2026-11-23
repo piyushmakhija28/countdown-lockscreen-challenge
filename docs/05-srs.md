@@ -7,7 +7,7 @@
 **Reviewer:** Architecture Review Board  
 **Status:** APPROVED  
 **Standard:** Level 2.2 Documentation Governance (ISO/IEC/IEEE 29148 Standard)  
-**Version:** 2.3.1
+**Version:** 2.3.2
 
 ---
 
@@ -199,7 +199,7 @@ Each functional requirement is formally specified with unique identifier, descri
 
 ---
 
-### 3.2 System Invariants Specification (INV-001 to INV-017)
+### 3.2 System Invariants Specification (INV-001 to INV-020)
 
 All implementations across the codebase must satisfy the following 17 hard mathematical and architectural system invariants:
 
@@ -220,6 +220,9 @@ All implementations across the codebase must satisfy the following 17 hard mathe
 15. **`INV-015` (Cross-Font Fallback Floor):** Effective font size $S_{\text{effective}} \ge S_{\text{floor}} = 10\text{px}$ (Zero text overflow under fallback font).
 16. **`INV-016` (Single-Instance Victory Audio Mutex):** Strictly $\le 1$ tab holds `countdown_victory_alarm_lock` at timer zero.
 17. **`INV-017` (Multi-Tab Eventual Consistency & Echo Shield):** Cross-tab synchronization converges within $\Delta t_{\text{sync}} \le 50\text{ms}$ with cyclic echoes suppressed via `senderId !== currentInstanceId`.
+18. **`INV-018` (Tabular Advance Width Invariance):** $\forall g_1, g_2 \in \{'0', \dots, '9'\}, w(g_1) = w(g_2) = W_{\text{cell}} \implies CLS = 0.000$ (Eliminates 1Hz layout jitter and adjacent container movement).
+19. **`INV-019` (Dual-Constraint Hardware Buffer Allocation & Dynamic Scrim):** $S^* \le 2.0, \text{Area} \le 16.7\text{MP}, \text{Edge} \le 4096\text{px}; \bar{Y}_{\text{bg}} > 0.35 \implies L^c \ge 75$ (Prevents iOS WebKit GPU crash and guarantees sunlight text readability).
+20. **`INV-020` (Tri-Modal Sensory Synchronization Temporal Bound):** $|\Delta t_{\text{visual}} - \Delta t_{\text{audio}}| < 20\text{ms}, |\Delta t_{\text{visual}} - \Delta t_{\text{haptic}}| < 20\text{ms}$ (Guarantees perceptual synchrony across spring ODE, Web Audio ADSR, and haptics).
 
 
 ---
@@ -256,6 +259,12 @@ All implementations across the codebase must satisfy the following 17 hard mathe
 | FR-22   | F-05 Font Barrier  | FontService         | js/services/FontService.js | TC-POS-20, TC-EDGE-24, TC-POS-114 |
 | FR-23   | F-07 Multi-Tab Sync| BroadcastChannel    | js/core/StateStore.js      | TC-POS-115, TC-NEG-15, TC-EDGE-27, ADR-011 |
 | FR-24   | F-05 Alarm Mutex   | WebLocksMutex       | js/services/AudioChimeService.js| TC-POS-116, TC-NEG-16, TC-EDGE-28, ADR-012 |
+| FR-25   | F-13 Tabular CLS    | TabularFontEngine   | js/canvas/CanvasRenderer.js | TC-POS-117, ADR-013, DOC-UI-08         |
+| FR-26   | F-14 Flagship Export| CanvasRenderer      | js/canvas/CanvasRenderer.js | TC-POS-21, TC-POS-113, ADR-014         |
+| FR-27   | F-14 Dynamic Scrim  | AmbientScrimEngine  | js/canvas/CanvasRenderer.js | TC-POS-119, ADR-014, DOC-UI-09         |
+| FR-28   | F-15 Sensory Sync   | SensoryCoordinator  | js/services/SensoryCoordinator.js | TC-POS-120, ADR-015, DOC-UI-10    |
+| FR-29   | F-14 Font Barrier   | FontService         | js/services/FontService.js  | TC-POS-114, ADR-013, DOC-UI-08         |
+| FR-30   | F-14 Buffer Bounds  | AdaptiveAllocator   | js/canvas/AdaptiveBufferAllocator.js | TC-POS-22, TC-EDGE-01, ADR-014 |
 +---------+--------------------+---------------------+----------------------+---------------------------+
 ```
 

@@ -7,7 +7,7 @@
 **Reviewer:** Architecture Review Board  
 **Status:** APPROVED  
 **Standard:** Level 2.2 Documentation Governance (Mathematical Spatial & Typographic Grid)  
-**Version:** 2.3.0  
+**Version:** 2.3.2  
 
 ---
 
@@ -102,6 +102,10 @@ $$S_k = 16 \times (1.25)^k \quad (k \in \{-2.1, -1, 0, 1, 2, 3, 4, 6\})$$
 :root {
   --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-mono: 'JetBrains Mono', 'SF Mono', Consolas, Monaco, monospace;
+  /* OpenType Tabular Numeral Chronometry Tokens (ADR-013, INV-018) */
+  --font-numeric-tabular: tabular-nums;
+  --font-feature-tnum: "tnum" 1;
+  --font-numeric-normal: normal;
   --font-size-2xs: 10px;
   --font-size-xs: 12.8px;
   --font-size-sm: 16px;

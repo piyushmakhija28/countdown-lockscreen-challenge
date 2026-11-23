@@ -7,7 +7,7 @@
 **Reviewer:** Architecture Review Board  
 **Status:** APPROVED  
 **Standard:** Level 2.2 Documentation Governance (Microsoft STRIDE + DREAD Methodology)  
-**Version:** 2.3.0
+**Version:** 2.3.2
 
 ---
 
@@ -80,7 +80,7 @@ Where:
 
 ---
 
-## 7. STRIDE Expansion: Multi-Tab IPC & Web Locks Threat Mitigations
+## 3. STRIDE Expansion: Multi-Tab IPC & Web Locks Threat Mitigations
 
 ```
 +-----------------------------------------------------------------------------------------------------------------+
@@ -93,4 +93,45 @@ Where:
 |D-12| Denial of Service | Victory Alarm Lock    | Sibling tab hangs holding Web Lock,   | 500ms acquisition limit|
 |    |                   | Squatting / Deadlock  | permanently muting user victory alarm.| + auto OS release.     |
 +----+-------------------+-----------------------+---------------------------------------+------------------------+
+```
+
+## 4. STRIDE Expansion: Offscreen Canvas Tainting, GPU Exhaustion & Fingerprinting
+
+```
++----+-------------+------------------------------------+----------+-------------------------------------------------------------+
+| #  | STRIDE Cat  | Attack Scenario                    | DREAD    | Architectural Defense & Invariant                           |
++----+-------------+------------------------------------+----------+-------------------------------------------------------------+
+| T1 | Tampering   | Cross-Origin Canvas Tainting       | MED (5.4)| All external images loaded with crossOrigin = 'anonymous'.  |
+|    |             | via untrusted wallpaper images     |          | Catch SecurityError on convertToBlob; fallback to vectors. |
+| D1 | Denial of S.| GPU Process Memory Exhaustion      | HIGH(7.2)| AdaptiveBufferAllocator dual-constraint clamp (S* <= 2.0,   |
+|    |             | via rapid high-DPI canvas alloc    |          | Area <= 16.7MP, MaxEdge <= 4096px). Reset width/height=0.  |
+| I1 | Information | Canvas Subpixel Fingerprinting     | LOW (3.2)| Zero pixel data readout exported outside user download.    |
+|    | Disclosure  | via anti-aliasing curve analysis   |          | Zero telemetry transmissions (Zero-PII INV-006).            |
++----+-------------+------------------------------------+----------+-------------------------------------------------------------+
+```
+
+## 5. STRIDE Expansion: CSS Font Injection & Typographic Side-Channels
+
+```
++----+-------------+------------------------------------+----------+-------------------------------------------------------------+
+| #  | STRIDE Cat  | Attack Scenario                    | DREAD    | Architectural Defense & Invariant                           |
++----+-------------+------------------------------------+----------+-------------------------------------------------------------+
+| T2 | Tampering   | CSS @font-face Exfiltration        | HIGH(7.0)| Strict CSP font-src 'self' data:; SafeFontEngine validates  |
+|    |             | via injected unicode-range URLs    |          | font names against whitelist ['Inter', 'JetBrains Mono'].  |
+| E1 | Elevation of| Malicious Font Binary Parsing      | CRIT(8.4)| Reject custom remote TTF/WOFF binaries; bundle only pre-   |
+|    | Privilege   | via OS font rasterizer buffer flaw |          | hashed, integrity-checked local web font subsets.           |
++----+-------------+------------------------------------+----------+-------------------------------------------------------------+
+```
+
+## 6. STRIDE Expansion: Web Audio Autoplay Bypass & Hardware Fingerprinting
+
+```
++----+-------------+------------------------------------+----------+-------------------------------------------------------------+
+| #  | STRIDE Cat  | Attack Scenario                    | DREAD    | Architectural Defense & Invariant                           |
++----+-------------+------------------------------------+----------+-------------------------------------------------------------+
+| D2 | Denial of S.| Acoustic Harassment / Audio Flooding| MED (5.6)| Procedural notes capped by DynamicsCompressorNode limiter;  |
+|    |             | via rapid looping synthesized tones|          | max duration <= 600ms; single-instance Web Locks mutex.     |
+| I2 | Information | AudioContext Hardware Fingerprint  | LOW (3.8)| Pure procedural synthesis without querying device hardware  |
+|    | Disclosure  | via sampleRate and latency timing  |          | channel counts or baseLatency profiles to external servers. |
++----+-------------+------------------------------------+----------+-------------------------------------------------------------+
 ```

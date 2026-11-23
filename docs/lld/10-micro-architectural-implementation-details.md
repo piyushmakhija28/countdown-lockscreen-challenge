@@ -8,7 +8,7 @@
 **Reviewer:** Architecture Review Board  
 **Status:** APPROVED  
 **Standard:** Level 2.2 Documentation Governance (Micro-Architectural Precision & Code-Level Robustness)  
-**Version:** 2.3.0
+**Version:** 2.3.2
 
 ---
 
@@ -395,8 +395,102 @@ To guarantee that the countdown lock screen web application executes flawlessly 
 
 ---
 
-## 16. Complete 40-Hazard Resolution Verification Matrix
+## 16. Category O: OpenType Tabular Numeral Chronometry & Zero-CLS Layout Hazards (LLD-TY 01–02)
 
+### LLD-TY-01: Proportional Digit Jitter & Cumulative Layout Shift (CLS)
+- **Micro-Hazard:** Proportional numbers vary in advance width ($w('1') \approx 0.28\text{em}$ vs $w('8') \approx 0.62\text{em}$). When ticking at 1Hz, the bounding box of the countdown digits shifts horizontally, causing layout thrashing and nonzero Cumulative Layout Shift.
+- **Architectural Solution:** Explicitly inject `font-variant-numeric: tabular-nums;` and `font-feature-settings: "tnum" 1;` into both CSS tokens and Canvas 2D font descriptors (`${weight} ${size}px "JetBrains Mono"`), guaranteeing character advance width invariance ($w(g_1) = w(g_2) = W_{\text{cell}}$).
+- **Target Implementation:** `src/css/tokens.css`, `js/canvas/CanvasRenderer.js`, and `TC-POS-117`.
+
+### LLD-TY-02: Synthetic Faux-Bold Metric Expansion
+- **Micro-Hazard:** When requesting `font-weight: 700` before the bold web font variant finishes loading, browser rasterizers apply synthetic faux-bold stroke dilation, widening character advance widths and causing text overflow.
+- **Architectural Solution:** Wrap canvas rasterization and DOM rendering in an asynchronous font preloading barrier (`FontService.ensureFontsLoaded()`) backed by `document.fonts.load()`, guaranteeing native glyph metrics before layout computation.
+- **Target Implementation:** `js/services/FontService.js` and `TC-POS-114`.
+
+---
+
+## 17. Category P: 9-Stage Canvas Wallpaper Composition & Dynamic Ambient Scrim Hazards (LLD-CR 01–02)
+
+### LLD-CR-01: iOS Safari WebKit GPU Process Termination under Unbounded Scale
+- **Micro-Hazard:** Calculating canvas scale as naive `devicePixelRatio` on an iPhone 16 Pro Max ($3\times$) yields $1320 \times 3 = 3960$ and $2868 \times 3 = 8604\text{px}$ ($34\text{ megapixels}$), instantly crashing the WebKit GPU process.
+- **Architectural Solution:** Apply `AdaptiveBufferAllocator` closed-form dual-limit constraint:
+  $$S^* = \min\left(2.0, \; \sqrt{\frac{16,777,216}{W \cdot H}}, \; \frac{4096}{\max(W, H)}\right)$$
+  strictly bounding area below $16.7\text{MP}$ and maximum linear dimension below $4096\text{px}$.
+- **Target Implementation:** `js/canvas/AdaptiveBufferAllocator.js` and `TC-POS-22`.
+
+### LLD-CR-02: Legibility Failure Over High-Luminance Heterogeneous Wallpapers
+- **Micro-Hazard:** When generating lock screen wallpapers over bright or high-key user images, white or light foreground text loses contrast, violating APCA and WCAG standards.
+- **Architectural Solution:** Sample $K=256$ spatial points in the content safe zone $y \in [0.28H, 0.82H]$. If spatial mean relative luminance $\bar{Y}_{\text{bg}} > 0.35$, dynamically composite an adaptive vertical gradient scrim $\alpha(y) \in [0.45, 0.75]$, restoring APCA $L^c \ge 75$.
+- **Target Implementation:** `js/canvas/CanvasRenderer.js` and `TC-POS-119`.
+
+---
+
+## 18. Category Q: Tri-Modal Sensory Synchronization & Temporal Skew Hazards (LLD-SN 01–02)
+
+### LLD-SN-01: Main-Thread GC Audio-Visual Temporal Desynchronization
+- **Micro-Hazard:** Web Audio synthesis runs on an OS real-time thread, while visual spring animations run on the main browser thread. High GC pressure can delay the visual frame by $>50\text{ms}$, resulting in audible chimes occurring noticeably before the visual checkbox pops.
+- **Architectural Solution:** Coordinate triggers via `SensoryCoordinator`, recording `performance.now()` alongside `audioContext.currentTime` with phase compensation, nudging the visual spring velocity forward if frame delay exceeds $20\text{ms}$.
+- **Target Implementation:** `js/services/SensoryCoordinator.js` and `TC-POS-120`.
+
+### LLD-SN-02: Un-Primed Vibration API Silent Blocking in Mobile Browsers
+- **Micro-Hazard:** Modern mobile browsers block `navigator.vibrate` calls that are not preceded by an active user gesture or when the page is running in an embedded webview.
+- **Architectural Solution:** `HapticService` checks `navigator.userActivation.hasBeenActive` and safely wraps all vibration calls in feature-detection guards, silently falling back to visual-only spring kinetics without uncaught exceptions.
+- **Target Implementation:** `js/services/HapticService.js` and `TC-POS-17`.
+
+---
+## 19. Complete 46-Hazard Resolution Verification Matrix
+
+```
++---+-----------------------------+-----------------------------------+-----------------------------------------+
+| # | Hazard Identifier           | Architectural Mitigation          | Verified In Source / Test Case          |
++---+-----------------------------+-----------------------------------+-----------------------------------------+
+| 01| LLD-AS-01: In-Flight Abort  | AbortController in GeminiGateway  | `GeminiAiClient.js` & `TC-NEG-14`       |
+| 02| LLD-AS-02: Microtask Starve | Yield via queueMicrotask          | `DualClockTimeEngine.js` & `TC-POS-100` |
+| 03| LLD-AS-03: Stale Promise    | Sequence epoch token comparison   | `MilestoneManager.js` & `TC-EDGE-13`    |
+| 04| LLD-CP-01: Non-Integer Line | Math.floor(x) + 0.5 sub-pixel snap| `CanvasRenderer.js` & `TC-POS-08`       |
+| 05| LLD-CP-02: Zero-Radius Arc  | Guard radius r = Math.max(0.1, r) | `CanvasRenderer.js` & `TC-EDGE-03`      |
+| 06| LLD-CP-03: Dirty Transform  | save() / restore() RAII pattern   | `CanvasRenderer.js` & `TC-POS-10`       |
+| 07| LLD-CS-01: Subpixel Seam    | Physical pixel bounding rect snap | `ResponsiveLayoutEngine.js` & `TC-POS-18|
+| 08| LLD-CS-02: Glass Blur Leak  | -webkit-backdrop-filter containment| `src/css/tokens.css` & `TC-POS-112`    |
+| 09| LLD-CS-03: Font Metric Shift| CSS font-display: optional        | `src/css/tokens.css` & `TC-POS-114`     |
+| 10| LLD-FS-01: iOS Share Reject | Blob file fallback with mime-type | `CanvasRenderer.js` & `TC-POS-15`       |
+| 11| LLD-FS-02: Corrupt PNG Blob | canvas.toBlob lossless verification| `CanvasRenderer.js` & `TC-POS-10`      |
+| 12| LLD-FS-03: Memory Leak URL  | URL.revokeObjectURL cleanup       | `CanvasRenderer.js` & `TC-EDGE-09`      |
+| 13| LLD-IN-01: XSS via Hash     | Strict DOMPurify whitelist sanit. | `InputSanitizer.js` & `TC-NEG-01`       |
+| 14| LLD-IN-02: Unicode Surrogate| UTF-8 byte boundary clamp (3..60) | `UrlStateService.js` & `TC-POS-107`     |
+| 15| LLD-IN-03: Past Date Reject | Dynamic min ISO anchor attribute  | `app.js` & `TC-POS-01`                  |
+| 16| LLD-SH-01: Clipboard Denied| Fallback textarea copy selection  | `UrlStateService.js` & `TC-NEG-11`      |
+| 17| LLD-SH-02: Web Share Abort  | Graceful AbortError catch block   | `CanvasRenderer.js` & `TC-POS-15`       |
+| 18| LLD-SH-03: PWA Standalone   | pageshow event state re-hydration | `app.js` & `TC-POS-102`                 |
+| 19| LLD-UI-01: 60FPS Jank       | Pre-allocated SoA TypedArrays     | `ParticleEngine.js` & `TC-POS-110`      |
+| 20| LLD-UI-02: Notch Overlap    | CSS env(safe-area-inset-*)        | `SafeZoneOverlay.js` & `TC-POS-08`      |
+| 21| LLD-UI-03: Contrast Deficit | OKLCH lightness check (APCA Lc>=75| `themes.js` & `TC-POS-11`               |
+| 22| LLD-V8-01: De-opt Polymorph | Monomorphic state object shapes   | `StateStore.js` & `TC-POS-105`          |
+| 23| LLD-V8-02: GC GC-Pressure   | Object pooling for vectors/points | `ParticleEngine.js` & `TC-POS-111`      |
+| 24| LLD-V8-03: Hidden Class Churn| Freeze prototype and property init| `MilestoneManager.js` & `TC-EDGE-13`   |
+| 25| LLD-AU-01: Autoplay Block   | Gesture priming before playChime  | `AudioChimeService.js` & `TC-POS-16`    |
+| 26| LLD-AU-02: Audio Node Leak  | DynamicsCompressorNode limiter    | `AudioChimeService.js` & `TC-POS-109`   |
+| 27| LLD-AU-03: Multi-Tab Audio  | Web Locks single-instance mutex   | `AudioChimeService.js` & `TC-POS-116`   |
+| 28| LLD-HI-01: History Quota    | TokenBucketRateLimiter (100 calls)| `TokenBucketHistoryGuard.js` & `TC-NEG-11|
+| 29| LLD-HI-02: Hash Truncation | LZ-String compressed base64 payload| `UrlStateService.js` & `TC-POS-13`     |
+| 30| LLD-HI-03: Deserial Failure | Safe default fallback state object| `UrlStateService.js` & `TC-NEG-07`      |
+| 31| LLD-ST-01: Cyclic Dispatch  | In-flight dispatch guard flag     | `StateStore.js` & `TC-NEG-15`           |
+| 32| LLD-ST-02: ABA Concurrency  | Monotonic version tick check      | `StateStore.js` & `TC-POS-115`          |
+| 33| LLD-ST-03: Echo Storm       | BroadcastChannel senderId filter  | `StateStore.js` & `TC-POS-115`          |
+| 34| LLD-BA-01: Scale Explosion  | S* <= min(2.0, sqrt(16.7M/Area))  | `AdaptiveBufferAllocator.js` & TC-POS-22|
+| 35| LLD-BA-02: Max Dimension    | S* <= 4096 / max(W, H) clamp      | `AdaptiveBufferAllocator.js` & TC-EDGE-01|
+| 36| LLD-BA-03: Memory Leak      | Canvas width=0, height=0 collapse | `CanvasRenderer.js` & `TC-POS-09`       |
+| 37| LLD-FO-01: Fallback Flash   | document.fonts.load barrier gate  | `FontService.js` & `TC-POS-114`         |
+| 38| LLD-FO-02: Size Floor      | Effective size S_eff >= S_floor   | `ResponsiveLayoutEngine.js` & TC-POS-113|
+| 39| LLD-HA-01: Haptic Block     | Silent fallback when unsupported  | `HapticService.js` & `TC-POS-17`        |
+| 40| LLD-HA-02: Excessive Pulse  | Rate-limited vibration debounce   | `HapticService.js` & `TC-POS-17`        |
+| 41| LLD-TY-01: Digit Jitter     | OpenType tabular-nums (tnum 1)    | `tokens.css`, `CanvasRenderer` & TC-117 |
+| 42| LLD-TY-02: Faux-Bold Shift  | Async font preloading barrier     | `FontService.js` & `TC-POS-114`         |
+| 43| LLD-CR-01: WebKit GPU Crash | Dual-constraint buffer scale S*   | `AdaptiveAllocator.js` & `TC-POS-22`    |
+| 44| LLD-CR-02: Scrim Washout    | Dynamic luminance scrim (Lc>=75)  | `CanvasRenderer.js` & `TC-POS-119`      |
+| 45| LLD-SN-01: Sensory Drift    | Audio-visual drift nudging <20ms  | `SensoryCoordinator.js` & `TC-POS-120`  |
+| 46| LLD-SN-02: Un-primed Haptic | User activation guard on vibrate  | `HapticService.js` & `TC-POS-17`        |
++---+-----------------------------+-----------------------------------+-----------------------------------------+
 ```
 +---------------------------------------------------------------------------------------------------------------+
 |                                      40-HAZARD RESOLUTION VERIFICATION MATRIX                                 |

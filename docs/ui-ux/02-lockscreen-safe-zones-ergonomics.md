@@ -7,7 +7,7 @@
 **Reviewer:** Architecture Review Board  
 **Status:** APPROVED  
 **Standard:** Level 2.2 Documentation Governance (Biomechanical UI Ergonomics)  
-**Version:** 2.3.0  
+**Version:** 2.3.2  
 
 ---
 
@@ -296,3 +296,11 @@ export class ResponsiveLayoutEngine {
   }
 }
 ```
+
+### 4.4 Flagship Device Resolution Profiles for Wallpaper Export (ADR-014)
+The canvas rendering pipeline targets 5 standardized flagship mobile viewports, applying dual-constraint buffer scaling ($S^* \le 2.0$):
+1. **iPhone 16 Pro Max:** $1320 \times 2868\text{px}$ ($19.5:9$, $460\text{ ppi}$) — Content zone: $[803\text{px}, 2351\text{px}]$.
+2. **Samsung Galaxy S24 Ultra:** $1440 \times 3120\text{px}$ ($19.5:9$, $505\text{ ppi}$) — Content zone: $[873\text{px}, 2558\text{px}]$.
+3. **Google Pixel 9 Pro:** $1280 \times 2856\text{px}$ ($20:9$, $495\text{ ppi}$) — Content zone: $[799\text{px}, 2341\text{px}]$.
+4. **Google Pixel 9 Pro Fold (Unfolded):** $2076 \times 2152\text{px}$ ($1:1.03$) — Dynamic split-pane content layout.
+5. **iPhone 16 / 15 Pro:** $1170 \times 2532\text{px}$ ($19.5:9$, $460\text{ ppi}$) — Reference viewport.

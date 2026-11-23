@@ -7,7 +7,7 @@
 **Reviewer:** Architecture Review Board  
 **Status:** APPROVED  
 **Standard:** Level 2.2 Documentation Governance (Browser Concurrency & Event Loop)  
-**Version:** 2.3.0
+**Version:** 2.3.2
 
 ---
 
@@ -342,7 +342,7 @@ export class ZeroAllocationTickEngine {
 
 ---
 
-## 4. Multi-Tab Distributed Concurrency & Web Locks Mutex Architecture
+## 11. Multi-Tab Distributed Concurrency & Web Locks Mutex Architecture
 
 Across concurrent browser tabs, execution is decoupled into isolated JavaScript microtask loops coordinated through native kernel primitives:
 
@@ -352,3 +352,20 @@ Across concurrent browser tabs, execution is decoupled into isolated JavaScript 
 2. **Kernel Mutex Arbitration (`Web Locks API`):**
    - Non-blocking lock requests (`{ ifAvailable: true }`) resolved atomically by the browser process.
    - Guarantees $O(1)$ single-tab arbitration of shared audio hardware resources upon timer zero.
+
+## 12. Audio-Visual Real-Time Thread Concurrency & Drift Compensation
+Web Audio execution operates on an OS real-time audio thread decoupled from the V8 main event loop. While visual rendering is bound to the display refresh cycle via `requestAnimationFrame` on the main thread, high GC pressure or layout recalculations can stall visual frames while audio continues uninterrupted.
+
+To maintain the **$< 20\text{ms}$ Tri-Modal Sensory Synchronization Invariant (`INV-020`)**:
+1. **Timestamp Anchoring:** At milestone trigger, the coordinator records `performance.now()` alongside `audioContext.currentTime`.
+2. **Phase Compensation:** Audio note envelopes use `setValueAtTime(now + latencyOffset)` where `latencyOffset = Math.max(0, audioContext.baseLatency || 0.01)`.
+3. **Drift Boundary Guard:** If main-thread lag between frame tick and audio synthesis exceeds $20\text{ms}$, the visual spring velocity is nudged forward:
+   $$\dot{x}(t^+) = \dot{x}(t^-) + \omega_0 \Delta t_{\text{drift}}$$
+   guaranteeing visual alignment with the auditory wavefront.
+
+## 13. OffscreenCanvas Web Worker Concurrency & Memory Isolation
+For intensive multi-resolution wallpaper rendering ($S^* \le 2.0$), the rendering workload is transferred to an isolated Web Worker via `HTMLCanvasElement.transferControlToOffscreen()`.
+
+- **Zero Main-Thread Jitter:** Heavy rasterization loops (Bayer 4x4 matrix dithering and $K=256$ luminance histogram calculations) execute without dropping a single 60 FPS animation frame.
+- **Structured Cloning Protocol:** State snapshots and device profiles are dispatched using structured cloning; the resulting Blob is transferred back via `Transferable` `ArrayBuffer`.
+- **Safari Compatibility Fallback:** If `window.OffscreenCanvas` lacks 2D context support in WebKit worker environments, `CanvasRenderer` automatically degrades to synchronous chunked execution on the main thread during idle callbacks (`requestIdleCallback`).
