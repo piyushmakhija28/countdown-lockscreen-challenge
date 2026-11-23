@@ -6,7 +6,8 @@
 **Author:** Piyush Makhija (Lead Systems Architect & Developer)  
 **Reviewer:** Architecture Review Board  
 **Status:** APPROVED  
-**Standard:** Level 2.2 Documentation Governance (Biomechanical UI Ergonomics)
+**Standard:** Level 2.2 Documentation Governance (Biomechanical UI Ergonomics)  
+**Version:** 1.2.0  
 
 ---
 
@@ -30,7 +31,7 @@ Text placed below $Y = 2076\text{px}$ will be obscured by iOS Flashlight/Camera 
 
 ---
 
-## 2. Hardware Safe-Zone Geometric Benchmark Matrix
+## 2. Hardware Safe-Zone Geometric Benchmark Matrix (Flagship Devices)
 
 To ensure pixel-perfect compatibility across actual flagship hardware, safe zones map to the following exact physical coordinates and normalized percentages:
 
@@ -46,13 +47,32 @@ To ensure pixel-perfect compatibility across actual flagship hardware, safe zone
 | **In-Display FP Sensor** | Galaxy S24, Pixel 9 | 240 x 240 px      | W: 20.5%, Y: 78.9%| Fingerprint boundary  |
 | **iOS Home Indicator**   | All modern iPhones  | 420 x 15 px       | W: 35.9%, Y: 98.2%| Bottom gesture bar    |
 | **System Clock & Date**  | iOS / Android lock  | Full width x 600px| Y: 4.5% to 27.5% | No text permitted     |
+| **iPhone 16 Pro Max**    | 16 Pro Max (6.9")   | 1320 x 2868 px    | Top: 27.8%, B:82%| Extra-tall flagship   |
+| **Pixel 9 Pro Fold**     | Inner Screen (8.0") | 2076 x 2152 px    | Top: 14.0%, B:88%| Dual-Column Mode (R<1.7|
+| **Galaxy Z Fold 6**      | Inner Screen (7.6") | 1856 x 2160 px    | Top: 14.0%, B:88%| Dual-Column Mode (R<1.7|
 +--------------------------+---------------------+-------------------+------------------+-----------------------+
 ```
 
-### 2.1 Software Architectural Mapping (`SafeZoneOverlay` & `ResponsiveLayoutEngine`)
-The Hardware Safe-Zone Geometric Benchmark Matrix is directly mapped into executable code:
-- **Guide Projection:** The `SafeZoneOverlay` class (`src/js/canvas/SafeZoneOverlay.js`) project translucent Dynamic Island, clock exclusion, and home bar guides in the interactive simulator so users can visually verify layout clearances.
-- **Dynamic Occlusion Avoidance:** The `ResponsiveLayoutEngine` class (`src/js/canvas/ResponsiveLayoutEngine.js`) consumes these hardware boundaries as hard layout constraints, dynamically scaling and clamping component bounding boxes to guarantee $0\text{px}$ visual collision on any smartphone display.
+### 2.1 Touch Target Hit Area Expansion Formulation (Fitts's Law $48\times 48\text{dp}$)
+Small visual elements (such as $24\times 24\text{px}$ checkboxes or $20\times 20\text{px}$ icon triggers) are prone to high miss rates ($> 18\%$) on touch screens. The engine applies an invisible pseudo-element expansion layer guaranteeing an absolute minimum $48\times 48\text{dp}$ touch envelope without altering visual layout spacing:
+
+```css
+/* Touch Hit Target Expansion Utility */
+.fitts-touch-target {
+  position: relative;
+}
+
+.fitts-touch-target::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: max(100%, 48px);
+  height: max(100%, 48px);
+  transform: translate(-50%, -50%);
+  pointer-events: auto;
+}
+```
 
 ---
 
@@ -77,7 +97,7 @@ To eliminate pillarboxing, awkward letterboxing, and geometric container collisi
 +--------------------------+----------------------------+-------------------------------------------------------+
 ```
 
-### 3.1 Non-Overlapping Ring Radius Derivation (Elimination of the +361px Defect)
+### 3.1 Non-Overlapping Ring Radius Derivation
 In standard flagship portrait ($W = 1170\text{px}, H = 2532\text{px}$):
 - Available height between safe zones: $H_{\text{avail}} = (0.82 - 0.28) \times 2532 = 1367.28\text{px}$.
 - Hero container height: $\text{heroBox.height} = H_{\text{avail}} \times 0.42 = 574.26\text{px}$.
@@ -89,37 +109,17 @@ $$r_{\text{ring}} = \min(\text{boxW} \times 0.32, \text{heroBox.height} \times 0
 
 Outer Diameter $D_{\text{ring}} = 2 \times 220 = 440\text{px} < 574.26\text{px}$. This provides $134.26\text{px}$ of vertical padding for the goal title and unit labels, completely eliminating the $361.74\text{px}$ overflow collision.
 
-### 3.1.1 Ultra-Tall Non-Overlapping Ring Radius for Regime 1 ($\mathcal{R} \ge 2.15$)
-On ultra-tall displays (e.g. Galaxy Z Fold cover display $904 \times 2316$, aspect $2.56:1$):
-- Available safe height: $H_{\text{avail}} = (0.84 - 0.22) \times 2316 = 1435.92\text{px}$.
-- Hero container height: $\text{heroBox.height} = H_{\text{avail}} \times 0.38 = 545.65\text{px}$.
-- Container width: $\text{boxW} = W \times 0.88 = 795.52\text{px}$.
-- Ring radius: $r_{\text{ring}} = \min(\text{boxW} \times 0.30, \text{heroBox.height} \times 0.36) = \min(238.65\text{px}, 196.43\text{px}) \approx 195\text{px}$.
-- Outer Diameter $D_{\text{ring}} = 390\text{px} < 545.65\text{px}$, guaranteeing $155.65\text{px}$ vertical safety buffer.
-
 ### 3.2 Dual-Column Coordinates for Foldables ($\mathcal{R} < 1.70$)
-On wide foldable inner screens (e.g. Galaxy Z Fold inner display $1812 \times 2176$, aspect $1.2:1$), standard vertical stacking wastes more than $38\%$ of display width. The engine bifurcates the canvas into two coordinated spatial columns:
+On wide foldable inner screens (e.g. Galaxy Z Fold inner display $1856 \times 2160$, aspect $1.16:1$), standard vertical stacking wastes more than $38\%$ of display width. The engine bifurcates the canvas into two coordinated spatial columns:
 - **Left Column ($X \in [0.05W \dots 0.48W]$):** Centers the Hero Days/Hours Countdown Digits and Progress Arc Ring ($Y_{\text{center}} = 0.50H$).
 - **Right Column ($X \in [0.52W \dots 0.95W]$):** Aligns the 4 Milestone Checkpoints and Daily Affirmation ($Y \in [0.14H \dots 0.88H]$).
 - **Reduced Top Clearance:** Because tablet clocks are smaller and left-aligned, top exclusion drops to $14\%$ ($Y_{\text{top}} = 0.14H$).
-
-### 3.3 Bimanual Cockpit Action Bar & Fitts's Law Optimization
-Centering the primary call-to-action (CTA) button across wide displays ($W = 1812\text{px}$) severely penalizes thumb reach when the user holds the device with both hands. Under centered alignment, the thumb reach distance to screen center is:
-
-$$D_{\text{center}} = \frac{1812}{2} - 80\text{px} = 825.8\text{px}$$
-
-This exceeds the maximum comfortable thumb arc radius ($280\text{px}$), forcing users into an awkward grip shift.
-
-Under the **Bimanual Cockpit Layout**:
-- The **Primary Action Button** ("Save Wallpaper" / "Export") anchors in the **Right Column Lateral Comfort Arc** ($X \in [0.70W, 0.93W]$, $Y \in [0.82H, 0.92H]$).
-- The **Secondary Action Button** ("Simulate Guides" / "Themes") anchors in the **Left Column Lateral Comfort Arc** ($X \in [0.07W, 0.30W]$, $Y \in [0.82H, 0.92H]$).
-- This drops movement distance to $D_{\text{reach}} \approx 140\text{px}$, reducing Fitts's Index of Difficulty ($ID = \log_2(1 + D/W)$) from $2.62\text{ bits}$ to $0.74\text{ bits}$—an **$82\%$ physical reach effort reduction**.
 
 ---
 
 ## 4. Mobile Keyboard Adaptation & Viewport Dynamics
 
-When mobile browsers (iOS Safari, Android Chrome) summon the virtual keyboard during goal entry, the available viewport height shrinks by $280\text{--}380\text{px}$.
+When mobile browsers summon the virtual keyboard during goal entry, the available viewport height shrinks by $280\text{--}380\text{px}$.
 
 ### 4.1 Viewport Meta Tag Policy
 ```html

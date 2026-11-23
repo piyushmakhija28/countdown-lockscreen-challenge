@@ -26,11 +26,11 @@ The system combines **Google Gemini 3.8 Flash** AI reasoning with mathematical s
 
 ## Enterprise Documentation Suite (Level 2.2 Standard)
 
-This project strictly adheres to Level 2.2 Documentation Governance, keeping only the canonical project management files at root while providing an exhaustive **82-document enterprise blueprint suite** (56 specifications in `docs/`, 13 Mermaid UML diagrams in `uml/`, and 13 Draw.io XML diagrams in `drawio/`):
+This project strictly adheres to Level 2.2 Documentation Governance, keeping only the canonical project management files at root while providing an exhaustive **86-document enterprise blueprint suite** (60 specifications in `docs/`, 13 Mermaid UML diagrams in `uml/`, and 13 Draw.io XML diagrams in `drawio/`):
 
 ```
 countdown-lockscreen-challenge/
-├── docs/                               # Level 2.2 Deep Architecture & Governance (56 Specs)
+├── docs/                               # Level 2.2 Deep Architecture & Governance (60 Specs)
 │   ├── 00-problem-statement.md         # Level 0: ISO/IEC/IEEE 29148 Problem Statement & Invariants
 │   ├── 01-prd.md                       # Level 1: PRD, Personas, Journey Maps & Mission Traceability
 │   ├── 02-hld.md                       # Level 2: High-Level Design, C4 Models & Dual-Engine Architecture
@@ -55,10 +55,14 @@ countdown-lockscreen-challenge/
 │   ├── 09-tech-stack-fundamentals-and-compliance-matrix.md # Level 9: Technical Fundamentals & Cross-Document Matrix
 │   ├── competition-rules-summary.md    # Contest Rules Teardown & Legal Verification
 │   ├── lockscreen-design-strategy.md   # 1.8s Glanceability Index & Technical Moats Playbook
-│   ├── ui-ux/                          # Design System (8pt Grid, Tokens, Safe Zones, WCAG/APCA a11y)
-│   │   ├── 01-design-system-and-tokens.md
-│   │   ├── 02-lockscreen-safe-zones-ergonomics.md
-│   │   └── 03-accessibility-wcag-apca.md
+│   ├── ui-ux/                          # Deep-Dive UI/UX Architecture Suite (7 specs, Zero AI Slop)
+│   │   ├── 01-design-system-and-tokens.md # OKLCH Tokens, P3 Gamut & Fresnel Glassmorphism
+│   │   ├── 02-lockscreen-safe-zones-ergonomics.md # Flagship Coordinates & Tri-Modal Layout
+│   │   ├── 03-accessibility-wcag-apca.md # WCAG 2.2 AAA, APCA Lc & CVD Color Matrices
+│   │   ├── 04-component-interaction-specifications.md # Atomic 10 Components across 9 States
+│   │   ├── 05-information-architecture-and-user-journeys.md # Fitts's Thumb Heatmaps & State Flows
+│   │   ├── 06-motion-choreography-and-kinetic-physics.md # Spring Physics ODE & Haptics
+│   │   └── 07-design-rationale-and-anti-pattern-defense.md # First-Principles Rationale & Banned Slop
 │   ├── lld/                            # Low-Level Design (LLD-01 through LLD-11)
 │   │   ├── 01-class-and-object-design.md
 │   │   ├── 02-dynamic-interaction-sequences.md

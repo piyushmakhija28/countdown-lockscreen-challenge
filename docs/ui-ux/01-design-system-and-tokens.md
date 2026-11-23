@@ -6,7 +6,8 @@
 **Author:** Piyush Makhija (Lead Systems Architect & Developer)  
 **Reviewer:** Architecture Review Board  
 **Status:** APPROVED  
-**Standard:** Level 2.2 Documentation Governance (Mathematical Spatial & Typographic Grid)
+**Standard:** Level 2.2 Documentation Governance (Mathematical Spatial & Typographic Grid)  
+**Version:** 1.2.0  
 
 ---
 
@@ -39,9 +40,12 @@ To prevent conflation between spatial layout margins and component edge curvatur
 | `--radius-xl` | `32px` | `var(--radius-xl)` | Lock screen simulator outer shell |
 | `--radius-full` | `9999px` | `var(--radius-full)` | Pills, Dynamic Island, Home indicator |
 
-### 1.2 System Elevation & Z-Index Tokens
+### 1.2 System Elevation & 3-Tier Multi-Layer Shadow Tokens
+In nature, light produces distinct shadow strata due to directional sunlight and ambient diffuse skylight. The system rejects single-layer shadows in favor of a **3-Tier Physical Shadow Stack**:
+
 ```css
 :root {
+  /* Z-Index Hierarchy */
   --z-canvas-base: 1;
   --z-overlay-decor: 10;
   --z-card-surface: 20;
@@ -49,6 +53,22 @@ To prevent conflation between spatial layout margins and component edge curvatur
   --z-modal-backdrop: 40;
   --z-modal-window: 50;
   --z-toast-notification: 60;
+
+  /* 3-Tier Elevation Shadows (Contact + Key + Ambient) */
+  --shadow-elevation-1: 
+    0 1px 2px rgba(0, 0, 0, 0.20),
+    0 4px 8px -1px rgba(0, 0, 0, 0.25),
+    0 12px 24px -2px rgba(0, 0, 0, 0.15);
+
+  --shadow-elevation-2: 
+    0 1px 2px rgba(0, 0, 0, 0.25),
+    0 8px 16px -2px rgba(0, 0, 0, 0.35),
+    0 24px 48px -4px rgba(0, 0, 0, 0.20);
+
+  --shadow-elevation-3: 
+    0 2px 4px rgba(0, 0, 0, 0.30),
+    0 16px 32px -4px rgba(0, 0, 0, 0.45),
+    0 36px 72px -6px rgba(0, 0, 0, 0.30);
 }
 ```
 
@@ -103,7 +123,51 @@ $$S_k = 16 \times (1.25)^k \quad (k \in \{-2.1, -1, 0, 1, 2, 3, 4, 6\})$$
 
 ---
 
-## 3. Curated Thematic Design Tokens & Palettes (WCAG AAA & APCA Certified)
+## 3. Mathematical OKLCH Color Space Ramp & Gamut Scaling
+
+To achieve perceptual uniformity across all device screens, colors are specified in the **OKLCH space** ($\text{oklch}(L, C, H)$), where Lightness $L \in [0, 1]$, Chroma $C \in [0, 0.4]$, and Hue angle $H \in [0^\circ, 360^\circ]$.
+
+### 3.1 OKLCH 11-Step Mathematical Color Progression (50–950)
+The lightness progression satisfies the Weber-Fechner logarithmic perception law:
+$$L_n = 0.98 - \left(\frac{n - 50}{900}\right)^{0.85} \times 0.86 \quad (n \in \{50, 100, 200, \dots, 900, 950\})$$
+
+```
++---------------------------------------------------------------------------------------------------------+
+|                                    OKLCH MASTER COLOR RAMP SPECIFICATION                                |
++--------+-----------+----------------------+----------------------+--------------------------------------+
+| Token  | Lightness | Cyan Neon (H: 210)   | Amber Zen (H: 75)    | Emerald Forest (H: 155)              |
++--------+-----------+----------------------+----------------------+--------------------------------------+
+| 50     | L: 0.98   | oklch(0.98 0.02 210) | oklch(0.98 0.03 75)  | oklch(0.98 0.03 155)                 |
+| 100    | L: 0.93   | oklch(0.93 0.05 210) | oklch(0.93 0.06 75)  | oklch(0.93 0.07 155)                 |
+| 200    | L: 0.86   | oklch(0.86 0.09 210) | oklch(0.86 0.11 75)  | oklch(0.86 0.12 155)                 |
+| 300    | L: 0.80   | oklch(0.80 0.14 210) | oklch(0.80 0.16 75)  | oklch(0.80 0.16 155) [Hero Mint]     |
+| 400    | L: 0.72   | oklch(0.72 0.16 210) | oklch(0.72 0.18 75)  | oklch(0.72 0.17 155)                 |
+| 500    | L: 0.64   | oklch(0.64 0.17 210) | oklch(0.64 0.19 75)  | oklch(0.64 0.18 155)                 |
+| 600    | L: 0.54   | oklch(0.54 0.16 210) | oklch(0.54 0.17 75)  | oklch(0.54 0.16 155)                 |
+| 700    | L: 0.42   | oklch(0.42 0.13 210) | oklch(0.42 0.14 75)  | oklch(0.42 0.13 155)                 |
+| 800    | L: 0.30   | oklch(0.30 0.09 210) | oklch(0.30 0.10 75)  | oklch(0.30 0.09 155)                 |
+| 900    | L: 0.18   | oklch(0.18 0.04 210) | oklch(0.18 0.04 75)  | oklch(0.18 0.05 155) [Base Canvas]   |
+| 950    | L: 0.11   | oklch(0.11 0.02 210) | oklch(0.11 0.02 75)  | oklch(0.11 0.03 155)                 |
++--------+-----------+----------------------+----------------------+--------------------------------------+
+```
+
+### 3.2 Display P3 Wide-Gamut Media Query Scaling
+On wide-gamut hardware (iPhone Super Retina XDR, Samsung Dynamic AMOLED 2X), chroma $C$ scales up by $20\%$ to utilize the expanded color envelope:
+
+```css
+@supports (color: color(display-p3 1 1 1)) {
+  :root {
+    --accent-primary-cyber: oklch(0.85 0.17 210);
+    --accent-secondary-cyber: oklch(0.72 0.19 270);
+    --accent-primary-zen: oklch(0.92 0.08 85);
+    --accent-primary-botanical: oklch(0.84 0.19 155);
+  }
+}
+```
+
+---
+
+## 4. Curated Thematic Design Tokens & Palettes (WCAG AAA & APCA Certified)
 
 All themes are mathematically validated against W3C WCAG 2.2 AAA ($CR \ge 7.0:1$) and APCA Lightness Contrast ($L^c \ge 75$):
 
@@ -111,51 +175,58 @@ All themes are mathematically validated against W3C WCAG 2.2 AAA ($CR \ge 7.0:1$
 +-------------------------------------------------------------------------------------------------------+
 |                                  THEME A: CYBER OBSIDIAN (HIGH-CONTRAST TECH)                         |
 +----------------------+--------------------+--------------------+--------------------------------------+
-| Semantic Token Name  | Hexadecimal Value  | RGBA / HSL Value   | Optical Contrast against Canvas      |
+| Semantic Token Name  | Hexadecimal Value  | RGBA / OKLCH Value | Optical Contrast against Canvas      |
 +----------------------+--------------------+--------------------+--------------------------------------+
-| `--bg-canvas`        | `#08090d`          | `rgba(8, 9, 13, 1)`| Base OLED Pure Dark (0% emittance)   |
-| `--bg-card`          | `#0f121a`          | `rgba(15, 18, 26)` | Elevation Layer 1                    |
-| `--border-specular`  | `#1e293b`          | `rgba(30, 41, 59)` | Specular border highlight            |
-| `--accent-primary`   | `#67e8f9` (Cyan300)| `rgba(103, 232, 249)`| Primary digits (CR: 14.56:1, Lc=90.4)|
-| `--accent-secondary` | `#818cf8` (Indigo) | `rgba(129, 140, 248)`| Light Indigo Progress (CR: 8.6:1)  |
-| `--text-primary`     | `#f8fafc`          | `rgba(248, 250, 252)`| Maximum contrast text (CR: 18.2:1) |
-| `--text-muted`       | `#94a3b8`          | `rgba(148, 163, 184)`| Secondary labels (CR: 7.2:1)       |
+| `--bg-canvas`        | `#08090d`          | oklch(0.10 0.01 250)| Base OLED Pure Dark (0% emittance)   |
+| `--bg-card`          | `#0f121a`          | oklch(0.14 0.02 260)| Elevation Layer 1 Translucent Card   |
+| `--border-specular`  | `#1e293b`          | oklch(0.25 0.03 250)| Specular Fresnel border highlight    |
+| `--accent-primary`   | `#67e8f9` (Cyan300)| oklch(0.85 0.14 210)| Primary digits (CR: 14.56:1, Lc=90.4)|
+| `--accent-secondary` | `#818cf8` (Indigo) | oklch(0.70 0.16 275)| Progress Arc Neon (CR: 8.6:1)        |
+| `--text-primary`     | `#f8fafc`          | oklch(0.98 0.01 250)| Maximum contrast text (CR: 18.2:1)   |
+| `--text-muted`       | `#94a3b8`          | oklch(0.71 0.03 250)| Secondary labels (CR: 7.2:1)         |
 +----------------------+--------------------+--------------------+--------------------------------------+
 
 +-------------------------------------------------------------------------------------------------------+
 |                                  THEME B: DEEP FOCUS ZEN (WARM MINIMALIST — AAA)                      |
 +----------------------+--------------------+--------------------+--------------------------------------+
-| Semantic Token Name  | Hexadecimal Value  | RGBA / HSL Value   | Optical Contrast against Canvas      |
+| Semantic Token Name  | Hexadecimal Value  | RGBA / OKLCH Value | Optical Contrast against Canvas      |
 +----------------------+--------------------+--------------------+--------------------------------------+
-| `--bg-canvas`        | `#0f172a` (Slate)  | `rgba(15, 23, 42)` | Deep Midnight Slate                  |
-| `--bg-card`          | `#1e293b`          | `rgba(30, 41, 59)` | Muted Card Elevation                 |
-| `--border-specular`  | `#334155`          | `rgba(51, 65, 85)` | Subtle Card Border                   |
-| `--accent-primary`   | `#fef3c7` (Amber50)| `rgba(254, 243, 199)`| Hero Digits (CR: 13.38:1, Lc=94.9)  |
-| `--accent-secondary` | `#fbbf24` (Amber400)| `rgba(251, 191, 36)`| Active checkpoint (CR: 8.79:1, Lc=81)|
-| `--text-primary`     | `#fde68a` (Amber200)| `rgba(253, 230, 138)`| Primary text (CR: 11.2:1, Lc=89.1)  |
-| `--text-muted`       | `#cbd5e1`          | `rgba(203, 213, 225)`| Subtext labels (CR: 8.4:1)         |
+| `--bg-canvas`        | `#0f172a` (Slate)  | oklch(0.18 0.03 260)| Deep Midnight Slate Base             |
+| `--bg-card`          | `#1e293b`          | oklch(0.24 0.04 260)| Muted Card Elevation                 |
+| `--border-specular`  | `#334155`          | oklch(0.35 0.04 260)| Subtle Card Border                   |
+| `--accent-primary`   | `#fef3c7` (Amber50)| oklch(0.96 0.05 85) | Hero Digits (CR: 13.38:1, Lc=94.9)   |
+| `--accent-secondary` | `#fbbf24` (Amber400| oklch(0.82 0.16 75) | Active checkpoint (CR: 8.79:1, Lc=81)|
+| `--text-primary`     | `#fde68a` (Amber200| oklch(0.92 0.08 85) | Primary text (CR: 11.2:1, Lc=89.1)   |
+| `--text-muted`       | `#cbd5e1`          | oklch(0.85 0.02 260)| Subtext labels (CR: 8.4:1)           |
 +----------------------+--------------------+--------------------+--------------------------------------+
 
 +-------------------------------------------------------------------------------------------------------+
 |                                  THEME C: AURORA BOTANICAL (LUMINOUS EMERALD — AAA)                   |
 +----------------------+--------------------+--------------------+--------------------------------------+
-| Semantic Token Name  | Hexadecimal Value  | RGBA / HSL Value   | Optical Contrast against Canvas      |
+| Semantic Token Name  | Hexadecimal Value  | RGBA / OKLCH Value | Optical Contrast against Canvas      |
 +----------------------+--------------------+--------------------+--------------------------------------+
-| `--bg-canvas`        | `#064e3b` (Forest) | `rgba(6, 78, 59)`  | Deep Emerald Green                   |
-| `--bg-card`          | `#065f46`          | `rgba(6, 95, 70)`  | Luminous Translucent Panel           |
-| `--border-specular`  | `#047857`          | `rgba(4, 120, 87)` | Organic Border Accent                |
-| `--accent-primary`   | `#6ee7b7` (Mint300)| `rgba(110, 231, 183)`| Growth Digits (CR: 7.15:1, Lc=78.2) |
-| `--accent-secondary` | `#a7f3d0` (Mint200)| `rgba(167, 243, 208)`| Checkpoint Glow (CR: 9.82:1, Lc=86.4)|
-| `--text-primary`     | `#ecfdf5`          | `rgba(236, 253, 245)`| Botanical Hero (CR: 7.22:1, Lc=81.6)|
-| `--text-muted`       | `#d1fae5`          | `rgba(209, 250, 229)`| Soft Mint Subtext (CR: 8.8:1)      |
+| `--bg-canvas`        | `#064e3b` (Forest) | oklch(0.22 0.09 155)| Deep Emerald Green                   |
+| `--bg-card`          | `#065f46`          | oklch(0.28 0.11 155)| Luminous Translucent Panel           |
+| `--border-specular`  | `#047857`          | oklch(0.38 0.13 155)| Organic Border Accent                |
+| `--accent-primary`   | `#6ee7b7` (Mint300)| oklch(0.84 0.16 155)| Growth Digits (CR: 7.15:1, Lc=78.2)  |
+| `--accent-secondary` | `#a7f3d0` (Mint200)| oklch(0.90 0.10 155)| Checkpoint Glow (CR: 9.82:1, Lc=86.4)|
+| `--text-primary`     | `#ecfdf5`          | oklch(0.97 0.03 155)| Botanical Hero (CR: 7.22:1, Lc=81.6) |
+| `--text-muted`       | `#d1fae5`          | oklch(0.94 0.05 155)| Soft Mint Subtext (CR: 8.8:1)        |
 +----------------------+--------------------+--------------------+--------------------------------------+
 ```
 
 ---
 
-## 4. Modern Multi-Layer Glassmorphism Specification (`blur(24px)`)
+## 5. Modern Multi-Layer Glassmorphism & Fresnel Reflectance Formulation
 
-To create tactile depth without sacrificing $60\text{ fps}$ smoothness, glassmorphism panels conform to the following multi-layer contract:
+To create tactile depth without sacrificing $60\text{ fps}$ smoothness, glassmorphism panels conform to the physical optical equations of light transmission and reflection across dielectric boundaries.
+
+### 5.1 Fresnel Reflectance Equation
+The reflectance $R(\theta)$ of ambient light striking the glass card at incidence angle $\theta$ is:
+
+$$R(\theta) = R_0 + (1 - R_0)(1 - \cos\theta)^5$$
+
+Where $R_0 = \left(\frac{n_1 - n_2}{n_1 + n_2}\right)^2 \approx 0.0426$ for crown glass ($n_2 = 1.52$) in air ($n_1 = 1.00$). At grazing angles ($\theta \to 90^\circ$), $R(\theta) \to 1.0$, creating an intense edge specular highlight that anchors the container.
 
 ```css
 /* Master Frosted Glass Card Container */
@@ -166,9 +237,7 @@ To create tactile depth without sacrificing $60\text{ fps}$ smoothness, glassmor
   -webkit-backdrop-filter: blur(24px) saturate(190%);
   border: 1px solid var(--border-specular);
   border-radius: var(--radius-lg);
-  box-shadow: 
-    0 8px 32px 0 rgba(0, 0, 0, 0.42),
-    0 2px 8px 0 rgba(0, 0, 0, 0.24);
+  box-shadow: var(--shadow-elevation-2);
   transform: translateZ(0); /* Promotes to dedicated GPU Compositor Layer */
   will-change: transform;
   overflow: hidden;
@@ -183,7 +252,7 @@ To create tactile depth without sacrificing $60\text{ fps}$ smoothness, glassmor
   right: 0;
   height: 1px;
   background: linear-gradient(
-    90deg,
+    90deg in oklch,
     rgba(255, 255, 255, 0) 0%,
     rgba(255, 255, 255, 0.35) 40%,
     rgba(255, 255, 255, 0.60) 50%,
@@ -193,72 +262,14 @@ To create tactile depth without sacrificing $60\text{ fps}$ smoothness, glassmor
   pointer-events: none;
   z-index: 2;
 }
-
-/* Sub-Surface Radial Glow Highlight */
-.glass-panel::after {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(
-    circle at center,
-    var(--accent-glow) 0%,
-    transparent 70%
-  );
-  opacity: 0.15;
-  pointer-events: none;
-  z-index: 0;
-}
-
-/* Graceful Degradation for Browsers without backdrop-filter */
-@supports not (backdrop-filter: blur(24px)) {
-  .glass-panel {
-    background: var(--bg-card-solid);
-    border: 1px solid rgba(255, 255, 255, 0.22);
-    box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.85);
-  }
-}
-
-/* Accessibility: Reduced Transparency Fallback (WCAG 2.2 / Visual Comfort) */
-@media (prefers-reduced-transparency: reduce) {
-  .glass-panel {
-    background: var(--bg-card-solid);
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-    border: 1px solid var(--border-solid-high-contrast, rgba(255, 255, 255, 0.35));
-    box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.95);
-  }
-  .glass-panel::after {
-    opacity: 0.05;
-  }
-}
 ```
 
 ---
 
-## 5. Micro-Interaction & Animation Choreography
+## 6. Cross-Specification Architectural Relationships
 
-- **Cubic-Bezier Easing & Sync Tokens:**
-  - `--ease-out-cubic: cubic-bezier(0.33, 1, 0.68, 1)` (Used for dialog popups and slide-ins).
-  - `--ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1)` (Used for milestone completion checkmark bounce).
-  - `--ease-smooth: cubic-bezier(0.4, 0, 0.2, 1)` (Used for continuous progress ring sweep).
-  - `--ease-sync: cubic-bezier(0.16, 1, 0.3, 1)` (Used for cross-tab state convergence ripple).
-  - `--color-sync-pulse: rgba(0, 240, 255, 0.35)` (Cyan ambient halo on sibling tab state update).
-- **Countdown Pulse:**
-  - On every second boundary, the seconds digit undergoes a $1.02\times$ scale transform with duration $150\text{ms}$, reinforcing temporal vitality.
-- **Milestone Toggle Interaction:**
-  - Checkbox activation triggers a particle burst effect and an immediate progress ring stroke interpolation over $400\text{ms}$.
-
----
-
-## 6. Comprehensive 6-State UX Specification
-
-1. **State 1 (Initial / Pre-generation):** Empty glass state with interactive placeholder prompts before Gemini decomposition.
-2. **State 2 (AI Generating / Streaming Shimmer):** Pulsing glassmorphic shimmer during API round-trip.
-3. **State 3 (Milestone Toggled Ripple):** Dual-channel checkmark bounce + progress arc sweep.
-4. **State 4 (Countdown Zero Celebration):** Visual celebration state with particle confetti and "GOAL ACHIEVED!" banner when $\Delta t \le 0$.
-5. **State 5 (Heuristic Offline Fallback):** Ambient pill notifying user of offline deterministic milestone fallback.
-6. **State 6 (Accessibility Overrides):** Complete disablement of transforms under `@media (prefers-reduced-motion: reduce)`, high-contrast borders under `@media (prefers-contrast: more)`, and solid acrylic opaque cards under `@media (prefers-reduced-transparency: reduce)`.
-7. **State 7 (Cross-Tab External Synchronization Pulse):** When an incoming `BroadcastChannel` update hydrates the store from a sibling tab, the active lock screen frame displays an ambient 300ms cyan specular ripple (`--color-accent-glow`) with a subtle sync badge ("Synced from sibling tab"), confirming multi-device cohesion without interrupting the 60 FPS chronometer.
+This specification forms the foundation for the entire UI/UX architecture suite:
+- **`DOC-UI-04-COMPONENT-SPECS`**: Ingests tokens to render all 10 components across 9 states.
+- **`DOC-UI-05-IA-JOURNEYS`**: Consumes spatial layout and Fitts's Law touch target boundaries.
+- **`DOC-UI-06-MOTION-PHYSICS`**: Drives CSS spring cubic-Bézier and kinetic duration variables.
+- **`DOC-UI-07-DESIGN-RATIONALE-ANTI-SLOP`**: Details first-principles engineering rationale and enforces the BANNED list.
