@@ -116,7 +116,7 @@ All themes are mathematically validated against W3C WCAG 2.2 AAA ($CR \ge 7.0:1$
 | `--bg-canvas`        | `#08090d`          | `rgba(8, 9, 13, 1)`| Base OLED Pure Dark (0% emittance)   |
 | `--bg-card`          | `#0f121a`          | `rgba(15, 18, 26)` | Elevation Layer 1                    |
 | `--border-specular`  | `#1e293b`          | `rgba(30, 41, 59)` | Specular border highlight            |
-| `--accent-primary`   | `#06b6d4` (Cyan)   | `rgba(6, 182, 212)`| Primary countdown digits (CR: 11.4:1)|
+| `--accent-primary`   | `#67e8f9` (Cyan300)| `rgba(103, 232, 249)`| Primary digits (CR: 14.56:1, Lc=90.4)|
 | `--accent-secondary` | `#818cf8` (Indigo) | `rgba(129, 140, 248)`| Light Indigo Progress (CR: 8.6:1)  |
 | `--text-primary`     | `#f8fafc`          | `rgba(248, 250, 252)`| Maximum contrast text (CR: 18.2:1) |
 | `--text-muted`       | `#94a3b8`          | `rgba(148, 163, 184)`| Secondary labels (CR: 7.2:1)       |
@@ -130,9 +130,9 @@ All themes are mathematically validated against W3C WCAG 2.2 AAA ($CR \ge 7.0:1$
 | `--bg-canvas`        | `#0f172a` (Slate)  | `rgba(15, 23, 42)` | Deep Midnight Slate                  |
 | `--bg-card`          | `#1e293b`          | `rgba(30, 41, 59)` | Muted Card Elevation                 |
 | `--border-specular`  | `#334155`          | `rgba(51, 65, 85)` | Subtle Card Border                   |
-| `--accent-primary`   | `#f59e0b` (Amber)  | `rgba(245, 158, 11)`| Warm focused digits (CR: 8.9:1)     |
+| `--accent-primary`   | `#fef3c7` (Amber50)| `rgba(254, 243, 199)`| Hero Digits (CR: 13.38:1, Lc=94.9)  |
 | `--accent-secondary` | `#fbbf24` (Amber400)| `rgba(251, 191, 36)`| Active checkpoint (CR: 8.79:1, Lc=81)|
-| `--text-primary`     | `#fef3c7` (Cream)  | `rgba(254, 243, 199)`| Warm soft white (CR: 15.6:1)       |
+| `--text-primary`     | `#fde68a` (Amber200)| `rgba(253, 230, 138)`| Primary text (CR: 11.2:1, Lc=89.1)  |
 | `--text-muted`       | `#cbd5e1`          | `rgba(203, 213, 225)`| Subtext labels (CR: 8.4:1)         |
 +----------------------+--------------------+--------------------+--------------------------------------+
 
@@ -146,7 +146,7 @@ All themes are mathematically validated against W3C WCAG 2.2 AAA ($CR \ge 7.0:1$
 | `--border-specular`  | `#047857`          | `rgba(4, 120, 87)` | Organic Border Accent                |
 | `--accent-primary`   | `#6ee7b7` (Mint300)| `rgba(110, 231, 183)`| Growth Digits (CR: 7.15:1, Lc=78.2) |
 | `--accent-secondary` | `#a7f3d0` (Mint200)| `rgba(167, 243, 208)`| Checkpoint Glow (CR: 9.82:1, Lc=86.4)|
-| `--text-primary`     | `#ecfdf5`          | `rgba(236, 253, 245)`| Crisp Botanical Light (CR: 16.1:1) |
+| `--text-primary`     | `#ecfdf5`          | `rgba(236, 253, 245)`| Botanical Hero (CR: 7.22:1, Lc=81.6)|
 | `--text-muted`       | `#d1fae5`          | `rgba(209, 250, 229)`| Soft Mint Subtext (CR: 8.8:1)      |
 +----------------------+--------------------+--------------------+--------------------------------------+
 ```

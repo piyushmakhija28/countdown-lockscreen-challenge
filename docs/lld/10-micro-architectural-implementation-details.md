@@ -412,12 +412,12 @@ To guarantee that the countdown lock screen web application executes flawlessly 
 | 08| **LLD-TM-01: Leap Seconds** | Target-bound monotonic clamp      | `DualClockTimeEngine.js` & `TC-EDGE-25` |
 | 09| **LLD-TM-02: Millis Under** | Celebration strict delta <= 0     | `DualClockTimeEngine.js` & `TC-EDGE-26` |
 | 10| **LLD-TM-03: String Churn** | Static LUT with bitwise integer n | `DualClockTimeEngine.js` & `TC-POS-87`  |
-| 11| **LLD-AI-01: HTTP 429 Breaker| Fail-fast circuit breaker         | `GeminiAiClient.js` & `TC-POS-88`       |
-| 12| **LLD-AI-02: XML Escaping** | escapeXmlEntities() pre-prompt    | `GeminiAiClient.js` & `TC-NEG-14`       |
+| 11| **LLD-AI-01: HTTP 429 Breaker| Fail-fast circuit breaker         | `GeminiClient.js` & `TC-POS-88`         |
+| 12| **LLD-AI-02: XML Escaping** | escapeXmlEntities() pre-prompt    | `GeminiClient.js` & `TC-NEG-14`         |
 | 13| **LLD-ST-01: Safari Incog** | isStorageAvailable() startup probe| `TokenBucketHistoryGuard.js`            |
 | 14| **LLD-ST-02: Schema Drift** | StateMigrator forward versioning  | `UrlStateService.js` & `TC-POS-89`      |
 | 15| **LLD-ST-03: SW HTTP Cache**| Cache-Control: no-cache headers   | `sw.js` & `devops/03`                   |
-| 16| **LLD-AU-01: Audio Desync** | onstatechange auto-resume handler | `AudioService.js` & `TC-POS-90`         |
+| 16| **LLD-AU-01: Audio Desync** | onstatechange auto-resume handler | `AudioChimeService.js` & `TC-POS-90`    |
 | 17| **LLD-UI-01: DPI CSS Blur** | Synchronized width/style.width    | `src/canvas/` & `TC-POS-91`             |
 | 18| **LLD-FS-01: Safari Download| Web Share API + fallback modal    | `src/canvas/` & `TC-POS-92`             |
 | 19| **LLD-FS-02: URL Object Leak| Single-slot tracked blob URL mgr   | `src/canvas/` & `TC-POS-93`             |
@@ -429,7 +429,7 @@ To guarantee that the countdown lock screen web application executes flawlessly 
 | 25| **LLD-CS-02: Hairline Border| max(0.5px, 1px/dpr) calculation  | `tokens.css` & `TC-POS-99`              |
 | 26| **LLD-CS-03: Blend Stacking| Stacking context DOM separation   | `glassmorphism.css` & `TC-POS-100`      |
 | 27| **LLD-AS-01: Microtask Freez| RAF for render, RIC for compute   | `app.js` & `TC-POS-101`                 |
-| 28| **LLD-AS-02: Abort Silence**| Filter error.name === 'AbortError'| `GeminiAiClient.js` & `TC-POS-102`      |
+| 28| **LLD-AS-02: Abort Silence**| Filter error.name === 'AbortError'| `GeminiClient.js` & `TC-POS-102`        |
 | 29| **LLD-AS-03: Upload Race**  | Monotonic activeUploadId sequence | `app.js` & `TC-POS-103`                 |
 | 30| **LLD-CP-01: beginPath Leak| Mandatory beginPath() at draw start| `src/canvas/` & `TC-POS-104`            |
 | 31| **LLD-CP-02: Zero Vector NaN| Epsilon guarded vector normalizat | `src/canvas/` & `TC-POS-105`            |
@@ -440,7 +440,7 @@ To guarantee that the countdown lock screen web application executes flawlessly 
 | 36| **LLD-IN-01: Virtual Keybd**| Enter key listener input.blur()   | `app.js` & `TC-POS-110`                 |
 | 37| **LLD-IN-02: Zero-Width Str| Unicode NFKC + regex strip        | `UrlStateService.js` & `TC-POS-111`     |
 | 38| **LLD-IN-03: Datetime Min** | Dynamic min ISO anchor attribute  | `app.js` & `TC-POS-112`                 |
-| 39| **LLD-AU-02: Audio Node Leak| Mandatory onended disconnect()    | `AudioService.js` & `TC-POS-113`        |
-| 40| **LLD-AU-03: Sample Rate Dis| Parametric realtime synthesis     | `AudioService.js` & `TC-POS-114`        |
+| 39| **LLD-AU-02: Audio Node Leak| Mandatory onended disconnect()    | `AudioChimeService.js` & `TC-POS-113`   |
+| 40| **LLD-AU-03: Sample Rate Dis| Parametric realtime synthesis     | `AudioChimeService.js` & `TC-POS-114`   |
 +---+-----------------------------+-----------------------------------+-----------------------------------------+
 ```

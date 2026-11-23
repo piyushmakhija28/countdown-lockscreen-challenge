@@ -214,13 +214,25 @@ gainNode.gain.exponentialRampToValueAtTime(0.0001, startTime + 1.200); // 1.2s d
 ## 4. Module 4: Defensive Client-Side Security Architecture
 
 ### 4.1 Prototype Pollution Immunity & Polymorphic Deserialization
-When parsing JSON state from `#v1=...`, malicious URLs containing `__proto__`, `constructor`, or `prototype` keys are stripped before object creation via recursive reviver:
+When parsing JSON state from `#v1=...`, malicious payloads containing `__proto__`, `constructor`, or `prototype` keys are stripped before object creation via recursive reviver and returned as clean `Object.create(null)` dictionaries:
 
 ```javascript
+/**
+ * Safely parses and revives serialized JSON state, enforcing null-prototype isolation
+ * and deep-freezing nested milestone collections against object mutation.
+ *
+ * @param {string} rawJson Uncompressed state string
+ * @returns {Record<string, unknown>} Prototype-free state object
+ */
 export function safeHydrateState(rawJson) {
   const parsed = JSON.parse(rawJson, (key, value) => {
+    // Strip prototype pollution vectors recursively
     if (key === '__proto__' || key === 'constructor' || key === 'prototype') {
       return undefined;
+    }
+    // Convert plain nested objects into null-prototype dictionaries
+    if (value !== null && typeof value === 'object' && !Array.isArray(value)) {
+      return Object.assign(Object.create(null), value);
     }
     return value;
   });
@@ -232,27 +244,27 @@ export function safeHydrateState(rawJson) {
   cleanState.th = parsed.th || 'cyber_obsidian';
   cleanState.af = typeof parsed.af === 'string' ? parsed.af.slice(0, 120) : '';
 
-  // Polymorphic milestone normalization handling both tuple and dict records
-  cleanState.m = Array.isArray(parsed.m)
+  // Polymorphic milestone normalization handling both compact tuple and dict records
+  const milestones = Array.isArray(parsed.m)
     ? parsed.m.slice(0, 5).map((item, idx) => {
+        const record = Object.create(null);
         if (Array.isArray(item)) {
-          return {
-            step: typeof item[0] === 'number' ? item[0] : idx + 1,
-            title: typeof item[1] === 'string' ? item[1].slice(0, 50) : `Milestone ${idx + 1}`,
-            offset_days: Math.max(0, Math.min(1825, Number(item[2]) || 0)),
-            completed: Boolean(item[3])
-          };
+          record.step = typeof item[0] === 'number' ? item[0] : idx + 1;
+          record.title = typeof item[1] === 'string' ? item[1].slice(0, 50) : `Milestone ${idx + 1}`;
+          record.offset_days = Math.max(0, Math.min(1825, Number(item[2]) || 0));
+          record.completed = Boolean(item[3]);
+        } else {
+          record.step = typeof item?.step === 'number' ? item.step : idx + 1;
+          record.title = typeof item?.title === 'string' ? item.title.slice(0, 50) : `Milestone ${idx + 1}`;
+          record.offset_days = Math.max(0, Math.min(1825, Number(item?.offset_days) || 0));
+          record.completed = Boolean(item?.completed);
         }
-        return {
-          step: typeof item?.step === 'number' ? item.step : idx + 1,
-          title: typeof item?.title === 'string' ? item.title.slice(0, 50) : `Milestone ${idx + 1}`,
-          offset_days: Math.max(0, Math.min(1825, Number(item?.offset_days) || 0)),
-          completed: Boolean(item?.completed)
-        };
+        return Object.freeze(record);
       })
     : [];
 
-  return cleanState;
+  cleanState.m = Object.freeze(milestones);
+  return Object.freeze(cleanState);
 }
 ```
 

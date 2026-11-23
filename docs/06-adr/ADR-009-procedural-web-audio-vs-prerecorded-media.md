@@ -49,13 +49,14 @@ We chose **Procedural Web Audio API Synthesis with Gesture-Gated Priming, Dynami
 
 ---
 
-## 4. Architectural Implementation Blueprint (`AudioService.js`)
+## 4. Architectural Implementation Blueprint (`AudioChimeService.js`)
 
 ```javascript
 /**
- * Procedural harmonic victory chime synthesizer with autoplay priming and dynamics compression.
+ * Procedural harmonic victory chime synthesizer with autoplay priming,
+ * continuous re-arming, visibility re-sync, and dynamics compression.
  */
-export class AudioService {
+export class AudioChimeService {
   #ctx = null;
   #limiterNode = null;
   #isUnlocked = false;
@@ -63,23 +64,36 @@ export class AudioService {
 
   constructor() {
     this.#registerGestureListeners();
+    this.#registerLifecycleListeners();
   }
 
   #registerGestureListeners() {
     const events = ['pointerdown', 'touchstart', 'keydown'];
     const unlockHandler = async () => {
       await this.unlockAudioContext();
-      if (this.#isUnlocked) {
-        events.forEach((evt) => window.removeEventListener(evt, unlockHandler));
-        if (this.#isPendingPlayback) {
-          this.#isPendingPlayback = false;
-          await this.playVictoryChime();
-        }
+      if (this.#isUnlocked && this.#isPendingPlayback) {
+        this.#isPendingPlayback = false;
+        await this.playVictoryChime();
       }
     };
+    // Keep passive listeners continuously active for seamless re-arming on any touch
     events.forEach((evt) =>
       window.addEventListener(evt, unlockHandler, { passive: true })
     );
+  }
+
+  #registerLifecycleListeners() {
+    // Re-sync AudioContext upon tab wake or mobile screen unlock
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible' && this.#ctx && this.#ctx.state === 'suspended') {
+        this.#ctx.resume().catch(() => {});
+      }
+    });
+    window.addEventListener('pageshow', () => {
+      if (this.#ctx && this.#ctx.state === 'suspended') {
+        this.#ctx.resume().catch(() => {});
+      }
+    });
   }
 
   /**
@@ -125,6 +139,8 @@ export class AudioService {
 
   /**
    * Synthesizes celebratory major chord (C5, E5, G5, C6) through the peak limiter.
+   * If audio is blocked (e.g. passive observer without user interaction), falls back
+   * silently to sensory haptics and visual celebration without throwing exceptions.
    *
    * @returns {Promise<boolean>}
    */

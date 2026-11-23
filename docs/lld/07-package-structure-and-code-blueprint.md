@@ -114,23 +114,25 @@ countdown-lockscreen-challenge/
 │       ├── config/
 │       │   └── themes.js              # Theme definitions & color tokens
 │       ├── core/
+│       │   ├── StateStore.js          # Central immutable state store with typed UDF dispatch
 │       │   ├── DualClockTimeEngine.js # Drift-compensated hybrid chronometer
 │       │   ├── MilestoneManager.js    # Checkpoint sequencing & progress
 │       │   ├── UrlStateService.js     # Base64 URL hash serialization
-│       │   ├── TokenBucketHistoryGuard.js # Token-bucket history rate limiter
+│       │   ├── TokenBucketHistoryGuard.js # Token-bucket history rate limiter & 3-layer loop shield
 │       │   └── InputSanitizer.js      # Unicode NFKC & Bidi Trojan Source shield
 │       ├── ai/
-│       │   ├── GeminiAiClient.js        # Google Gemini 3.8 Flash SDK client (Header auth)
+│       │   ├── GeminiClient.js        # Google Gemini 3.8 Flash SDK client (Header auth)
+│       │   ├── GeminiRateLimiter.js   # Client-side 15 RPM token bucket rate limiter
 │       │   └── HeuristicGenerator.js  # Deterministic offline fallback
 │       ├── canvas/
 │       │   ├── CanvasRenderer.js      # High-DPI 2D rasterizer
 │       │   ├── AdaptiveBufferAllocator.js # Dual-constraint WebKit GPU texture allocator
 │       │   ├── ResponsiveLayoutEngine.js # Tri-modal responsive layout engine
-│       │   ├── CanvasTextWrapper.js   # Bidi isolation & text wrapper
-│       │   ├── ParticleEngine.js      # Float32Array celebration physics
+│       │   ├── CanvasTextWrapper.js   # Multi-script Intl.Segmenter text wrapper & fitText
+│       │   ├── ParticleEngine.js      # Float32Array celebration physics (semi-implicit drag)
 │       │   └── SafeZoneOverlay.js     # Lock screen simulator overlay
 │       ├── services/
-│       │   ├── AudioService.js        # Autoplay-primed procedural Web Audio
+│       │   ├── AudioChimeService.js   # Autoplay-primed continuous re-arming Web Audio
 │       │   ├── FontService.js         # Canvas font readiness barrier & FOIT gate
 │       │   └── HapticService.js       # Vibration API tactile patterns
 │       └── app.js                     # Root view controller & event bindings
@@ -138,7 +140,7 @@ countdown-lockscreen-challenge/
 │   ├── unit/                          # Unit tests
 │   └── integration/                   # Integration tests
 ├── .gitignore                         # Level 2.2 strict doc exclusions
-├── VERSION                            # Single source of truth version string (1.5.0)
+├── VERSION                            # Single source of truth version string (1.6.0)
 ├── CHANGELOG.md                       # Keep a Changelog release history
 ├── CLAUDE.md                          # Claude Code developer instructions
 └── README.md                          # Master project playbook

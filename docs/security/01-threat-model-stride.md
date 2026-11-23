@@ -53,11 +53,13 @@ Where:
 
 ## 2. Threat Mitigation Architecture
 
-- **Tampering (XSS & Prototype Pollution) Defense:** 
+- **Tampering (XSS, Prototype Pollution & Font Injection) Defense:** 
   1. All user-supplied goal titles, milestone descriptions, and affirmations are passed through strict Unicode NFKC normalization, Bidi override stripping, and whitelist regex checks (`InputSanitizer`).
   2. The Canvas 2D engine draws text exclusively using `fillText()`, which treats input strictly as raw character sequences, completely immune to DOM injection sinks.
   3. SVG text rendering in `SafeZoneOverlay.js` and complex typography bridges use programmatic `document.createElementNS` and `div.textContent` bindings, never evaluating raw HTML or SVG strings.
-  4. URL hash JSON parsing uses a recursive reviver that discards `__proto__`, `constructor`, and `prototype` keys across all nested levels, hydrating state into `Object.create(null)` dictionaries.
+  4. URL hash Base64URL decoding validates bit-quantum length constraints ($L \pmod 4 \ne 1$), rejecting truncated payloads with `ERR_HASH_CORRUPT`.
+  5. URL hash JSON parsing uses a recursive reviver that discards `__proto__`, `constructor`, and `prototype` keys across all nested levels, hydrating state into `Object.create(null)` dictionaries with frozen records.
+  6. Dynamic canvas font construction is enforced via `SafeFontEngine`, preventing CSS injection into `ctx.font` by restricting families to `AUTHORIZED_FAMILIES`.
 - **Information Disclosure (API Key Zero-Leakage Invariant):** 
   User-supplied Google Gemini API keys are transmitted exclusively via the `x-goog-api-key` HTTP header, eliminating query parameter leakage in logs. Global unhandled error and rejection interceptors scrub all patterns matching `AIza[0-9A-Za-z-_]{35,40}`.
 - **Denial of Service (OOM & Quota Crash) Defense:** 

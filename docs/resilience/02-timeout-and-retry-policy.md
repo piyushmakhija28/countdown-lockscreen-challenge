@@ -65,14 +65,20 @@ export class CircuitBreaker {
 
   private onSuccess(): void {
     this.failureCount = 0;
+    this.tripCount = 0;
     this.state = 'CLOSED';
   }
 
-  private onFailure(): void {
+  private onFailure(err?: any): void {
     this.failureCount++;
-    if (this.failureCount >= this.failureThreshold || this.state === 'HALF_OPEN') {
+    // Immediate circuit breaker trip upon HTTP 429 (Resource Exhausted)
+    const isRateLimit = err?.status === 429 || err?.message?.includes('429');
+    if (isRateLimit || this.failureCount >= this.failureThreshold || this.state === 'HALF_OPEN') {
       this.state = 'OPEN';
-      this.nextAttemptEpoch = Date.now() + this.coolOffPeriodMs;
+      this.tripCount = (this.tripCount || 0) + 1;
+      // Exponential cool-off: 60s * 2^(tripCount - 1), capped at 600s (10 min)
+      const dynamicCoolOff = Math.min(600000, this.coolOffPeriodMs * Math.pow(2, this.tripCount - 1));
+      this.nextAttemptEpoch = Date.now() + dynamicCoolOff;
     }
   }
 }

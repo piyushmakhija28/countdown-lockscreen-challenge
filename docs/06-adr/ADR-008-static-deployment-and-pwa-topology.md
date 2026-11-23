@@ -58,12 +58,12 @@ We must decide on the hosting platform and deployment topology.
 - Served through Fastly's global CDN with native HTTP/2 and TLS 1.3 encryption.
 
 ### 5.2 Offline Progressive Web App (PWA) Precache Inventory
-To ensure flawless offline execution on mobile devices and zero dependency on CDN availability during judging, the Service Worker (`sw.js`) registers a deterministic **Cache-First** strategy encompassing all application assets:
+To ensure flawless offline execution on mobile devices and zero dependency on CDN availability during judging, the Service Worker (`sw.js`) registers a deterministic **Cache-First** strategy using namespaced cache key `countdown-lockscreen-ghpages-v1.6.0` and dynamic relative scope `self.registration.scope`:
 - **Core Shell:** `index.html`, `manifest.json`, `favicon.ico`, `assets/icons/*`
-- **Stylesheets:** `src/css/style.css`, `src/css/tokens.css`, `src/css/glassmorphic.css`
+- **Stylesheets:** `src/css/main.css`, `src/css/tokens.css`, `src/css/glassmorphism.css`
 - **Entry & Config:** `src/js/app.js`, `src/js/config/constants.js`, `src/js/config/themes.js`
-- **Core Engine:** `src/js/core/DualClockTimeEngine.js`, `src/js/core/MilestoneManager.js`, `src/js/core/UrlStateService.js`, `src/js/core/TokenBucketHistoryGuard.js`, `src/js/core/InputSanitizer.js`
-- **Sensory & Fonts:** `src/js/services/AudioService.js`, `src/js/services/HapticService.js`, `src/js/services/FontService.js`
-- **AI & Fallback:** `src/js/ai/GeminiAiClient.js`, `src/js/ai/HeuristicGenerator.js`
+- **Core Engine:** `src/js/core/DualClockTimeEngine.js`, `src/js/core/MilestoneManager.js`, `src/js/core/UrlStateService.js`, `src/js/core/TokenBucketHistoryGuard.js`, `src/js/core/InputSanitizer.js`, `src/js/core/StateStore.js`
+- **Sensory & Fonts:** `src/js/services/AudioChimeService.js`, `src/js/services/HapticService.js`, `src/js/services/FontService.js`
+- **AI & Fallback:** `src/js/ai/GeminiClient.js`, `src/js/ai/GeminiRateLimiter.js`, `src/js/ai/HeuristicGenerator.js`
 - **Canvas Subsystem:** `src/js/canvas/CanvasRenderer.js`, `src/js/canvas/AdaptiveBufferAllocator.js`, `src/js/canvas/ResponsiveLayoutEngine.js`, `src/js/canvas/CanvasTextWrapper.js`, `src/js/canvas/ParticleEngine.js`, `src/js/canvas/SafeZoneOverlay.js`
 - **Self-Hosted WOFF2 Typography:** `public/fonts/inter-v13-latin-regular.woff2`, `public/fonts/inter-v13-latin-700.woff2`, `public/fonts/jetbrains-mono-v18-latin-700.woff2`

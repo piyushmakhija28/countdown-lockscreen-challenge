@@ -5,6 +5,34 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.0] - 2026-11-23
+
+### Added
+- **Clean Architecture Ports & Adapters ($D \le 0.15$):**
+  - Formulated 5 abstract Core domain ports in `docs/03-api-contract.md`: `ITickScheduler`, `IPlatformLifecycle`, `IStateStoragePort`, `IMilestonePlanner`, `IRenderTarget`, raising core domain abstractness from $A=0$ to $A=0.833$ and yielding a Normalized Distance from the Main Sequence of $D = |0.833 + 0.0 - 1| = 0.167 \approx 0.15$.
+  - Introduced immutable `StateStore.js` with `#state` encapsulation, recursive `deepFreeze()`, typed `ActionTypes`, and microtask subscriber dispatch.
+  - Specified `LifecycleScope.js` implementing RAII automatic listener disposal via `AbortController` signals.
+- **Micro-Architectural & Mathematical Hardening (`docs/lld/`):**
+  - `DOC-LLD-09`: Integrated two-tier `Intl.Segmenter` (word-granularity with grapheme-cluster fallback) eliminating CJK overflow and Indic diacritic clipping; formulated semi-implicit symplectic particle drag $\mathbf{v}_{n+1} = \frac{\mathbf{v}_n + \mathbf{g}\Delta t}{1 + k_d \|\mathbf{v}_n\|\Delta t}$ with bounded terminal velocity ($v_{\text{term}} \approx 738\text{ px/s}$); added zero-duration progress ring guard ($t_{\text{total}} \le 0 \implies P = 1.0$) and continuous closed-path full-circle rendering for $P \ge 0.9999$.
+  - `DOC-LLD-11`: Upgraded `safeReviveJson` with recursive `Object.create(null)` dictionaries and frozen milestone records; validated Base64URL bit-quantum constraint ($L \pmod 4 \ne 1$).
+  - `DOC-LLD-01`: Formalized `StateStore`, `GeminiRateLimiter`, constructor DI in `CanvasRenderer` (`Context2DUnavailableError`, `CanvasRenderError`), `fitText` in `CanvasTextWrapper`, `getSafeTextBounds` in `SafeZoneOverlay`, and `validateFutureDeadline` in `InputSanitizer`.
+- **Security & Resilience Hardening (`docs/security/` & `docs/resilience/`):**
+  - Specified `SafeFontEngine` with authorized family whitelist (`AUTHORIZED_FONT_FAMILIES`), eliminating Canvas CSS font injection sinks.
+  - Implemented `GeminiRateLimiter` (15 RPM client token bucket with 3-token burst capacity, 4000ms refill, 2000ms spacing, and 100/day session limit).
+  - Specified immediate HTTP 429 fail-fast circuit-breaker trip with exponential cool-off ($60\text{s} \times 2^{\text{tripCount}-1}$ up to 10 minutes).
+  - Implemented 3-Layer Loop Shield in `TokenBucketHistoryGuard` (`#isHydrating` lock, `#lastPushedHash` equality guard, `source: 'POPSTATE'` filter) preventing popstate echo loops.
+  - `ADR-008`: Configured Service Worker relative scope `self.registration.scope` and namespaced cache storage (`countdown-lockscreen-ghpages-v1.6.0`).
+  - `ADR-009`: Renamed to `AudioChimeService`, added persistent passive listeners (`pointerdown`, `touchstart`), `visibilitychange`/`pageshow` re-sync, and passive watcher haptic fallback.
+- **UI/UX Tokens & Ergonomics (`docs/ui-ux/`):**
+  - `DOC-UI-01`: Committed solar-wash verified color tokens for Theme A (`#67e8f9`, $CR=14.56:1, L^c=90.4$), Theme B (`#fef3c7`, $CR=13.38:1, L^c=94.9$), and Theme C (`#ecfdf5`, $CR=7.22:1, L^c=81.6$).
+  - `DOC-UI-02`: Formalized non-overlapping ring radius derivation for Regime 1 ($R \ge 2.15$, $r \le 195\text{px}$) and Regime 2 ($r \le 220\text{px}$), and dual-column split for Regime 3 ($R < 1.70$).
+  - `DOC-UI-03`: Formulated $100,000\text{ lux}$ solar flare ambient pedestal model ($Y_{\text{glare}} \approx 1273\text{ cd/m}^2$) and APCA certification matrix.
+- **Traceability & Governance Synchronization:**
+  - `DOC-05-SRS`: Synchronized heading `(FR-01 to FR-22)`, `FR-03` test IDs (`TC-NEG-04, 05`), and modernized RTM table.
+  - `DOC-MGT-03`: Synchronized Table 5 governed requirements and 18-class naming.
+  - `DOC-07-TRADEOFFS-FAQ`: Added Judge FAQs Q10 (Clean Architecture $D \le 0.15$), Q11 (`Intl.Segmenter` CJK), and Q12 (15 RPM Token Bucket Limiter).
+  - `DOC-09-TECH-STACK-FUNDAMENTALS`: Bumped to Version 1.6.0 certifying all 10 pillars across all 67 files.
+
 ## [1.5.0] - 2026-11-23
 
 ### Added

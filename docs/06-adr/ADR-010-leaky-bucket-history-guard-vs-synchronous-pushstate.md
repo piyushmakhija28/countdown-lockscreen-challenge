@@ -56,6 +56,10 @@ export class TokenBucketHistoryGuard {
   private lastRefillEpoch: number = Date.now();
   private pendingHash: string | null = null;
   private debounceTimer: ReturnType<typeof setTimeout> | null = null;
+  /** Layer 1: Mutex lock stopping re-entrant state serialization during hydration */
+  private isHydrating: boolean = false;
+  /** Layer 2: Fingerprint cache of last pushed hash preventing duplicate operations */
+  private lastPushedHash: string = '';
 
   constructor() {
     window.addEventListener('visibilitychange', () => {
@@ -64,7 +68,19 @@ export class TokenBucketHistoryGuard {
     window.addEventListener('pagehide', () => this.forceFlush());
   }
 
-  public pushStateUpdate(serializedHash: string): void {
+  public setHydrating(hydrating: boolean): void {
+    this.isHydrating = hydrating;
+  }
+
+  public pushStateUpdate(serializedHash: string, source: 'USER' | 'POPSTATE' = 'USER'): void {
+    // 3-Layer Loop Shield:
+    // 1. Block state serialization during hash hydration
+    // 2. Suppress re-entrant updates originating from popstate events
+    // 3. Prevent duplicate serialization if hash is identical to last pushed hash
+    if (this.isHydrating || source === 'POPSTATE' || serializedHash === this.lastPushedHash) {
+      return;
+    }
+    this.lastPushedHash = serializedHash;
     this.pendingHash = serializedHash;
 
     // Tier 1: Instant synchronous micro-persistence

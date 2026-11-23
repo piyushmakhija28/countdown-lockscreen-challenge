@@ -265,9 +265,31 @@ export interface IDualClockTimeEngine {
   calculateRemaining(deadline: Date, referenceDate?: Date): TimeRemaining;
 }
 
-export interface IAudioService {
+export interface ITickScheduler {
+  requestTick(callback: (timestamp: DOMHighResTimeStamp) => void): number;
+  cancelTick(handle: number): void;
+}
+
+export interface IPlatformLifecycle {
+  onWake(callback: () => void): () => void;
+  onSleep(callback: () => void): () => void;
+  isDocumentVisible(): boolean;
+}
+
+export interface IStateStoragePort {
+  saveEphemeral(key: string, value: string): void;
+  loadEphemeral(key: string): string | null;
+  replaceNavigationState(hashFragment: string): void;
+}
+
+export interface IDisposable {
+  dispose(): void;
+}
+
+export interface IAudioChimeService extends IDisposable {
   unlockAudioContext(): Promise<boolean>;
   playVictoryChime(): Promise<boolean>;
+  getState(): 'LOCKED' | 'UNLOCKED' | 'INTERRUPTED' | 'DEGRADED';
 }
 
 export interface IHapticService {

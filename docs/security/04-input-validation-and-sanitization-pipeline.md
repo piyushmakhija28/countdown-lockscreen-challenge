@@ -119,9 +119,10 @@ export function sanitizeGoalTitle(raw) {
 
 ## 4. Prototype Pollution & Decompression Bomb Immunity
 
-During hydration of the `#v1=` shareable URL hash payload, the application enforces two defenses:
-1. **Decompression Bomb Shield:** Limits decompressed state bytes to a strict $32\text{ KB}$ ceiling, rejecting exponential memory expansion attacks with immediate error propagation.
-2. **Recursive JSON Reviver:** The native JSON parser reviver traverses all object levels (root, milestone arrays, nested properties) and strips `__proto__`, `constructor`, and `prototype`. State is stored in a prototype-free `Object.create(null)` container.
+During hydration of the `#v1=` shareable URL hash payload, the application enforces three defenses:
+1. **Base64URL Bit-Quantum Integrity Check:** In standard Base64, each character encodes 6 bits. A payload length of $L \equiv 1 \pmod 4$ requires 6 bits, which cannot form a complete 8-bit byte. Any payload where $L \pmod 4 === 1$ is immediately rejected with `ERR_HASH_CORRUPT` before invoking browser decoding APIs.
+2. **Decompression Bomb Shield:** Limits decompressed state bytes to a strict $32\text{ KB}$ ceiling, rejecting exponential memory expansion attacks with immediate error propagation.
+3. **Recursive Zero-Prototype JSON Reviver:** The native JSON parser reviver traverses all object levels (root, milestone arrays, nested properties) and strips `__proto__`, `constructor`, and `prototype`. All revived objects are instantiated via `Object.create(null)` dictionaries and frozen.
 
 ```javascript
 /**
@@ -139,7 +140,14 @@ export async function parseSafeUrlState(base64Payload) {
     throw err;
   }
 
-  // 1. Base64URL padding normalization
+  // 1. Bit-quantum validation: length % 4 === 1 is mathematically impossible for valid Base64
+  if (base64Payload.length % 4 === 1) {
+    const err = new Error('Malformed Base64URL string length: bit quantum invalid');
+    err.code = 'ERR_HASH_CORRUPT';
+    throw err;
+  }
+
+  // 2. Base64URL padding normalization
   const padLen = (4 - (base64Payload.length % 4)) % 4;
   const normalizedBase64 = (base64Payload + '='.repeat(padLen))
     .replace(/-/g, '+')
@@ -158,6 +166,7 @@ export async function parseSafeUrlState(base64Payload) {
   for (let i = 0; i < binaryString.length; i++) {
     bytes[i] = binaryString.charCodeAt(i);
   }
+```
 
   // 2. Safe Decompression with strict 32 KB Budget
   let decompressedText = '';
@@ -258,5 +267,47 @@ export async function parseSafeUrlState(base64Payload) {
     : [];
 
   return safeState;
+}
+```
+
+---
+
+## 5. Canvas CSS Font Injection Defense (`SafeFontEngine`)
+
+When dynamically formatting `ctx.font = "${fontWeight} ${fontSize}px ${fontFamily}"`, unsanitized strings can lead to font-injection attacks or canvas rendering stalls. `SafeFontEngine` strictly enforces an authorized font family whitelist:
+
+```javascript
+/**
+ * Defensive Canvas 2D font property constructor blocking font injection sinks.
+ */
+export class SafeFontEngine {
+  static #AUTHORIZED_FAMILIES = new Set([
+    'Inter',
+    'JetBrains Mono',
+    'Cinzel',
+    'Playfair Display',
+    'sans-serif',
+    'monospace',
+    'serif'
+  ]);
+
+  /**
+   * Constructs a validated font property string.
+   *
+   * @param {number | string} weight Numeric weight (e.g., 400, 700)
+   * @param {number} sizePx Clamped font size in pixels (8 to 512)
+   * @param {string} family Requested font family
+   * @returns {string} Safe ctx.font specification
+   * @throws {ValidationError} If font family is unauthorized or size is out of bounds
+   */
+  static buildFontSpec(weight, sizePx, family) {
+    const cleanFamily = family.replace(/['";\\]/g, '').trim();
+    if (!this.#AUTHORIZED_FAMILIES.has(cleanFamily)) {
+      throw new ValidationError(`Unauthorized font family: ${cleanFamily}`, 'ERR_FONT_UNAUTHORIZED');
+    }
+    const clampedSize = Math.max(8, Math.min(512, Math.round(Number(sizePx) || 16)));
+    const cleanWeight = [300, 400, 500, 600, 700, 800, 'normal', 'bold'].includes(weight) ? weight : 400;
+    return `${cleanWeight} ${clampedSize}px "${cleanFamily}"`;
+  }
 }
 ```

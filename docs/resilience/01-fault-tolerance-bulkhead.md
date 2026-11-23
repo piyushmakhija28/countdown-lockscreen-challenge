@@ -44,6 +44,53 @@ When communicating with the Google Gemini API, receiving an HTTP 429 (`RESOURCE_
 3. The user receives actionable retrograde milestones instantly without error dialogs or hanging loaders.
 4. After 60 seconds, the circuit breaker enters `HALF-OPEN` state, allowing a single probe request to test API quota recovery.
 
+### 1.2 Client-Side 15 RPM Token Bucket Limiter (`GeminiRateLimiter`)
+To preemptively prevent Google Gemini API 429 rate limit errors (15 RPM free tier ceiling), client calls pass through `GeminiRateLimiter`:
+- **Token Bucket Capacity:** 3 tokens (permits bursts of up to 3 quick queries).
+- **Refill Rate:** 1 token every $4000\text{ms}$ ($15\text{ tokens/minute}$).
+- **Minimum Request Spacing:** $2000\text{ms}$ minimum inter-request delay to prevent burst collision.
+- **Session Budget:** Maximum 100 requests per 24-hour rolling window per client instance.
+
+```javascript
+/**
+ * Client-side rate limiter strictly enforcing the 15 RPM Google Gemini Free Tier quota.
+ */
+export class GeminiRateLimiter {
+  #tokens = 3;
+  #maxTokens = 3;
+  #refillIntervalMs = 4000;
+  #lastRefill = Date.now();
+  #lastRequestTime = 0;
+  #minSpacingMs = 2000;
+
+  /**
+   * Attempts to acquire a token before dispatching a Gemini API call.
+   *
+   * @returns {Promise<boolean>} True if call is permitted; false if rate-limited
+   */
+  async acquire() {
+    this.#refill();
+    const now = Date.now();
+    if (this.#tokens < 1 || (now - this.#lastRequestTime) < this.#minSpacingMs) {
+      return false; // Fast-fail to heuristic generator
+    }
+    this.#tokens -= 1;
+    this.#lastRequestTime = now;
+    return true;
+  }
+
+  #refill() {
+    const now = Date.now();
+    const elapsed = now - this.#lastRefill;
+    const tokensToAdd = Math.floor(elapsed / this.#refillIntervalMs);
+    if (tokensToAdd > 0) {
+      this.#tokens = Math.min(this.#maxTokens, this.#tokens + tokensToAdd);
+      this.#lastRefill = now;
+    }
+  }
+}
+```
+
 ---
 
 ## 2. Production Concurrency & Memory Bulkhead Implementation

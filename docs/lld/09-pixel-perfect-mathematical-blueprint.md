@@ -153,14 +153,22 @@ $$y(\theta) = c_y + r \sin(\theta)$$
 
 To anchor the top of the ring ($12\text{ o'clock}$) as the start point, the angular offset is $\theta_0 = -\frac{\pi}{2}$.
 
-### 6.2 Stroke-Dashoffset Invariant Math
+### 6.2 Stroke-Dashoffset Invariant Math & Arc Continuity
 For an SVG or Canvas stroked ring with stroke circumference $C = 2\pi r$, the progress stroke offset for completion ratio $P \in [0, 1]$ is:
 
 $$\text{stroke-dasharray} = C = 2\pi r$$
 $$\text{stroke-dashoffset} = C \cdot (1 - P) = 2\pi r (1 - P)$$
 
-To eliminate anti-aliasing seam artifacts at $P = 1.0$, the angular boundary is clamped:
-$$\theta_{\text{end}} = \theta_{\text{start}} + \min(2\pi - 10^{-6}, 2\pi \cdot P)$$
+**Zero-Duration Goal Invariant:**  
+To prevent division-by-zero singularities when initial start time equals deadline ($t_{\text{total}} = T_{\text{deadline}} - T_{\text{start}} \le 0$), the completion ratio is clamped:
+$$P = \begin{cases} 1.0 & \text{if } t_{\text{total}} \le 0 \\ \max\left(0.0, \min\left(1.0, \frac{t_{\text{elapsed}}}{t_{\text{total}}}\right)\right) & \text{otherwise} \end{cases}$$
+
+**12 o'clock Seam Elimination Invariant:**  
+When $P \ge 0.9999$, Canvas 2D floating-point trigonometric truncation can leave an unpainted 1-pixel gap at the 12 o'clock seam ($\theta = -\frac{\pi}{2}$). The rendering engine switches from an open partial arc to a continuous, closed full circle:
+$$\text{ArcPath} = \begin{cases} 
+\text{ctx.arc}(c_x, c_y, r, 0, 2\pi) & \text{if } P \ge 0.9999 \\
+\text{ctx.arc}(c_x, c_y, r, -\frac{\pi}{2}, -\frac{\pi}{2} + 2\pi P) & \text{otherwise}
+\end{cases}$$
 
 ---
 
@@ -270,7 +278,48 @@ Ensuring that animations remain identical in visual velocity regardless of wheth
 
 ---
 
-## 12. Verification & Rigor Invariant Matrix
+## 12. Module 11: Semi-Implicit Symplectic Particle Kinematics & Aerodynamic Drag
+
+### 12.1 Symplectic Drag Kinematics Formulation
+Standard explicit Euler integration ($\mathbf{v}_{n+1} = \mathbf{v}_n + \mathbf{a}\Delta t$) exhibits energy divergence and numerical instability under non-linear quadratic air resistance $F_d = -k_d \|\mathbf{v}\|\mathbf{v}$. To guarantee unconditional stability across arbitrary frame intervals $\Delta t \in [8\text{ms}, 100\text{ms}]$:
+
+$$\mathbf{v}_{n+1} = \frac{\mathbf{v}_n + \mathbf{g}\Delta t}{1 + k_d \|\mathbf{v}_n\|\Delta t}$$
+$$\mathbf{x}_{n+1} = \mathbf{x}_n + \mathbf{v}_{n+1}\Delta t$$
+
+Where:
+- $\mathbf{g} = (0, 980\text{ px/s}^2)$ is gravitational acceleration.
+- $k_d = 0.0018\text{ px}^{-1}$ is the aerodynamic drag coefficient.
+- The terminal velocity $v_{\text{term}}$ is bounded asymptotically:
+$$v_{\text{term}} = \sqrt{\frac{\|\mathbf{g}\|}{k_d}} = \sqrt{\frac{980}{0.0018}} \approx 737.86\text{ px/s}$$
+
+### 12.2 Structure-of-Arrays (SoA) Float32Array Memory Layout
+To eliminate garbage collector thrashing during the 180-frame celebration burst, particles are stored in a single contiguous `Float32Array` of 900 elements ($150\text{ particles} \times 6\text{ attributes}$):
+```
+Stride: [x, y, vx, vy, alpha, colorIdx]
+Offset: [ 0, 1,  2,  3,     4,        5]
+```
+The update pass executes sequentially through memory with cache locality, achieving zero allocations per frame. Furthermore, if `window.matchMedia('(prefers-reduced-motion: reduce)').matches` evaluates to true, particle kinematics are cleanly bypassed.
+
+---
+
+## 13. Module 12: Two-Tier Intl.Segmenter Typography Line-Wrapping Pipeline
+
+### 13.1 CJK & Indic Word-Boundary Failure
+Canvas text wrapping relying solely on whitespace splitting (`text.split(' ')`) catastrophically fails for Chinese, Japanese, Korean (CJK) scripts that do not use spaces, as well as Indic scripts with complex grapheme clusters (combining diacritics, viramas).
+
+### 13.2 Two-Tier Decomposition Architecture
+The typography measurement engine implements a two-tier segmentation strategy:
+1. **Tier 1 (Word Granularity):** Invokes `new Intl.Segmenter(locale, { granularity: 'word' })`. For whitespace-separated languages, words are accumulated until `ctx.measureText(line).width > maxWidth`.
+2. **Tier 2 (Grapheme Cluster Granularity):** When a single word or ideographic token exceeds `maxWidth` (or when word segmentation yields no boundaries, as in continuous CJK strings), the engine drops to grapheme-level segmentation:
+   ```javascript
+   const segmenter = new Intl.Segmenter(undefined, { granularity: 'grapheme' });
+   const graphemes = Array.from(segmenter.segment(token), s => s.segment);
+   ```
+   Graphemes are accumulated into lines with exact sub-pixel boundary checking, preventing CJK overflow and preserving Indic consonant conjuncts without broken diacritic rendering.
+
+---
+
+## 14. Verification & Rigor Invariant Matrix
 
 ```
 +-----------------------------------------------------------------------------------------------------------------+
@@ -288,5 +337,7 @@ Ensuring that animations remain identical in visual velocity regardless of wheth
 | 08 | Arc boundary singularity    | theta_end - theta_start               | <= 2*PI - 1e-6 (Zero self-intersect) |
 | 09 | Thermal GPU frame clamp     | FPS during idle preview               | <= 15.0000 FPS (Energy conservation) |
 | 10 | Inverse transform precision | norm(M * M^-1 - I)                    | <= 1e-12 (Zero floating-point drift) |
+| 11 | Symplectic particle terminal| lim_{t -> inf} ||v(t)||               | <= 738.00 px/s (Unconditional bound) |
+| 12 | Zero-duration arc guard     | P when t_total <= 0                   | == 1.00000 (Zero NaN division error) |
 +----+-----------------------------+---------------------------------------+--------------------------------------+
 ```

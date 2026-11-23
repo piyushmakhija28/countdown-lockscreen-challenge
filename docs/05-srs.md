@@ -20,7 +20,7 @@ The system is a dual-deliverable Progressive Web Application:
 
 ---
 
-## 2. Functional Requirements Specification (FR-01 to FR-15)
+## 2. Functional Requirements Specification (FR-01 to FR-22)
 
 Each functional requirement is formally specified with unique identifier, description, inputs, transformations, outputs, and verification method:
 
@@ -46,7 +46,7 @@ Each functional requirement is formally specified with unique identifier, descri
 - **Input:** Total interval $\Delta T = t_{\text{deadline}} - t_{\text{now}}$.
 - **Processing:** Computes quarter-interval partitions ($75\%, 50\%, 25\%, 0\%$). Formulates generic milestone titles.
 - **Output:** Complete `MilestonePlanResponse` generated in $< 5\text{ms}$ with zero network calls.
-- **Verification Method:** Test (`TC-NEG-02`).
+- **Verification Method:** Test (`TC-NEG-04`, `TC-NEG-05`).
 
 ### FR-04: Motivational Affirmation Synthesis
 - **Requirement:** The system shall generate a tailored, psychologically empowering daily affirmation string ($\le 120$ characters) matching the user's specific goal domain.
@@ -164,9 +164,9 @@ Each functional requirement is formally specified with unique identifier, descri
 | Req ID  | PRD Feature Link   | HLD Component       | Target Implementation| Test Case ID              |
 +---------+--------------------+---------------------+----------------------+---------------------------+
 | FR-01   | F-02 Countdown     | IngressController   | js/core/InputSanitizer.js | TC-POS-01, TC-NEG-01 |
-| FR-02   | F-01 Gemini AI     | GeminiGateway       | js/ai/GeminiAiClient.js     | TC-POS-02, TC-EDGE-01|
+| FR-02   | F-01 Gemini AI     | GeminiGateway       | js/ai/GeminiClient.js       | TC-POS-02, TC-EDGE-01|
 | FR-03   | F-01 Fallback      | HeuristicEngine     | js/ai/HeuristicGenerator.js| TC-NEG-04, TC-NEG-05|
-| FR-04   | F-01 Affirmation   | GeminiGateway       | js/ai/GeminiAiClient.js     | TC-POS-03            |
+| FR-04   | F-01 Affirmation   | GeminiGateway       | js/ai/GeminiClient.js       | TC-POS-03            |
 | FR-05   | F-02 Chronometer   | DualClockTimeEngine | js/core/DualClockTimeEngine.js| TC-POS-04        |
 | FR-06   | F-02 Zero Drift    | DualClockTimeEngine | js/core/DualClockTimeEngine.js| TC-POS-05, TC-EDGE-01|
 | FR-07   | F-03 Milestones    | MilestoneStore      | js/core/MilestoneManager.js| TC-POS-06           |
@@ -178,7 +178,7 @@ Each functional requirement is formally specified with unique identifier, descri
 | FR-13   | F-06 Themes        | ThemeController     | js/config/themes.js       | TC-POS-11, TC-POS-12 |
 | FR-14   | F-07 URL Hash      | StateSerializer     | js/core/UrlStateService.js | TC-POS-13, TC-POS-14 |
 | FR-15   | F-05 Download      | BlobExporter        | js/canvas/CanvasRenderer.js| TC-POS-10           |
-| FR-16   | F-05 Audio FSM     | AudioService        | js/services/AudioService.js| TC-POS-16, TC-NEG-10|
+| FR-16   | F-05 Audio FSM     | AudioService        | js/services/AudioChimeService.js| TC-POS-16, TC-NEG-10|
 | FR-17   | F-05 Haptics       | HapticService       | js/services/HapticService.js| TC-POS-17          |
 | FR-18   | F-07 History Guard | TokenBucketGuard    | js/core/TokenBucketHistoryGuard.js| TC-NEG-11, TC-EDGE-10|
 | FR-19   | F-05 Web Share     | ShareService        | js/canvas/CanvasRenderer.js| TC-NEG-11           |

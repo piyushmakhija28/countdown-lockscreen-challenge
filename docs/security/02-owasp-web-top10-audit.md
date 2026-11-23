@@ -26,9 +26,9 @@ Every component of the Countdown Lock Screen architecture is systematically eval
 |A02| Cryptographic Failures     | LOW RISK        | Enforced HTTPS with TLS 1.3 edge termination. All URL state|
 |   |                            |                 | checksums use constant-time bitwise comparisons.          |
 +---+----------------------------+-----------------+------------------------------------------------------------+
-|A03| Injection (XSS & SVG)      | CRITICAL FOCUS  | Eliminated via: (1) Strict CSP Level 3 forbidding inline   |
-|   |                            |                 | scripts; (2) Pure Canvas 2D fillText; (3) Programmatic DOM |
-|   |                            |                 | TextNode and SVG createElementNS creation without innerHTML|
+|A03| Injection (XSS, SVG, Font) | CRITICAL FOCUS  | Eliminated via: (1) Strict CSP Level 3; (2) SafeFontEngine |
+|   |                            |                 | whitelist for ctx.font; (3) Base64URL bit-quantum check;   |
+|   |                            |                 | (4) Programmatic DOM TextNode/createElementNS (no innerHTML|
 +---+----------------------------+-----------------+------------------------------------------------------------+
 |A04| Insecure Design            | MITIGATED       | Full STRIDE threat model, DREAD scoring, hard invariants   |
 |   |                            |                 | (INV-001 to INV-009), and mathematical safe-zone bounds.   |

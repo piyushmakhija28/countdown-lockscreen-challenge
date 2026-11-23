@@ -57,16 +57,163 @@
 
 ## 2. Concrete Subsystem Class Specifications
 
+### 2.0 `StateStore` Class Contract
+```javascript
+/**
+ * Frozen action types supported by StateStore.
+ * @enum {string}
+ */
+export const ActionTypes = Object.freeze({
+  SET_GOAL_INPUT: 'SET_GOAL_INPUT',
+  HYDRATE_URL_STATE: 'HYDRATE_URL_STATE',
+  PLANNING_REQUESTED: 'PLANNING_REQUESTED',
+  PLANNING_SUCCEEDED: 'PLANNING_SUCCEEDED',
+  PLANNING_FAILED: 'PLANNING_FAILED',
+  TOGGLE_MILESTONE: 'TOGGLE_MILESTONE',
+  SET_THEME: 'SET_THEME',
+  TOGGLE_OVERLAY: 'TOGGLE_OVERLAY',
+  TICK_CHRONOMETER: 'TICK_CHRONOMETER',
+  GOAL_EXPIRED: 'GOAL_EXPIRED'
+});
+
+/**
+ * Deep freezes an object recursively, preventing any property mutation in strict mode.
+ *
+ * @template T
+ * @param {T} obj
+ * @returns {Readonly<T>}
+ */
+export function deepFreeze(obj) {
+  if (obj === null || typeof obj !== 'object' || Object.isFrozen(obj)) {
+    return obj;
+  }
+  Object.freeze(obj);
+  for (const key of Object.getOwnPropertyNames(obj)) {
+    deepFreeze(obj[key]);
+  }
+  return obj;
+}
+
+/**
+ * Central Observable State Store enforcing Unidirectional Data Flow and absolute state immutability.
+ */
+export class StateStore {
+  /** @type {Readonly<CountdownState>} */
+  #state;
+  /** @type {Set<(state: Readonly<CountdownState>, action: Object) => void>} */
+  #subscribers = new Set();
+  /** @type {boolean} */
+  #isBatching = false;
+  /** @type {boolean} */
+  #isDispatching = false;
+
+  /**
+   * Initializes store with immutable initial state.
+   *
+   * @param {CountdownState} initialState
+   */
+  constructor(initialState) {
+    this.#state = deepFreeze(structuredClone(initialState));
+  }
+
+  /**
+   * Retrieves a deeply frozen immutable snapshot of current state.
+   *
+   * @returns {Readonly<CountdownState>}
+   */
+  getState() {
+    return this.#state;
+  }
+
+  /**
+   * Dispatches an action to mutate state via registered reducers.
+   *
+   * @param {{ type: string, payload?: any, meta?: { source?: string } }} action
+   * @throws {Error} If dispatch is called re-entrantly from within a reducer.
+   */
+  dispatch(action) {
+    if (this.#isDispatching) {
+      throw new Error(`StateStore: Re-entrant dispatch detected for action ${action.type}`);
+    }
+    try {
+      this.#isDispatching = true;
+      const nextState = this.#reduce(this.#state, action);
+      if (nextState !== this.#state) {
+        this.#state = deepFreeze(nextState);
+        this.#notifySubscribers(action);
+      }
+    } finally {
+      this.#isDispatching = false;
+    }
+  }
+
+  /**
+   * Subscribes a listener to state changes.
+   *
+   * @param {(state: Readonly<CountdownState>, action: Object) => void} listener
+   * @returns {() => void} Unsubscribe function
+   */
+  subscribe(listener) {
+    this.#subscribers.add(listener);
+    return () => this.#subscribers.delete(listener);
+  }
+
+  #notifySubscribers(action) {
+    if (this.#isBatching) return;
+    this.#isBatching = true;
+    queueMicrotask(() => {
+      this.#isBatching = false;
+      const snapshot = this.#state;
+      for (const listener of this.#subscribers) {
+        try {
+          listener(snapshot, action);
+        } catch (err) {
+          console.error('StateStore: Subscriber notification failed', err);
+        }
+      }
+    });
+  }
+
+  #reduce(state, action) {
+    switch (action.type) {
+      case ActionTypes.SET_GOAL_INPUT:
+        return { ...state, goalTitle: action.payload.title, deadline: action.payload.deadline };
+      case ActionTypes.HYDRATE_URL_STATE:
+        return { ...state, ...action.payload };
+      case ActionTypes.PLANNING_SUCCEEDED:
+        return { ...state, milestones: action.payload.milestones, affirmation: action.payload.affirmation, isPlanning: false };
+      case ActionTypes.TOGGLE_MILESTONE:
+        return {
+          ...state,
+          milestones: state.milestones.map(m => m.id === action.payload.id ? { ...m, isCompleted: !m.isCompleted } : m)
+        };
+      case ActionTypes.SET_THEME:
+        return { ...state, selectedTheme: action.payload.themeId };
+      case ActionTypes.TOGGLE_OVERLAY:
+        return { ...state, isOverlayVisible: !state.isOverlayVisible };
+      case ActionTypes.GOAL_EXPIRED:
+        return { ...state, isExpired: true };
+      default:
+        return state;
+    }
+  }
+}
+
 ### 2.1 `DualClockTimeEngine` Class Contract
 ```javascript
 /**
  * Manages drift-compensated countdown chronometry coupling UTC wall-clock anchors with requestAnimationFrame.
  */
 export class DualClockTimeEngine {
+  /** @type {number | null} */
   #rafId = null;
+  /** @type {number} */
   #lastWallEpoch = 0;
+  /** @type {boolean} */
   #isRunning = false;
+  /** @type {number | null} */
   #activeTargetEpoch = null;
+  /** @type {number} */
   #lastReportedRemaining = Infinity;
 
   /**
@@ -77,6 +224,13 @@ export class DualClockTimeEngine {
    * @param {() => void} onExpire Expiration callback
    */
   startTicker(deadline, onTick, onExpire) {}
+
+  /**
+   * Dynamically updates target deadline enforcing the target-bound chronometer reset invariant.
+   *
+   * @param {Date} newDeadline
+   */
+  setDeadline(newDeadline) {}
 
   /**
    * Stops active requestAnimationFrame ticker loop.
@@ -108,6 +262,7 @@ export class DualClockTimeEngine {
  * Manages sequencing, progress metrics, and state mutations for milestone items.
  */
 export class MilestoneManager {
+  /** @type {MilestoneItem[]} */
   #milestones = [];
 
   /**
@@ -116,6 +271,15 @@ export class MilestoneManager {
    * @param {readonly MilestoneItem[]} milestones
    */
   setMilestones(milestones) {}
+
+  /**
+   * Returns read-only snapshot of milestones.
+   *
+   * @returns {readonly MilestoneItem[]}
+   */
+  getMilestones() {
+    return this.#milestones;
+  }
 
   /**
    * Toggles completion status of a specific milestone by ID.
@@ -135,14 +299,17 @@ export class MilestoneManager {
 }
 ```
 
-### 2.3 `GeminiAiClient` & `HeuristicGenerator` Class Contracts
+### 2.3 `GeminiClient` & `HeuristicGenerator` Class Contracts
 ```javascript
 /**
  * Client gateway for Google Gemini 3.8 Flash model.
  */
-export class GeminiAiClient {
+export class GeminiClient {
+  /** @type {string | null} */
   #apiKey = null;
+  /** @type {AbortController | null} */
   #activeAbortController = null;
+  /** @type {number} */
   #currentRequestEpoch = 0;
 
   /**
@@ -156,6 +323,8 @@ export class GeminiAiClient {
    * @param {string} goalTitle Sanitized goal title
    * @param {Date} deadline Target deadline timestamp
    * @returns {Promise<Object>} MilestonePlanResponse
+   * @throws {AiServiceError} If API returns 429 or 5xx
+   * @throws {AsyncAbortedError} If request is superseded
    */
   async generatePlan(goalTitle, deadline) {}
 
@@ -236,9 +405,19 @@ export class InputSanitizer {
    *
    * @param {string} raw Raw user input string
    * @returns {string} Sanitized clean goal title
-   * @throws {Error} If input violates length or character constraints
+   * @throws {ValidationError} If input violates length or character constraints
    */
   static sanitizeGoalTitle(raw) {}
+
+  /**
+   * Validates target deadline timestamp ensuring it is strictly in the future.
+   *
+   * @param {Date | string | number} deadline Target timestamp
+   * @param {Date} [referenceTime=new Date()] Optional reference timestamp
+   * @returns {Date} Validated future Date instance
+   * @throws {ValidationError} If date is invalid, in the past, or exceeds maximum future threshold
+   */
+  static validateFutureDeadline(deadline, referenceTime = new Date()) {}
 
   /**
    * Escapes XML/HTML entities for safe insertion into prompts and DOM.
@@ -261,6 +440,7 @@ export class UrlStateService {
    *
    * @param {CountdownState} state
    * @returns {Promise<string>} #v1= hash string
+   * @throws {StateSerializationError} If serialization or compression fails
    */
   static async serializeState(state) {}
 
@@ -269,7 +449,8 @@ export class UrlStateService {
    * Supports both compact tuple arrays and structured object dictionaries.
    *
    * @param {string} base64Payload
-   * @returns {Promise<Record<string, any>>}
+   * @returns {Promise<Record<string, unknown>>} Prototype-free state object
+   * @throws {StateSerializationError} If payload is corrupt, tampering detected, or expansion exceeds 32KB
    */
   static async deserializeState(base64Payload) {}
 }
@@ -278,15 +459,20 @@ export class UrlStateService {
 ### 2.8 `ParticleEngine` Class Contract
 ```javascript
 /**
- * Zero-allocation Float32Array celebration confetti physics engine.
+ * Zero-allocation Float32Array celebration confetti physics engine using Structure-of-Arrays (SoA).
+ * Buffer layout per particle (stride 6): [x, y, vx, vy, alpha, colorIdx].
  */
 export class ParticleEngine {
+  /** @type {number} */
   #count = 150;
+  /** @type {Float32Array} Float32Array of 900 elements (150 particles * 6 floats) */
   #buffer = new Float32Array(150 * 6);
+  /** @type {number | null} */
   #rafId = null;
 
   /**
    * Initializes 150 particles with polar velocities and triggers 180-frame animation.
+   * Checks window.matchMedia('(prefers-reduced-motion: reduce)') and bypasses execution if active.
    *
    * @param {CanvasRenderingContext2D} ctx
    * @param {number} width
@@ -301,18 +487,23 @@ export class ParticleEngine {
 }
 ```
 
-### 2.9 `AudioService` Class Contract
+### 2.9 `AudioChimeService` Class Contract
 ```javascript
 /**
  * Procedural Web Audio API sound synthesizer with 4-state lifecycle, dynamic sample rate, and peak limiter.
  */
-export class AudioService {
+export class AudioChimeService {
+  /** @type {AudioContext | null} */
   #ctx = null;
+  /** @type {DynamicsCompressorNode | null} */
   #limiterNode = null;
+  /** @type {'LOCKED' | 'WARMED' | 'RUNNING' | 'CLOSED'} */
   #state = 'LOCKED';
+  /** @type {(() => void) | null} */
+  #unbindGestureListeners = null;
 
   /**
-   * Initializes gesture listeners to prime AudioContext on first tap/click.
+   * Initializes persistent gesture listeners on window to warm AudioContext on any user interaction.
    */
   constructor() {}
 
@@ -326,12 +517,21 @@ export class AudioService {
   /**
    * Synthesizes celebratory major chord chime (C5-E5-G5-C6) with peak compression.
    *
-   * @returns {Promise<boolean>}
+   * @returns {Promise<boolean>} Resolves true if sound played, false if audio blocked or unavailable
    */
   async playVictoryChime() {}
 
   /**
-   * Releases hardware audio resources.
+   * Returns instantaneous audio hardware state.
+   *
+   * @returns {'LOCKED' | 'WARMED' | 'RUNNING' | 'CLOSED'}
+   */
+  getState() {
+    return this.#state;
+  }
+
+  /**
+   * Releases hardware audio resources and unbinds gesture listeners.
    */
   dispose() {}
 }
@@ -367,7 +567,8 @@ export class HapticService {
 ### 2.11 `TokenBucketHistoryGuard` Class Contract
 ```javascript
 /**
- * Leaky token bucket rate limiter (B=30, r=2/s) preventing WebKit history.replaceState quota errors.
+ * Leaky token bucket rate limiter (B=30, r=2/s) preventing WebKit history.replaceState quota errors
+ * and featuring a 3-layer loop shield against recursive popstate echoes.
  */
 export class TokenBucketHistoryGuard {
   #tokens = 30;
@@ -376,6 +577,10 @@ export class TokenBucketHistoryGuard {
   #lastRefillEpoch = Date.now();
   #pendingHash = null;
   #timer = null;
+  /** @type {boolean} Mutex flag blocking state serialization during popstate hydration */
+  #isHydrating = false;
+  /** @type {string} Fingerprint cache of last pushed hash */
+  #lastPushedHash = '';
 
   /**
    * Enqueues state update with immediate sessionStorage sync and throttled replaceState.
@@ -383,6 +588,13 @@ export class TokenBucketHistoryGuard {
    * @param {string} hashPayload
    */
   pushStateUpdate(hashPayload) {}
+
+  /**
+   * Returns fresh URL reflecting currently persisted state hash without history manipulation.
+   *
+   * @returns {string} Fully qualified URL string
+   */
+  getFreshUrl() {}
 
   /**
    * Flushes any pending state into history immediately before page unload.
@@ -397,18 +609,32 @@ export class TokenBucketHistoryGuard {
  * Compositional application root orchestrating state store, chronometer, DOM views, and export engine.
  */
 export class CountdownApp {
-  #store = null;
-  #timeEngine = null;
-  #audioService = null;
-  #hapticService = null;
-  #historyGuard = null;
-  #canvasRenderer = null;
+  /** @type {StateStore} */
+  #store;
+  /** @type {DualClockTimeEngine} */
+  #timeEngine;
+  /** @type {AudioChimeService} */
+  #audioService;
+  /** @type {HapticService} */
+  #hapticService;
+  /** @type {TokenBucketHistoryGuard} */
+  #historyGuard;
+  /** @type {CanvasRenderer} */
+  #canvasRenderer;
+
+  /**
+   * Instantiates the core application wiring dependencies via constructor injection.
+   *
+   * @param {Object} [deps={}] Optional injected service instances for testability
+   */
+  constructor(deps = {}) {}
 
   /**
    * Boots application, hydrates URL hash, registers event listeners, and mounts UI.
    */
   async init() {}
 }
+```
 
 ### 2.13 `CanvasRenderer` Class Contract
 ```javascript
@@ -432,28 +658,49 @@ export class CanvasRenderer {
   #fontService;
 
   /**
-   * Constructs the canvas wallpaper renderer.
+   * Constructs the canvas wallpaper renderer with clean dependency injection.
    *
    * @param {HTMLCanvasElement} canvas
    * @param {AdaptiveBufferAllocator} allocator
    * @param {ResponsiveLayoutEngine} layoutEngine
    * @param {FontService} fontService
+   * @param {CanvasTextWrapper} [textWrapper] Optional text wrapper override
+   * @param {SafeZoneOverlay} [safeZoneOverlay] Optional safe zone overlay override
    */
-  constructor(canvas, allocator, layoutEngine, fontService) {
+  constructor(canvas, allocator, layoutEngine, fontService, textWrapper, safeZoneOverlay) {
     this.#canvas = canvas;
-    this.#ctx = canvas.getContext('2d', { colorSpace: 'display-p3' }) || canvas.getContext('2d');
+    const ctx = canvas.getContext('2d', { colorSpace: 'display-p3' }) || canvas.getContext('2d');
+    if (!ctx) {
+      throw new Context2DUnavailableError('CanvasRenderingContext2D could not be acquired');
+    }
+    this.#ctx = ctx;
     this.#allocator = allocator;
     this.#layoutEngine = layoutEngine;
-    this.#textWrapper = new CanvasTextWrapper();
-    this.#safeZoneOverlay = new SafeZoneOverlay();
     this.#fontService = fontService;
+    this.#textWrapper = textWrapper || new CanvasTextWrapper();
+    this.#safeZoneOverlay = safeZoneOverlay || new SafeZoneOverlay();
   }
+
+  /**
+   * Dynamically switches active color palette and triggers wallpaper re-render.
+   *
+   * @param {'themeA' | 'themeB' | 'themeC'} themeId
+   */
+  updateThemePalette(themeId) {}
+
+  /**
+   * Dispatches native Web Share API with PNG Blob or falls back to direct Anchor download.
+   *
+   * @returns {Promise<boolean>} True if shared/downloaded successfully
+   */
+  async shareOrDownload() {}
 
   /**
    * Renders the complete lock screen wallpaper with safe-zone bounds and typography.
    *
    * @param {Object} renderState - Countdown state, theme tokens, and milestones.
    * @returns {Promise<void>}
+   * @throws {CanvasRenderError} If drawing pipeline fails
    */
   async renderWallpaper(renderState) {}
 
@@ -481,7 +728,7 @@ export class CanvasTextWrapper {
   #measurementCache = new Map();
 
   /**
-   * Wraps text into lines that do not exceed the specified maximum width.
+   * Wraps text into lines that do not exceed the specified maximum width using two-tier Intl.Segmenter.
    *
    * @param {CanvasRenderingContext2D} ctx - Target 2D rendering context.
    * @param {string} text - Input text string.
@@ -489,6 +736,19 @@ export class CanvasTextWrapper {
    * @returns {string[]} Array of wrapped lines.
    */
   wrapText(ctx, text, maxWidth) {}
+
+  /**
+   * Calculates optimal font size and wrapped lines that fit within bounding box constraints.
+   *
+   * @param {CanvasRenderingContext2D} ctx
+   * @param {string} text
+   * @param {number} maxWidth
+   * @param {number} maxHeight
+   * @param {number} maxFontSize
+   * @param {number} minFontSize
+   * @returns {{fontSize: number, lines: string[], totalHeight: number}}
+   */
+  fitText(ctx, text, maxWidth, maxHeight, maxFontSize, minFontSize) {}
 
   /**
    * Measures text width with LRU caching.
@@ -519,6 +779,15 @@ export class SafeZoneOverlay {
     this.#visible = !this.#visible;
     return this.#visible;
   }
+
+  /**
+   * Returns exact pixel bounding box of primary unobstructed content zone.
+   *
+   * @param {number} width Canvas width
+   * @param {number} height Canvas height
+   * @returns {{top: number, bottom: number, left: number, right: number, safeHeight: number}}
+   */
+  getSafeTextBounds(width, height) {}
 
   /**
    * Draws the safe-zone guide overlays onto the canvas.

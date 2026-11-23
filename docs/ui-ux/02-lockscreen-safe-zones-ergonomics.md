@@ -89,6 +89,14 @@ $$r_{\text{ring}} = \min(\text{boxW} \times 0.32, \text{heroBox.height} \times 0
 
 Outer Diameter $D_{\text{ring}} = 2 \times 220 = 440\text{px} < 574.26\text{px}$. This provides $134.26\text{px}$ of vertical padding for the goal title and unit labels, completely eliminating the $361.74\text{px}$ overflow collision.
 
+### 3.1.1 Ultra-Tall Non-Overlapping Ring Radius for Regime 1 ($\mathcal{R} \ge 2.15$)
+On ultra-tall displays (e.g. Galaxy Z Fold cover display $904 \times 2316$, aspect $2.56:1$):
+- Available safe height: $H_{\text{avail}} = (0.84 - 0.22) \times 2316 = 1435.92\text{px}$.
+- Hero container height: $\text{heroBox.height} = H_{\text{avail}} \times 0.38 = 545.65\text{px}$.
+- Container width: $\text{boxW} = W \times 0.88 = 795.52\text{px}$.
+- Ring radius: $r_{\text{ring}} = \min(\text{boxW} \times 0.30, \text{heroBox.height} \times 0.36) = \min(238.65\text{px}, 196.43\text{px}) \approx 195\text{px}$.
+- Outer Diameter $D_{\text{ring}} = 390\text{px} < 545.65\text{px}$, guaranteeing $155.65\text{px}$ vertical safety buffer.
+
 ### 3.2 Dual-Column Coordinates for Foldables ($\mathcal{R} < 1.70$)
 On wide foldable inner screens (e.g. Galaxy Z Fold inner display $1812 \times 2176$, aspect $1.2:1$), standard vertical stacking wastes more than $38\%$ of display width. The engine bifurcates the canvas into two coordinated spatial columns:
 - **Left Column ($X \in [0.05W \dots 0.48W]$):** Centers the Hero Days/Hours Countdown Digits and Progress Arc Ring ($Y_{\text{center}} = 0.50H$).

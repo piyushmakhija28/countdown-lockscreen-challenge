@@ -54,6 +54,15 @@
 | **State**         | Behavioral            | `CountdownFSM`        | Encapsulates behaviors for    |
 |                   |                       |                       | IDLE, EXPIRED, MODAL states.  |
 +-------------------+-----------------------+-----------------------+-------------------------------+
+| **Ports & Adapters**| Structural          | `CorePorts`           | Decouples core logic from DOM |
+| (Hexagonal)       |                       | (ITickScheduler, etc.)| guaranteeing D <= 0.15.       |
++-------------------+-----------------------+-----------------------+-------------------------------+
+| **LifecycleScope**| Structural (RAII)     | `LifecycleScope`      | Wraps AbortController for zero|
+|                   |                       |                       | DOM listener memory leaks.    |
++-------------------+-----------------------+-----------------------+-------------------------------+
+| **Token Bucket**  | Behavioral            | `GeminiRateLimiter`   | Enforces 15 RPM quota limit   |
+|                   |                       |                       | with 2s pacing on Free Tier.  |
++-------------------+-----------------------+-----------------------+-------------------------------+
 ```
 
 ---
@@ -69,13 +78,13 @@
 New visual themes (e.g. "Sunset Neon") can be added by registering a new `ThemeConfig` object in `themes.ts` without modifying the core `CanvasRenderer` rendering logic.
 
 ### 2.3 Liskov Substitution Principle (LSP)
-Both `GeminiAiClient` and `HeuristicGenerator` implement the unified `IMilestonePlanner` interface. The application consumer functions identically regardless of which implementation is active.
+Both `GeminiClient` and `HeuristicGenerator` implement the unified `IMilestonePlanner` interface. The application consumer functions identically regardless of which implementation is active.
 
 ### 2.4 Interface Segregation Principle (ISP)
 Interfaces are narrowly scoped (`IDualClockTimeEngine`, `IMilestoneManager`, `IWallpaperRenderer`), preventing consumers from depending on unused methods.
 
 ### 2.5 Dependency Inversion Principle (DIP)
-High-level view controllers depend on abstract interfaces (`IDualClockTimeEngine`, `IMilestonePlanner`) injected via constructor parameters, rather than concrete implementations.
+High-level view controllers depend on abstract interfaces (`IDualClockTimeEngine`, `IMilestonePlanner`, `ITickScheduler`, `IPlatformLifecycle`) injected via constructor parameters, rather than concrete browser APIs.
 
 ---
 
