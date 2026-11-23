@@ -209,7 +209,7 @@ export class TokenBucketHistoryGuard {
 Mobile Safari and Chrome strictly enforce user interaction policies: an `AudioContext` instantiated without prior user gesture starts in `'suspended'` state.
 
 ### 7.1 Gesture Unlocking Protocol
-1. On application boot, `AudioService` registers passive one-time listeners on `window` (`pointerdown`, `touchstart`, `keydown`).
+1. On application boot, `AudioChimeService` registers passive one-time listeners on `window` (`pointerdown`, `touchstart`, `keydown`).
 2. When unlocked, it creates a 1-sample silent buffer matching the native hardware `ctx.sampleRate` to avoid audio resampler overhead.
 3. Output routes through a `DynamicsCompressorNode` peak limiter (threshold: $-3\text{dB}$, ratio: $12:1$, attack: $0.003\text{s}$, release: $0.25\text{s}$), completely preventing harmonic distortion and speaker clipping.
 

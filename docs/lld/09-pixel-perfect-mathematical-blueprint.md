@@ -319,28 +319,37 @@ The typography measurement engine implements a two-tier segmentation strategy:
 
 ---
 
-## 14. Verification & Rigor Invariant Matrix
+## 14. Module 13: Closed-Form Dual-Constraint GPU Texture Scaling & Memory Allocation Engine
 
-```
-+-----------------------------------------------------------------------------------------------------------------+
-|                                    MATHEMATICAL VERIFICATION INVARIANTS                                         |
-+----+-----------------------------+---------------------------------------+--------------------------------------+
-| #  | Mathematical Invariant      | Verification Formulation              | Pass Condition                       |
-+----+-----------------------------+---------------------------------------+--------------------------------------+
-| 01 | Sub-pixel snapping          | abs(y_snap * DPR - round(y_snap * DPR))| == 0.00000 (Exact physical pixel)    |
-| 02 | Oklab gamut preservation    | L* in [0, 1], a*, b* in [-0.5, 0.5]   | Zero color clipping in sRGB gamut    |
-| 03 | Monotone spline slope       | y'(x) >= 0.00000 for all x in [0, 1]  | Zero overshoot (monotonically non-dec)|
-| 04 | Aspect ratio isotropy       | abs(scaleX - scaleY)                  | == 0.00000 (Zero circular warping)   |
-| 05 | Fitts's Law difficulty      | log2(1 + 2D / W)                      | <= 3.50000 bits (One-handed zone)    |
-| 06 | Orbital shift bounding      | sqrt(dx^2 + dy^2)                     | <= 2.00000 physical pixels           |
-| 07 | Mazur urgency limit         | V(D) as D -> 0                        | Approaches A = 100 asymptotically    |
-| 08 | Arc boundary singularity    | theta_end - theta_start               | <= 2*PI - 1e-6 (Zero self-intersect) |
-| 09 | Thermal GPU frame clamp     | FPS during idle preview               | <= 15.0000 FPS (Energy conservation) |
-| 10 | Inverse transform precision | norm(M * M^-1 - I)                    | <= 1e-12 (Zero floating-point drift) |
-| 11 | Symplectic particle terminal| lim_{t -> inf} ||v(t)||               | <= 738.00 px/s (Unconditional bound) |
-| 12 | Zero-duration arc guard     | P when t_total <= 0                   | == 1.00000 (Zero NaN division error) |
-+----+-----------------------------+---------------------------------------+--------------------------------------+
-```
+### 14.1 Hardware GPU Limits & WebKit OOM Ceilings
+Mobile browsers enforce two independent hardware and platform constraints on `<canvas>` backing store allocations:
+1. **Total Surface Pixel Area Ceiling ($A_{\max}$):** iOS WebKit terminates tabs or crashes canvas contexts without throwing catchable exceptions if backing store exceeds $16,777,216\text{ physical pixels}$ ($16\text{ MP}$, equivalent to $4096 \times 4096$).
+2. **Maximum Single Texture Dimension ($D_{\max}$):** Mobile GPU texture units clamp individual coordinate dimensions to `gl.getParameter(gl.MAX_TEXTURE_SIZE)`, typically $4096\text{px}$ on standard mobile GPUs and $8192\text{px}$ on modern flagships.
+
+### 14.2 Closed-Form Optimal Scale Derivation
+To maximize wallpaper export crispness without exceeding either boundary, `AdaptiveBufferAllocator` computes the exact closed-form optimal supersampling scale factor $S^*$:
+
+$$S_{\text{area}} = \sqrt{\frac{A_{\max}}{W_{\text{base}} \times H_{\text{base}}}}$$
+
+$$S_{\text{edge}} = \frac{D_{\max}}{\max(W_{\text{base}}, H_{\text{base}})}$$
+
+$$S^* = \min\left(\text{targetDPR}, \, S_{\text{area}}, \, S_{\text{edge}}\right)$$
+
+Where for standard flagship portrait resolution ($W_{\text{base}} = 1170\text{px}$, $H_{\text{base}} = 2532\text{px}$):
+- Base surface area: $A_{\text{base}} = 1170 \times 2532 = 2,962,440\text{ pixels} \approx 2.96\text{ MP}$.
+- Area-constrained limit: $S_{\text{area}} = \sqrt{\frac{16,777,216}{2,962,440}} = \sqrt{5.6633} \approx 2.3797$.
+- Edge-constrained limit ($D_{\max} = 4096$): $S_{\text{edge}} = \frac{4096}{2532} \approx 1.6176$.
+- On standard iOS Safari with $\text{targetDPR} = 2.0$:
+  $$S^* = \min(2.0, \, 2.3797, \, 1.6176) = 1.6176 \xrightarrow{\text{quantized}} 1.50$$
+
+### 14.3 Memory Allocation & Byte Guard Formula
+The total VRAM buffer footprint $M_{\text{VRAM}}$ for a 32-bit RGBA context is:
+
+$$M_{\text{VRAM}} = \lceil W_{\text{base}} \times S^* \rceil \times \lceil H_{\text{base}} \times S^* \rceil \times 4\text{ bytes}$$
+
+At $S^* = 1.50$:
+$$W_{\text{phys}} = 1755\text{px}, \quad H_{\text{phys}} = 3798\text{px}$$
+$$M_{\text{VRAM}} = 1755 \times 3798 \times 4 = 26,661,960\text{ bytes} \approx 25.43\text{ MB} \le 50\text{ MB} \quad (\text{NFR-08 PASS})$$
 
 ---
 
@@ -427,3 +436,32 @@ $$x_{\text{left, phys}} = \lfloor x_{\text{left, css}} \cdot \text{DPR} \rfloor,
 $$W_{\text{snapped, css}} = \frac{x_{\text{right, phys}} - x_{\text{left, phys}}}{\text{DPR}}$$
 
 This coupled extent invariant guarantees $0\text{px}$ gap or seam between adjacent tiled glassmorphism cards across all fractional DPR displays.
+
+---
+
+## 18. Verification & Rigor Invariant Matrix (Complete 16-Module Suite)
+
+```
++-----------------------------------------------------------------------------------------------------------------+
+|                                    MATHEMATICAL VERIFICATION INVARIANTS                                         |
++----+-----------------------------+---------------------------------------+--------------------------------------+
+| #  | Mathematical Invariant      | Verification Formulation              | Pass Condition                       |
++----+-----------------------------+---------------------------------------+--------------------------------------+
+| 01 | Sub-pixel snapping          | abs(y_snap * DPR - round(y_snap * DPR))| == 0.00000 (Exact physical pixel)    |
+| 02 | Oklab gamut preservation    | L* in [0, 1], a*, b* in [-0.5, 0.5]   | Zero color clipping in sRGB gamut    |
+| 03 | Monotone spline slope       | y'(x) >= 0.00000 for all x in [0, 1]  | Zero overshoot (monotonically non-dec)|
+| 04 | Aspect ratio isotropy       | abs(scaleX - scaleY)                  | == 0.00000 (Zero circular warping)   |
+| 05 | Fitts's Law difficulty      | log2(1 + 2D / W)                      | <= 3.50000 bits (One-handed zone)    |
+| 06 | Orbital shift bounding      | sqrt(dx^2 + dy^2)                     | <= 2.00000 physical pixels           |
+| 07 | Mazur urgency limit         | V(D) as D -> 0                        | Approaches A = 100 asymptotically    |
+| 08 | Arc boundary singularity    | theta_end - theta_start               | <= 2*PI - 1e-6 (Zero self-intersect) |
+| 09 | Thermal GPU frame clamp     | FPS during idle preview               | <= 15.0000 FPS (Energy conservation) |
+| 10 | Inverse transform precision | norm(M * M^-1 - I)                    | <= 1e-12 (Zero floating-point drift) |
+| 11 | Symplectic particle terminal| lim_{t -> inf} ||v(t)||               | <= 738.00 px/s (Unconditional bound) |
+| 12 | Zero-duration arc guard     | P when t_total <= 0                   | == 1.00000 (Zero NaN division error) |
+| 13 | Dual-Constraint GPU ceiling | S* <= min(DPR, S_area, S_edge)        | Backing store <= 16.7MP, max edge <= 4096px |
+| 14 | Oklab Chroma Bisection      | F(alpha_final) == 1                   | Hue h preserved, dE <= 0.001 to gamut |
+| 15 | Cross-Font Fallback Floor   | S_effective >= S_floor = 10px         | Zero text overflow under fallback font |
+| 16 | Coupled Extent Seam Guard   | x_left,phys == x_right,prev,phys      | 0px physical seam between adjacent cards|
++----+-----------------------------+---------------------------------------+--------------------------------------+
+```

@@ -413,7 +413,7 @@ export function normalizeMilestones(rawItems) {
 
 ---
 
-## 4. `HeuristicGenerator` Component Contract & Polymorphic Schema Guarantee
+## 5. `HeuristicGenerator` Component Contract & Polymorphic Schema Guarantee
 
 To guarantee that callers (`CountdownApp`, `MilestoneManager`) can seamlessly consume milestone decomposition plans regardless of whether the plan was synthesized by Google Gemini 3.8 Flash or generated locally by the offline fallback, `HeuristicGenerator` adheres to a strict polymorphic contract:
 
@@ -437,7 +437,7 @@ export interface MilestoneItem {
 }
 ```
 
-### 4.1 Interface Contract
+### 5.1 Interface Contract
 ```javascript
 /**
  * Deterministic offline heuristic milestone generator providing 100% offline autonomy.

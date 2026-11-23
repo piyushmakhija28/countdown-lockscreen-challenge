@@ -31,7 +31,7 @@ Conforming to `~/.claude/rules/28-test-coverage-enforcement.md`, the testing str
    - **Coverage Mandate:** Minimum **$90\%$ Line Coverage** and **$85\%$ Branch Coverage**.
    - **Execution Speed:** $< 500\text{ms}$ total execution time.
 2. **Integration Testing Layer (20% of Suite — 18 Scenarios):**
-   - **Scope:** Cross-module collaborations: `GeminiAiClient` circuit-breaker trip to `HeuristicGenerator` fallback; `UrlStateService` Base64URL compression, decompression bomb defense, and sessionStorage sync; `AudioService` 4-state lifecycle and autoplay priming; `HapticService` vibration patterns; `FontService` async font loading gate (`document.fonts.load()`).
+   - **Scope:** Cross-module collaborations: `GeminiAiClient` circuit-breaker trip to `HeuristicGenerator` fallback; `UrlStateService` Base64URL compression, decompression bomb defense, and sessionStorage sync; `AudioChimeService` 4-state lifecycle and autoplay priming; `HapticService` vibration patterns; `FontService` async font loading gate (`document.fonts.load()`).
    - **Mocking Policy:** All external HTTP calls to `https://generativelanguage.googleapis.com` are mocked via MSW (Mock Service Worker) or native fetch mocks.
 3. **End-to-End & Visual Canvas Testing Layer (10% of Suite — 10 Scenarios):**
    - **Scope:** Full user journeys in headless Chromium: `CountdownApp` bootstrapping; `CanvasRenderer` rasterization at $1170 \times 2532$; `SafeZoneOverlay` guide bounds; theme switching (Cyber Obsidian, Deep Focus Zen, Aurora Botanical); 1-click PNG blob download; PWA offline cache recovery.

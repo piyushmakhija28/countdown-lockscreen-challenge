@@ -68,5 +68,5 @@ To guarantee that contestants, users, and evaluators never encounter a broken UI
 
 ### Card 4: `ERR_AUDIO_LOCKED` (Autoplay Policy Protection)
 - **Root Cause:** Countdown timer expires while `AudioContext.state === 'suspended'`.
-- **Recovery Action:** `AudioService` catches `NotAllowedError`, emits an `audio:autoplay-blocked` event, triggers device vibration (`navigator.vibrate`), and presents a floating glassmorphic "Tap to Play Celebration Sound" button.
+- **Recovery Action:** `AudioChimeService` catches `NotAllowedError`, emits an `audio:autoplay-blocked` event, triggers device vibration (`navigator.vibrate`), and presents a floating glassmorphic "Tap to Play Celebration Sound" button.
 - **User Impact:** Celebration visual effects and haptics continue uninterrupted with zero unhandled promise rejections.

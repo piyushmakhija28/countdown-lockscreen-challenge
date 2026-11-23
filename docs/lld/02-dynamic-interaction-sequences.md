@@ -152,7 +152,7 @@ sequenceDiagram
     autonumber
     participant Ticker as DualClockTimeEngine
     participant Store as StateStore
-    participant Audio as AudioService
+    participant Audio as AudioChimeService
     participant Haptic as HapticService
     participant Particle as ParticleEngine
     participant View as CelebrationOverlayView

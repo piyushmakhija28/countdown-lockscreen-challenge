@@ -13,7 +13,7 @@ sequenceDiagram
     participant Ticker as DualClockTimeEngine
     participant Worker as WorkerTickerAdapter
     participant WebLocks as Navigator Web Locks
-    participant Audio as AudioService
+    participant Audio as AudioChimeService
     participant Haptic as HapticService
     participant Alloc as AdaptiveBufferAllocator
     participant FontSvc as FontService

@@ -74,7 +74,7 @@ journey
 
 ---
 
-## 4. Feature Specifications & BDD Acceptance Criteria (F-01 to F-07)
+## 4. Feature Specifications & BDD Acceptance Criteria (F-01 to F-12)
 
 ### F-01: Google Gemini Backward Milestone Decomposition
 - **Functional Description:** Ingests the user's goal string and target deadline timestamp, invokes Google Gemini 3.8 Flash with structured JSON schema constraints, and returns 3 to 5 sequential, chronologically ordered milestone checkpoints working backward from the goal.
@@ -178,6 +178,9 @@ journey
 ### F-11: Confetti Celebration Physics & Font Preloading Gate
 - **Functional Description:** Simulates celebratory particles using flat `Float32Array` Structure-of-Arrays (SoA) buffers with aerodynamic air drag, honors `prefers-reduced-motion`, and gates canvas rendering via `FontService` to eliminate FOIT (`FR-21`, `FR-22`).
 
+### F-12: Multi-Tab State Synchronization & Single-Instance Alarm Mutex
+- **Functional Description:** Broadcasts milestone checkoffs, title edits, and theme modifications across all open tabs on the same origin via `BroadcastChannel('countdown_lockscreen_sync')`, and arbitrates celebratory chime playback via `navigator.locks.request('countdown_victory_alarm_lock', { ifAvailable: true })` so only one tab synthesizes audio upon timer zero (`FR-23`, `FR-24`).
+
 ---
 
 ## 5. Non-Functional Requirements & Performance SLAs
@@ -194,6 +197,7 @@ journey
 | **NFR-08** | Memory | Heap Allocation Ceiling | $< 50\text{ MB}$ total heap | Chrome Memory Profiler |
 | **NFR-09** | Compatibility | Cross-Browser Coverage | Chrome, Safari iOS, Edge, Firefox | BrowserStack Automated Grid |
 | **NFR-10** | Offline | Progressive Web App Caching | 100% Core Functionality Offline | Service Worker Cache Audit |
+| **NFR-11** | Security / Cache | Scoped SW Cache Scoping | 0 Stale Bundles & Query Stripping | Automated Cache Audit |
 
 ---
 

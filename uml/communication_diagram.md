@@ -13,7 +13,7 @@ graph LR
     Guard -->|9: serialize| URLCodec[UrlStateService]
     Store -->|10: setDeadline| Engine[DualClockTimeEngine]
     Engine -->|11: onTick 60fps| UI
-    Engine -->|12: onExpire| Audio[AudioService]
+    Engine -->|12: onExpire| Audio[AudioChimeService]
     Engine -->|13: onExpire| Haptic[HapticService]
     User -->|14: Requests Wallpaper| UI
     UI -->|15: solveScale| Alloc[AdaptiveBufferAllocator]

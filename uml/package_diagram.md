@@ -21,7 +21,7 @@ graph TD
 
         subgraph ServicesLayer [src/js/services]
             WorkerTickerPkg[WorkerTickerAdapter.js: 1Hz Background Worker Ticker]
-            AudioServicePkg[AudioService.js: Procedural Web Audio Synthesizer]
+            AudioServicePkg[AudioChimeService.js: Procedural Web Audio Synthesizer]
             HapticServicePkg[HapticService.js: Haptic Vibration Feedback]
             FontServicePkg[FontService.js: WebFont Loader & Kerning Ready Guard]
         end

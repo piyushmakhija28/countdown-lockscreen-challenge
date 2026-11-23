@@ -5,6 +5,30 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.8.0] - 2026-11-23
+
+### Added
+- **Full Draw.io Diagram Suite (`drawio/`, Rule 45 Parity):**
+  - Generated all 13 canonical `.drawio` XML diagrams matching the Mermaid diagrams in `uml/`: `activity_diagram.drawio`, `call_graph_diagram.drawio` (17.6 KB), `class_diagram.drawio` (39.2 KB), `communication_diagram.drawio`, `component_diagram.drawio`, `composite_diagram.drawio`, `deployment_diagram.drawio`, `interaction_diagram.drawio`, `object_diagram.drawio`, `package_diagram.drawio`, `sequence_diagram.drawio`, `state_diagram.drawio`, and `usecase_diagram.drawio`.
+  - Enriched `class_diagram.drawio` with 27 extracted classes, interface port bindings, and field/method signatures; enriched `call_graph_diagram.drawio` with 34 methods and invocation edges.
+- **Mathematical Blueprint Hardening (`docs/lld/09-pixel-perfect-mathematical-blueprint.md`):**
+  - Formulated Module 13: Closed-Form Dual-Constraint GPU Texture Scaling & Memory Allocation Engine deriving $S^* = \min\left(\text{targetDPR}, \, \sqrt{\frac{A_{\max}}{W_{\text{base}} \times H_{\text{base}}}}, \, \frac{D_{\max}}{\max(W_{\text{base}}, H_{\text{base}})}\right)$ with hardware boundary constraints ($A_{\max} = 16,777,216\text{ px}$, $D_{\max} = 4096\text{ px}$).
+  - Formulated Section 18: Verification & Rigor Invariant Matrix formally certifying all 16 mathematical invariants ($I_1$ to $I_{16}$).
+- **Content Security Policy Level 3 Directive Hardening (`docs/09-tech-stack-fundamentals-and-compliance-matrix.md`, `docs/lld/11-deep-dive-design-patterns-and-security-architecture.md`):**
+  - Injected mandatory directives: `worker-src 'self' blob:;` (authorizing inline Blob ticker workers), `manifest-src 'self';`, `upgrade-insecure-requests;`, and `block-all-mixed-content;`.
+- **System Traceability & Non-Conflicting IDs (`docs/05-srs.md`, `docs/testing/02-test-cases-catalog.md`, `docs/management/03-traceability-matrix.md`):**
+  - Disambiguated duplicate test IDs by assigning monotonic identifiers `TC-POS-115` (Cross-Tab BroadcastChannel State Synchronization) for `FR-23` and `TC-POS-116` (Web Locks Single-Instance Victory Alarm Mutex) for `FR-24`, achieving 100% strict bidirectional test-to-requirement traceability.
+
+### Changed
+- **Architectural Naming Synchronization:**
+  - Standardized class nomenclature across all 54 specifications and 13 Mermaid UML diagrams: synchronized `AudioService` $\to$ `AudioChimeService` across `docs/management/`, `docs/resilience/`, `docs/testing/`, and `uml/` files.
+  - Standardized `GeminiClient` $\to$ `GeminiAiClient` across `docs/03-api-contract.md`, `docs/lld/01-class-and-object-design.md`, `docs/lld/07-package-structure-and-code-blueprint.md`, and C4 architecture diagrams.
+  - Synchronized C4 Level 2 Container and Component diagrams in `docs/02-hld.md`: `AppStateStore` $\to$ `StateStore`, `AudioService` $\to$ `AudioChimeService`, `ThemeManager` $\to$ `ThemeController`, `ConfettiRenderer` $\to$ `ParticleEngine`.
+- **PWA & Cache Scoping (`docs/06-adr/ADR-008-static-deployment-and-pwa-topology.md`):**
+  - Updated Service Worker precache version key to `countdown-lockscreen-ghpages-v1.8.0` and aligned file manifest with `GeminiAiClient.js` and `AudioChimeService.js`.
+- **API Contract Renumbering (`docs/03-api-contract.md`):**
+  - Resolved section numbering collision by promoting duplicate Section 4 to Section 5 (`HeuristicGenerator` Contract).
+
 ## [1.7.0] - 2026-11-23
 
 ### Added

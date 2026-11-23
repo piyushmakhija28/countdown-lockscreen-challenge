@@ -26,7 +26,7 @@ The system combines **Google Gemini 3.8 Flash** AI reasoning with mathematical s
 
 ## Enterprise Documentation Suite (Level 2.2 Standard)
 
-This project strictly adheres to Level 2.2 Documentation Governance, keeping only the canonical project management files at root while providing an exhaustive **67-document enterprise blueprint suite** (54 specifications in `docs/` and 13 Mermaid UML diagrams in `uml/`):
+This project strictly adheres to Level 2.2 Documentation Governance, keeping only the canonical project management files at root while providing an exhaustive **80-document enterprise blueprint suite** (54 specifications in `docs/`, 13 Mermaid UML diagrams in `uml/`, and 13 Draw.io XML diagrams in `drawio/`):
 
 ```
 countdown-lockscreen-challenge/
@@ -94,6 +94,20 @@ countdown-lockscreen-challenge/
 │       ├── 01-wbs-and-sprint-backlog.md
 │       ├── 02-service-orchestration-dag.md
 │       └── 03-traceability-matrix.md
+├── drawio/                             # The 13 Canonical Draw.io XML Diagrams (Rule 45 Parity)
+│   ├── activity_diagram.drawio         # Interactive XML model for activity flows
+│   ├── call_graph_diagram.drawio       # Invocation hierarchy & call graph model
+│   ├── class_diagram.drawio            # Class model with contracts & port implementations
+│   ├── communication_diagram.drawio    # Inter-object collaboration XML model
+│   ├── component_diagram.drawio        # System components and external ports
+│   ├── composite_diagram.drawio        # Canvas 2D engine internal composition
+│   ├── deployment_diagram.drawio       # GitHub Pages, CDN, browser & Gemini runtime
+│   ├── interaction_diagram.drawio      # Multi-scenario interaction overview
+│   ├── object_diagram.drawio           # Concrete runtime memory state snapshot
+│   ├── package_diagram.drawio          # Package architecture & clean boundaries
+│   ├── sequence_diagram.drawio         # End-to-end execution sequence model
+│   ├── state_diagram.drawio            # Finite state machine model
+│   └── usecase_diagram.drawio          # Actor use case specifications
 └── uml/                                # The 13 Canonical Mermaid UML Diagrams
     ├── activity_diagram.md             # User activity flow for countdown & wallpaper generation
     ├── call_graph_diagram.md           # Function and method invocation hierarchy

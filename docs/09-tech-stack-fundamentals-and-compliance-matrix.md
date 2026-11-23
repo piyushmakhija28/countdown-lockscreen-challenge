@@ -7,7 +7,7 @@
 **Reviewer:** Architecture Review Board  
 **Status:** APPROVED  
 **Standard:** Level 2.2 Documentation Governance & Technical Fundamentals Compliance  
-**Version:** 1.7.0  
+**Version:** 1.8.0  
 
 ---
 
@@ -200,7 +200,7 @@ $$\Delta t(t) = \text{TargetEpochMs} - \left( \text{BaseEpochMs} + (\text{perfor
 - **Zero-PII Local Isolation:** 100% of user data remains on-device (`localStorage` / `sessionStorage`). No external telemetry, tracking pixels, or database synchronization.
 - **Strict Content Security Policy (CSP Level 3):**
   ```http
-  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self' https://generativelanguage.googleapis.com; img-src 'self' blob: data:; font-src 'self'; object-src 'none'; base-uri 'self';
+  Content-Security-Policy: default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; connect-src 'self' https://generativelanguage.googleapis.com; worker-src 'self' blob:; manifest-src 'self'; media-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'; upgrade-insecure-requests; block-all-mixed-content;
   ```
 - **Anti-Exploit Input Sanitization (`InputSanitizer`):**
   - Unicode NFKC normalization and Trojan Source bidirectional override stripping (`U+200E`, `U+200F`, `U+202A-202E`, `U+2066-2069`).

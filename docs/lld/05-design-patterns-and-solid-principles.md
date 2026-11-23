@@ -88,7 +88,7 @@
 New visual themes (e.g. "Sunset Neon") can be added by registering a new `ThemeConfig` object in `themes.ts` without modifying the core `CanvasRenderer` rendering logic.
 
 ### 2.3 Liskov Substitution Principle (LSP)
-Both `GeminiClient` and `HeuristicGenerator` implement the unified `IMilestonePlanner` interface. The application consumer functions identically regardless of which implementation is active.
+Both `GeminiAiClient` and `HeuristicGenerator` implement the unified `IMilestonePlanner` interface. The application consumer functions identically regardless of which implementation is active.
 
 ### 2.4 Interface Segregation Principle (ISP)
 Interfaces are narrowly scoped (`IDualClockTimeEngine`, `IMilestoneManager`, `IWallpaperRenderer`), preventing consumers from depending on unused methods.

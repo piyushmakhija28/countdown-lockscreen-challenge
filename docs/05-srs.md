@@ -20,7 +20,7 @@ The system is a dual-deliverable Progressive Web Application:
 
 ---
 
-## 2. Functional Requirements Specification (FR-01 to FR-22)
+## 2. Functional Requirements Specification (FR-01 to FR-24)
 
 Each functional requirement is formally specified with unique identifier, description, inputs, transformations, outputs, and verification method:
 
@@ -138,11 +138,11 @@ Each functional requirement is formally specified with unique identifier, descri
 
 ### FR-23: Cross-Tab State Synchronization via BroadcastChannel
 - **Requirement:** When the user modifies goal parameters, checks milestones, or switches themes in one browser tab, the system shall synchronize state across all concurrent tabs on the same origin via `BroadcastChannel('countdown_lockscreen_sync')` without causing recursive pushState loops.
-- **Verification Method:** Test (`TC-POS-106`).
+- **Verification Method:** Test (`TC-POS-115`).
 
 ### FR-24: Single-Instance Victory Alarm Locking via Web Locks API
 - **Requirement:** Upon countdown expiration ($\Delta t \le 0$), the system shall request an exclusive lock via the Web Locks API (`navigator.locks.request('countdown_victory_alarm_lock', { ifAvailable: true })`) to ensure strictly one tab synthesizes celebratory audio, preventing double-amplitude acoustic clipping across duplicate tabs.
-- **Verification Method:** Test (`TC-POS-107`).
+- **Verification Method:** Test (`TC-POS-116`).
 
 ---
 
@@ -173,9 +173,9 @@ Each functional requirement is formally specified with unique identifier, descri
 | Req ID  | PRD Feature Link   | HLD Component       | Target Implementation| Test Case ID              |
 +---------+--------------------+---------------------+----------------------+---------------------------+
 | FR-01   | F-02 Countdown     | IngressController   | js/core/InputSanitizer.js | TC-POS-01, TC-NEG-01 |
-| FR-02   | F-01 Gemini AI     | GeminiGateway       | js/ai/GeminiClient.js       | TC-POS-02, TC-EDGE-01|
+| FR-02   | F-01 Gemini AI     | GeminiGateway       | js/ai/GeminiAiClient.js     | TC-POS-02, TC-EDGE-01|
 | FR-03   | F-01 Fallback      | HeuristicEngine     | js/ai/HeuristicGenerator.js| TC-NEG-04, TC-NEG-05|
-| FR-04   | F-01 Affirmation   | GeminiGateway       | js/ai/GeminiClient.js       | TC-POS-03            |
+| FR-04   | F-01 Affirmation   | GeminiGateway       | js/ai/GeminiAiClient.js     | TC-POS-03            |
 | FR-05   | F-02 Chronometer   | DualClockTimeEngine | js/core/DualClockTimeEngine.js| TC-POS-04        |
 | FR-06   | F-02 Zero Drift    | DualClockTimeEngine | js/core/DualClockTimeEngine.js| TC-POS-05, TC-EDGE-01|
 | FR-07   | F-03 Milestones    | MilestoneStore      | js/core/MilestoneManager.js| TC-POS-06           |
@@ -187,15 +187,15 @@ Each functional requirement is formally specified with unique identifier, descri
 | FR-13   | F-06 Themes        | ThemeController     | js/config/themes.js       | TC-POS-11, TC-POS-12 |
 | FR-14   | F-07 URL Hash      | StateSerializer     | js/core/UrlStateService.js | TC-POS-13, TC-POS-14 |
 | FR-15   | F-05 Download      | BlobExporter        | js/canvas/CanvasRenderer.js| TC-POS-10           |
-| FR-16   | F-05 Audio FSM     | AudioService        | js/services/AudioChimeService.js| TC-POS-16, TC-NEG-10|
+| FR-16   | F-05 Audio FSM     | AudioChimeService   | js/services/AudioChimeService.js| TC-POS-16, TC-NEG-10|
 | FR-17   | F-05 Haptics       | HapticService       | js/services/HapticService.js| TC-POS-17          |
 | FR-18   | F-07 History Guard | TokenBucketGuard    | js/core/TokenBucketHistoryGuard.js| TC-NEG-11, TC-EDGE-10|
 | FR-19   | F-05 Web Share     | ShareService        | js/canvas/CanvasRenderer.js| TC-NEG-11           |
 | FR-20   | F-04 Safe Zones/VP | LayoutEngine        | js/canvas/ResponsiveLayoutEngine.js| TC-POS-08, TC-POS-18 |
 | FR-21   | F-05 Confetti SoA  | ParticleEngine      | js/canvas/ParticleEngine.js| TC-POS-19           |
 | FR-22   | F-05 Font Barrier  | FontService         | js/services/FontService.js | TC-POS-20           |
-| FR-23   | F-07 Multi-Tab Sync| BroadcastChannel    | js/core/StateStore.js      | TC-POS-106          |
-| FR-24   | F-05 Alarm Mutex   | WebLocksMutex       | js/services/AudioChimeService.js| TC-POS-107     |
+| FR-23   | F-07 Multi-Tab Sync| BroadcastChannel    | js/core/StateStore.js      | TC-POS-115          |
+| FR-24   | F-05 Alarm Mutex   | WebLocksMutex       | js/services/AudioChimeService.js| TC-POS-116     |
 +---------+--------------------+---------------------+----------------------+---------------------------+
 ```
 

@@ -8,7 +8,7 @@ classDiagram
         -canvasRenderer: CanvasRenderer
         -geminiClient: GeminiAiClient
         -historyGuard: TokenBucketHistoryGuard
-        -audioService: AudioService
+        -audioService: AudioChimeService
         -hapticService: HapticService
         +init(): void
         +bindEvents(): void
@@ -89,7 +89,7 @@ classDiagram
         +stop(): void
     }
 
-    class AudioService {
+    class AudioChimeService {
         -ctx: AudioContext
         -limiterNode: DynamicsCompressorNode
         -state: string
@@ -209,7 +209,7 @@ classDiagram
     CountdownApp --> GeminiAiClient
     CountdownApp --> UrlStateService
     CountdownApp --> TokenBucketHistoryGuard
-    CountdownApp --> AudioService
+    CountdownApp --> AudioChimeService
     CountdownApp --> HapticService
     CountdownApp --> ParticleEngine
     CountdownApp --> LifecycleScope

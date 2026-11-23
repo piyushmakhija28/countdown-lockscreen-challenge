@@ -95,7 +95,7 @@ graph TD
         Store[Central State Manager (StateStore)<br/>Immutable #state + deepFreeze + Microtask Batching]
         DualClockTimeEngine[DualClockTimeEngine<br/>RAF + UTC Epoch Anchor via ITickScheduler Port]
         ViewLayer[Reactive UI & Ergonomic Shell<br/>Multi-Layer Glassmorphism 24px + LifecycleScope]
-        AudioService[AudioChimeService<br/>Continuous Re-Arming Procedural Synthesizer & Limiter]
+        AudioChimeService[AudioChimeService<br/>Continuous Re-Arming Procedural Synthesizer & Limiter]
         HapticService[HapticService<br/>Navigator Vibration API]
         CanvasEngine[High-DPI Canvas 2D Pipeline<br/>AdaptiveBufferAllocator & Tri-Modal Layout]
     end
@@ -113,7 +113,7 @@ graph TD
     Store -->|11. Ticks Milliseconds| DualClockTimeEngine
     DualClockTimeEngine -->|12. Emits Frame Deltas| ViewLayer
     DualClockTimeEngine -->|13. Goal Expiration Event| Store
-    Store -->|14. Victory Audio Chime| AudioService
+    Store -->|14. Victory Audio Chime| AudioChimeService
     Store -->|15. Haptic Pattern| HapticService
     Store -->|16. Snapshot Render Request| CanvasEngine
     CanvasEngine -->|17. Wallpaper PNG Blob| ViewLayer
@@ -127,7 +127,7 @@ graph TD
 ```mermaid
 graph TD
     subgraph CoreChronometry [Core State & Chronometry Module]
-        Store[AppStateStore: Reactive Central Store]
+        Store[StateStore: Reactive Central Store]
         DualClockTimeEngine[DualClockTimeEngine: Hybrid Monotonic/Wall Clock]
         Guard[TokenBucketHistoryGuard: Leaky Token Bucket]
         Codec[UrlStateService: Polymorphic Base64URL Codec]
@@ -193,7 +193,7 @@ graph TD
         Shell[LockscreenSimulator: Container Query Host]
         GlassCard[GlassmorphicPanel: Multi-Layer blur 24px + Fresnel Specular]
         OverlayGuide[SafeZoneOverlay: SVG / CSS Notch & Island Guides]
-        ThemeEngine[ThemeManager: CSS Custom Properties Swapper]
+        ThemeEngine[ThemeController: CSS Custom Properties Swapper]
         ViewportSync[ViewportAdaptor: visualViewport & Keyboard Resizer]
     end
 
@@ -207,10 +207,10 @@ graph TD
 ```mermaid
 graph TD
     subgraph SensoryFeedback [Audio & Haptics Sensory Engine]
-        AudioCtx[AudioService: 4-State Lifecycle FSM]
+        AudioCtx[AudioChimeService: 4-State Lifecycle FSM]
         PeakLimiter[DynamicsCompressorNode: Zero-Clipping Limiter]
         Haptic[HapticService: Vibration API Pattern Coordinator]
-        Confetti[ConfettiRenderer: 180-Frame Reduced-Motion Particle Engine]
+        Confetti[ParticleEngine: 180-Frame Reduced-Motion Particle Engine]
     end
 
     AudioCtx --> PeakLimiter
@@ -261,7 +261,7 @@ sequenceDiagram
     participant Worker as WorkerTickerAdapter
     participant WebLocks as Navigator Web Locks
     participant Sync as BroadcastChannel
-    participant Audio as AudioService
+    participant Audio as AudioChimeService
     participant Haptic as HapticService
     participant Canvas as Canvas 2D Engine
 
@@ -387,6 +387,6 @@ All browser infrastructure dependencies (`requestAnimationFrame`, `history.repla
 +---+-----------------------------+--------+------------------------------------+-----------------------------------------+
 | 4 | **Production Readiness,**   | 25%    | `TokenBucketHistoryGuard`,         | 32KB decompression bomb guard, Bidi     |
 |   | **Resilience & Security**   |        | `InputSanitizer`, `UrlStateService`,| Trojan Source sanitizer, 15-error matrix,|
-|   |                             |        | `AudioService`, Service Worker     | 4-state Web Audio FSM, zero-PII privacy.|
+|   |                             |        | `AudioChimeService`, Service Worker| 4-state Web Audio FSM, zero-PII privacy.|
 +---+-----------------------------+--------+------------------------------------+-----------------------------------------+
 ```

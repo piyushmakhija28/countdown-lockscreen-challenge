@@ -44,7 +44,7 @@
 - **Epic 4: Lock Screen Ergonomics & Polish (13 SP):**
   - Story 4.1: Tri-modal responsive layout engine and virtualViewport keyboard sync (`ResponsiveLayoutEngine`, `SafeZoneOverlay`) (4 SP).
   - Story 4.2: Float32Array celebration physics engine (`ParticleEngine`) (3 SP).
-  - Story 4.3: Autoplay-primed procedural Web Audio chime & haptic immersion (`AudioService`, `HapticService`) (3 SP).
+  - Story 4.3: Autoplay-primed procedural Web Audio chime & haptic immersion (`AudioChimeService`, `HapticService`) (3 SP).
   - Story 4.4: App orchestrator, Service Worker PWA, and GitHub Actions CI/CD deployment (`CountdownApp`) (3 SP).
 
 ---
@@ -64,7 +64,7 @@
 | `TASK-ENG-07` | `src/js/canvas/CanvasTextWrapper.js` | Bidi isolation & text wrap    | `FR-20`             |
 | `TASK-ENG-08` | `src/js/canvas/ParticleEngine.js`    | Float32Array confetti physics | `FR-21`             |
 | `TASK-ENG-09` | `src/js/canvas/SafeZoneOverlay.js`   | Lockscreen simulator overlay  | `FR-09`             |
-| `TASK-ENG-10` | `src/js/services/AudioService.js`    | 4-state procedural Web Audio  | `FR-16`             |
+| `TASK-ENG-10` | `src/js/services/AudioChimeService.js`| 4-state procedural Web Audio  | `FR-16`             |
 | `TASK-ENG-11` | `src/js/services/HapticService.js`   | Tactile vibration patterns    | `FR-17`             |
 | `TASK-ENG-12` | `src/js/services/FontService.js`     | Web font loading barrier gate | `FR-22`             |
 | `TASK-ENG-13` | `src/js/core/TokenBucketHistoryGuard.js`| Leaky token bucket rate limiter| `FR-18`          |

@@ -280,12 +280,16 @@ Deployed via `<meta http-equiv="Content-Security-Policy">`:
 default-src 'none';
 script-src 'self';
 style-src 'self' 'unsafe-inline';
+font-src 'self';
 img-src 'self' data: blob:;
 connect-src 'self' https://generativelanguage.googleapis.com;
-font-src 'self';
+worker-src 'self' blob:;
+manifest-src 'self';
 media-src 'none';
 object-src 'none';
 frame-ancestors 'none';
 base-uri 'none';
 form-action 'none';
+upgrade-insecure-requests;
+block-all-mixed-content;
 ```

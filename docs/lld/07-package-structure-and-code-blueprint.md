@@ -123,7 +123,7 @@ countdown-lockscreen-challenge/
 │       │   ├── TokenBucketHistoryGuard.js # Token-bucket history rate limiter & 3-layer loop shield
 │       │   └── InputSanitizer.js      # Unicode NFKC & Bidi Trojan Source shield
 │       ├── ai/
-│       │   ├── GeminiClient.js        # Google Gemini 3.8 Flash SDK client (Header auth)
+│       │   ├── GeminiAiClient.js      # Google Gemini 3.8 Flash SDK client (Header auth)
 │       │   ├── GeminiRateLimiter.js   # Client-side 15 RPM token bucket rate limiter
 │       │   └── HeuristicGenerator.js  # Deterministic offline fallback
 │       ├── canvas/
@@ -143,7 +143,7 @@ countdown-lockscreen-challenge/
 │   ├── unit/                          # Unit tests
 │   └── integration/                   # Integration tests
 ├── .gitignore                         # Level 2.2 strict doc exclusions
-├── VERSION                            # Single source of truth version string (1.6.0)
+├── VERSION                            # Single source of truth version string (1.8.0)
 ├── CHANGELOG.md                       # Keep a Changelog release history
 ├── CLAUDE.md                          # Claude Code developer instructions
 └── README.md                          # Master project playbook
@@ -176,9 +176,9 @@ To maintain strict acyclic dependencies ($D \le 0.15$):
 | `core/DualClockTimeEngine.js`| `DualClockTimeEngine`              | `core/ports.js`                           |
 | `core/MilestoneManager.js`   | `MilestoneManager`                 | (None - Local Arithmetic)                 |
 | `core/UrlStateService.js`    | `UrlStateService`                  | (None - Compression Streams API)          |
-| `core/TokenBucketHistoryGuard`| `TokenBucketHistoryGuard`         | `core/ports.js`                           |
+| `core/TokenBucketHistoryGuard.js`| `TokenBucketHistoryGuard`       | `core/ports.js`                           |
 | `core/InputSanitizer.js`     | `InputSanitizer`                   | (None - Native Unicode RegExp)            |
-| `ai/GeminiClient.js`         | `GeminiClient`                     | `core/ports.js`, `ai/GeminiRateLimiter.js`|
+| `ai/GeminiAiClient.js`        | `GeminiAiClient`                   | `core/ports.js`, `ai/GeminiRateLimiter.js`|
 | `ai/GeminiRateLimiter.js`    | `GeminiRateLimiter`                | (None - LocalStorage Token Bucket)        |
 | `ai/HeuristicGenerator.js`   | `HeuristicGenerator`               | `core/ports.js`                           |
 | `canvas/CanvasRenderer.js`   | `CanvasRenderer`                   | `core/ports.js`, `canvas/Adaptive...`,    |
@@ -187,8 +187,8 @@ To maintain strict acyclic dependencies ($D \le 0.15$):
 | `canvas/CanvasTextWrapper.js`| `CanvasTextWrapper`                | (None - Intl.Segmenter API)               |
 | `canvas/SafeZoneOverlay.js`  | `SafeZoneOverlay`                  | (None - Canvas 2D Stroke)                 |
 | `canvas/ParticleEngine.js`   | `ParticleEngine`                   | (None - Float32Array Buffers)             |
-| `services/WorkerTickerAdapter`| `WorkerTickerAdapter`             | `core/ports.js`                           |
-| `services/AudioChimeService` | `AudioChimeService`                | (None - Web Audio API AudioContext)       |
+| `services/WorkerTickerAdapter.js`| `WorkerTickerAdapter`           | `core/ports.js`                           |
+| `services/AudioChimeService.js`| `AudioChimeService`              | (None - Web Audio API AudioContext)       |
 | `services/FontService.js`    | `FontService`                      | (None - document.fonts FontFaceSet)       |
 | `services/HapticService.js`  | `HapticService`                    | (None - navigator.vibrate)                |
 | `app.js` (Orchestrator Root) | `CountdownApp`                     | All Subsystem Modules                     |

@@ -107,9 +107,9 @@ Conforming to `~/.claude/rules/37-edge-case-testing-standards.md`:
 
 ---
 
-## 4. Micro-Architectural Unit Test Suite (TC-POS-100 to TC-POS-114)
+## 4. Micro-Architectural Unit Test Suite (TC-POS-100 to TC-POS-116)
 
-The 15 micro-architectural unit tests specified in `docs/lld/10-micro-architectural-implementation-details.md` verify V8 hidden class stability, memory allocations, and hardware boundary safety:
+The 17 micro-architectural unit tests specified in `docs/lld/10-micro-architectural-implementation-details.md` verify V8 hidden class stability, memory allocations, multi-tab synchronization, and hardware boundary safety:
 
 ```
 +------------+-----------------------------------+--------------------------------------------------------------+
@@ -130,6 +130,8 @@ The 15 micro-architectural unit tests specified in `docs/lld/10-micro-architectu
 | TC-POS-112 | Virtual Viewport Soft Keyboard    | interactive-widget adjusts canvas height on mobile focus.    |
 | TC-POS-113 | Closed-Form Ring Radius Clamp     | Progress ring radius r_ring <= 220px prevents overlap.       |
 | TC-POS-114 | Canvas Font Readiness Gate        | FontService.ensureFontsLoaded() eliminates FOIT/FOUT.        |
+| TC-POS-115 | Cross-Tab Broadcast Channel Sync  | StateStore syncs state across tabs via BroadcastChannel.     |
+| TC-POS-116 | Web Locks Victory Alarm Mutex     | Web Locks API grants single-tab victory audio playback.      |
 +------------+-----------------------------------+--------------------------------------------------------------+
 ```
 

@@ -521,12 +521,12 @@ export class MilestoneManager {
 }
 ```
 
-### 2.3 `GeminiClient` & `HeuristicGenerator` Class Contracts
+### 2.3 `GeminiAiClient` & `HeuristicGenerator` Class Contracts
 ```javascript
 /**
  * Client gateway for Google Gemini 3.8 Flash model.
  */
-export class GeminiClient {
+export class GeminiAiClient {
   /** @type {string | null} */
   #apiKey = null;
   /** @type {AbortController | null} */

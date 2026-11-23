@@ -96,7 +96,7 @@ graph TD
     end
 
     subgraph PlatformServices [Tier 3: Platform & Sensory Services]
-        Audio[AudioService]
+        Audio[AudioChimeService]
         Haptic[HapticService]
         Font[FontService]
     end

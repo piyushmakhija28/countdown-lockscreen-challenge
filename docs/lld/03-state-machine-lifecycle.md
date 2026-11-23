@@ -93,7 +93,7 @@ stateDiagram-v2
 
 ## 4. Web Audio 4-State Lifecycle FSM
 
-To guarantee reliable in-browser procedural audio synthesis without unhandled promise rejections on mobile WebKit and Blink, `AudioService` is modeled as a 4-state sub-lifecycle FSM:
+To guarantee reliable in-browser procedural audio synthesis without unhandled promise rejections on mobile WebKit and Blink, `AudioChimeService` is modeled as a 4-state sub-lifecycle FSM:
 
 ```mermaid
 stateDiagram-v2

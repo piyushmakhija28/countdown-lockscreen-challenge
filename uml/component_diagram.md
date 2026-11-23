@@ -33,7 +33,7 @@ graph TD
         end
 
         subgraph SensoryLayer [Audio, Haptics & Background Worker Subsystems]
-            AudioChime[AudioService: Procedural Web Audio API]
+            AudioChime[AudioChimeService: Procedural Web Audio API]
             HapticCtrl[HapticService: Vibration API Feedback]
             WorkerTicker[WorkerTickerAdapter: 1Hz Background Worker Ticker]
         end
