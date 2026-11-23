@@ -7,7 +7,7 @@
 **Reviewer:** Architecture Review Board  
 **Status:** APPROVED  
 **Standard:** Level 2.2 Documentation Governance (Directed Acyclic Graph Pipeline)  
-**Version:** 2.3.4
+**Version:** 2.3.5
 
 ---
 
@@ -75,7 +75,7 @@ Each pipeline stage is mapped to specialized subagent expertise from `claude-glo
 
 ---
 
-## 3. Application Runtime Service Orchestration DAG (All 24 Architectural Elements & 21 Core Classes)
+## 3. Application Runtime Service Orchestration DAG (All 25 Architectural Elements & 22 Core Classes)
 
 The client-side runtime adheres to a strict Directed Acyclic Graph (DAG) with zero circular dependencies ($D \le 0.15$):
 
@@ -103,6 +103,7 @@ graph TD
 
     subgraph PlatformServices [Tier 3: Platform & Sensory Services]
         Worker[WorkerTickerAdapter: Inline Blob 1Hz Ticker]
+        Sensory[SensoryCoordinator: Tri-Modal Sensory Synchronization]
         Audio[AudioChimeService: Procedural Web Audio FSM]
         Haptic[HapticService: Vibration API Patterns]
         Font[FontService: Canvas FOIT Barrier Gate]
@@ -125,10 +126,12 @@ graph TD
     App --> Sanitizer
     App --> State
     App --> Guard
-    App --> Audio
-    App --> Haptic
+    App --> Sensory
     App --> Font
     App --> Renderer
+    Sensory --> Audio
+    Sensory --> Haptic
+    Sensory --> Particles
 
     Store --> MM
     Time --> Worker

@@ -7,7 +7,7 @@
 **Reviewer:** Architecture Review Board  
 **Status:** APPROVED  
 **Standard:** Level 2.2 Documentation Governance (Formal Finite State Machine)  
-**Version:** 2.3.4
+**Version:** 2.3.5
 
 ---
 

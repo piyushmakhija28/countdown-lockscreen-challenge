@@ -8,7 +8,7 @@
 **Reviewer:** Architecture Review Board  
 **Status:** APPROVED  
 **Standard:** Level 2.2 Documentation Governance (Micro-Architectural Precision & Code-Level Robustness)  
-**Version:** 2.3.4
+**Version:** 2.3.5
 
 ---
 

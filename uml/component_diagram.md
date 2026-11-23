@@ -35,6 +35,7 @@ graph TD
         end
 
         subgraph SensoryLayer [Audio, Haptics & Background Worker Subsystems]
+            SensoryCoord[SensoryCoordinator: Tri-Modal Sensory Synchronization Coordinator]
             AudioChime[AudioChimeService: Procedural Web Audio API]
             HapticCtrl[HapticService: Vibration API Feedback]
             WorkerTicker[WorkerTickerAdapter: 1Hz Background Worker Ticker]
@@ -65,8 +66,10 @@ graph TD
     StateStore --> Lifecycle
     StateStore --> SyncChannel
     AudioChime --> WebLocks
-    StateStore --> AudioChime
-    StateStore --> HapticCtrl
+    StateStore --> SensoryCoord
+    SensoryCoord --> AudioChime
+    SensoryCoord --> HapticCtrl
+    SensoryCoord --> ParticleEng
     StateStore --> CanvasEng
     TimeEng --> Ports
     TimeEng --> WorkerTicker

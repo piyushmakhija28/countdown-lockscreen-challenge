@@ -199,6 +199,25 @@ classDiagram
         +isDocumentVisible(): boolean
     }
 
+    class ISensoryCoordinator {
+        <<interface>>
+        +triggerMilestoneFeedback(themeId: string): Promise~SensoryTriggerResult~
+        +triggerVictoryCelebration(themeId: string): Promise~SensoryTriggerResult~
+        +stopCelebration(): void
+        +dispose(): void
+    }
+
+    class SensoryCoordinator {
+        -audioService: AudioChimeService
+        -hapticService: HapticService
+        -particleEngine: ParticleEngine
+        -activeLoopId: number
+        +triggerMilestoneFeedback(themeId: string): Promise~SensoryTriggerResult~
+        +triggerVictoryCelebration(themeId: string): Promise~SensoryTriggerResult~
+        +stopCelebration(): void
+        +dispose(): void
+    }
+
     class CanvasRenderer {
         -target: IRenderTarget
         -ctx: CanvasRenderingContext2D
@@ -217,6 +236,12 @@ classDiagram
     IMilestonePlanner <|.. HeuristicGenerator
     IWallpaperRenderer <|.. CanvasRenderer
     IStateStoragePort <|.. ResilientStorageService
+    ISensoryCoordinator <|.. SensoryCoordinator
+    SensoryCoordinator --> AudioChimeService
+    SensoryCoordinator --> HapticService
+    SensoryCoordinator --> ParticleEngine
+    CountdownApp --> ISensoryCoordinator
+
     CountdownApp --> ResilientStorageService
 
     CountdownApp --> StateStore

@@ -25,6 +25,7 @@ graph TD
             HapticServicePkg[HapticService.js: Haptic Vibration Feedback]
             FontServicePkg[FontService.js: WebFont Loader & Kerning Ready Guard]
             ResilientStoragePkg[ResilientStorageService.js: Tiered Persistence Adapter (IndexedDB/LocalStorage)]
+            SensoryCoordPkg[SensoryCoordinator.js: Tri-Modal Sensory Coordinator (ADR-015, INV-020)]
         end
 
         subgraph AILayer [src/js/ai]

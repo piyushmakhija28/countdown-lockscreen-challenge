@@ -1,5 +1,24 @@
 # Changelog
 
+## [2.3.5] - 2026-11-23
+
+### Added
+- **Visual Diagram Parity (UML & Draw.io Models):**
+  - Incorporated `ISensoryCoordinator` and `SensoryCoordinator` into `uml/class_diagram.md` (bringing class diagram to 30 elements) and `drawio/class_diagram.drawio` with complete XML cell coordinates.
+  - Added `SensoryCoordinator` component into `uml/component_diagram.md` SensoryLayer, coordinating visual spring ODE, Web Audio ADSR, and haptics.
+  - Added `SensoryCoordinator.js` module into `uml/package_diagram.md` under `src/js/services`.
+- **Work Breakdown Structure & Sprint Planning Expansion (`DOC-MGT-01`):**
+  - Expanded Work Breakdown Structure from 24 to 29 concrete engineering work packages (`TASK-ENG-01` through `TASK-ENG-29`).
+  - Added `TASK-ENG-25` (`SensoryCoordinator.js`), `TASK-ENG-26` (`constants.js`), `TASK-ENG-27` (`tokens.css`, `safe-zones.css`, `glassmorphism.css`), `TASK-ENG-28` (`index.html`), and `TASK-ENG-29` (`public/sw.js`, `manifest.json`).
+  - Formulated granular execution batches for Sprint 2 (Core Domain & State), Sprint 3 (Canvas 9-Stage Engine & AI Retrograde Planning), and Sprint 4 (Sensory Immersion, Ergonomic UI Shell & PWA Deployment).
+- **Service Orchestration DAG Realignment (`DOC-MGT-02`):**
+  - Incorporated `SensoryCoordinator` into Tier 3 Platform Services runtime graph, orchestrating `AudioChimeService`, `HapticService`, and `ParticleEngine`.
+  - Updated runtime graph to 25 architectural elements and 22 core classes.
+
+### Changed
+- **Repository-Wide Version Synchronization (`v2.3.5`):**
+  - Unified all 66 specs in `docs/`, `VERSION`, `SRS.md`, `docs/05-srs.md` (verified exact SHA256 match `d835bb0a39a9c68bf760e58cb123e42fec793bb53e7f6004b3cf43ff9981fefc`), `README.md`, and `CLAUDE.md` to `2.3.5`.
+
 ## [2.3.4] - 2026-11-23
 
 ### Fixed
