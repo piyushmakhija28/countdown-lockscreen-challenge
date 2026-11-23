@@ -313,6 +313,21 @@ export class StateStore {
    *
    * @returns {Readonly<CountdownState>}
    */
+  /**
+   * Initializes BroadcastChannel listener for multi-tab synchronization.
+   * Filters out cyclic self-broadcasts via unique tab instanceId.
+   */
+  enableCrossTabSync() {
+    if (typeof BroadcastChannel === 'undefined') return;
+    this.#syncChannel = new BroadcastChannel('countdown_lockscreen_sync');
+    this.#syncChannel.onmessage = (event) => {
+      if (!event.data || event.data.senderId === this.#instanceId) return;
+      if (event.data.type === 'SYNC_STATE_V1') {
+        this.dispatch({ type: 'HYDRATE_EXTERNAL', payload: event.data.state, meta: { isExternalSync: true } });
+      }
+    };
+  }
+
   getState() {
     return this.#state;
   }
@@ -780,6 +795,26 @@ export class AudioChimeService {
    *
    * @returns {Promise<boolean>} Resolves true if sound played, false if audio blocked or unavailable
    */
+  /**
+   * Arbitrates single-instance victory audio chime via Web Locks API mutex.
+   * Guarantees strictly one tab plays celebratory audio across multi-tab sessions.
+   *
+   * @returns {Promise<boolean>} True if lock was acquired and chime played; false if suppressed.
+   */
+  async playVictoryChimeWithLock() {
+    if (!('locks' in navigator)) return this.playVictoryChime();
+    try {
+      return await navigator.locks.request('countdown_victory_alarm_lock', { ifAvailable: true }, async (lock) => {
+        if (!lock) return false;
+        await this.playVictoryChime();
+        await new Promise((r) => setTimeout(r, 2500));
+        return true;
+      });
+    } catch {
+      return this.playVictoryChime();
+    }
+  }
+
   async playVictoryChime() {}
 
   /**

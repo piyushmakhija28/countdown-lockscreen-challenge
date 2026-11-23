@@ -18,6 +18,8 @@ graph TD
             HistoryGuard[TokenBucketHistoryGuard: 300ms Leaky Bucket]
             Sanitizer[InputSanitizer: Unicode NFKC & Whitelist Pipeline]
             MilestoneMgr[MilestoneManager: Backward Planning Tracker]
+            StorageSvc[ResilientStorageService: 4-Tier IndexedDB & LocalStorage Adapter]
+            Lifecycle[LifecycleScope: RAII Scope & Listener Guard]
             Ports[Clean Architecture Abstract Ports: ITickScheduler, IMilestonePlanner, etc.]
         end
 
@@ -36,6 +38,8 @@ graph TD
             AudioChime[AudioChimeService: Procedural Web Audio API]
             HapticCtrl[HapticService: Vibration API Feedback]
             WorkerTicker[WorkerTickerAdapter: 1Hz Background Worker Ticker]
+            WebLocks[WebLocksMutex: Navigator Web Locks Single-Instance Mutex]
+            SyncChannel[BroadcastChannel: Same-Origin Multi-Tab State Bus]
         end
 
         subgraph AILayer [Google Gemini Intelligence Layer]
@@ -57,6 +61,10 @@ graph TD
     StateStore --> MilestoneMgr
     StateStore --> TimeEng
     StateStore --> UrlCodec
+    StateStore --> StorageSvc
+    StateStore --> Lifecycle
+    StateStore --> SyncChannel
+    AudioChime --> WebLocks
     StateStore --> AudioChime
     StateStore --> HapticCtrl
     StateStore --> CanvasEng

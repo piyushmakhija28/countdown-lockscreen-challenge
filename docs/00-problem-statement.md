@@ -72,6 +72,7 @@ However, existing countdown apps and custom wallpaper generators fail ergonomica
 | **INV-014** | **Cross-Font Metric Scaling Floor:** Typography never overflows safe zone under fallback fonts. | $S_{\text{effective}} = \max\left(S_{\text{floor}}, \, S_{\text{nominal}} \times \min(1.0, \, k_{\text{font}})\right), \quad S_{\text{floor}} = 10\text{px}$ | Fallback compensation width ratio scaling with WCAG minimum legibility. |
 | **INV-015** | **Coupled Extent Zero-Seam Guard:** Adjacent glass cards share identical snapped physical edges. | $x_{\text{left,phys}} = x_{\text{right,prev,phys}} \implies \text{Seam} = 0\text{px}$ | Eliminates hairline background bleed between tiled glassmorphic cards. |
 | **INV-016** | **Single-Instance Victory Alarm Locking:** Strictly one tab synthesizes celebratory audio on timer expiry. | `navigator.locks.request('countdown_victory_alarm_lock', { ifAvailable: true })` | Prevents double-amplitude acoustic distortion across multi-tab sessions. |
+| **INV-017** | **Multi-Tab Eventual Consistency & Echo Shield:** Concurrent same-origin tabs converge state within 50ms without cyclic storms. | $\Delta t_{\text{sync}} \le 50\text{ms}, \quad \text{senderId} \neq \text{instanceId}$ | Native `BroadcastChannel('countdown_lockscreen_sync')` with UUID cycle filter. |
 
 ---
 

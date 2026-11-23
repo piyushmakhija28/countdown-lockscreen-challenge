@@ -104,3 +104,20 @@ All modules conform to strict mathematical limits:
 - **Cyclomatic Complexity ($M$):** Strictly $M \le 10$ across all methods.
 - **Lack of Cohesion in Methods (LCOM4):** Strictly $\text{LCOM4} = 1$ (High cohesion).
 - **Afferent / Efferent Coupling:** $C_a \le 3, C_e \le 2$ on core domain models.
+
+
+### 1.9 Mutex / Distributed Concurrency Lock Pattern
+Enforces strictly one tab synthesizes victory celebratory audio when multiple windows observe countdown expiration:
+
+```javascript
+/**
+ * Concurrency Mutex Pattern implementing non-blocking resource acquisition.
+ */
+export async function executeWithMutex(resourceName, onAcquired, onContended) {
+  if (!('locks' in navigator)) return onAcquired();
+  return navigator.locks.request(resourceName, { ifAvailable: true }, async (lock) => {
+    if (!lock) return onContended();
+    return onAcquired();
+  });
+}
+```

@@ -17,9 +17,13 @@ classDiagram
     class StateStore {
         -state: CountdownState
         -listeners: Function[]
+        -syncChannel: BroadcastChannel
+        -instanceId: string
         +getState(): CountdownState
         +dispatch(action: CountdownAction): void
         +subscribe(listener: Function): Function
+        +enableCrossTabSync(): void
+        +broadcastSync(payload: any): void
     }
 
     class DualClockTimeEngine {
@@ -95,6 +99,7 @@ classDiagram
         -state: string
         +unlockAudioContext(): Promise~boolean~
         +playVictoryChime(): Promise~boolean~
+        +playVictoryChimeWithLock(): Promise~boolean~
         +dispose(): void
     }
 

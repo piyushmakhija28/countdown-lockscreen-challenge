@@ -293,3 +293,23 @@ form-action 'none';
 upgrade-insecure-requests;
 block-all-mixed-content;
 ```
+
+
+### 1.7 The Mutex / Distributed Concurrency Coordination Pattern
+Guarantees single-instance procedural Web Audio execution upon deadline zero across multi-tab browser sessions:
+
+```javascript
+/**
+ * Concurrency Mutex Pattern via Web Locks API.
+ * Arbitrates audio playback with zero phase interference.
+ */
+export async function arbitrateVictoryAlarm(chimeCallback) {
+  if (!('locks' in navigator)) return chimeCallback();
+  return navigator.locks.request('countdown_victory_alarm_lock', { ifAvailable: true }, async (lock) => {
+    if (!lock) return false;
+    await chimeCallback();
+    await new Promise((r) => setTimeout(r, 2500));
+    return true;
+  });
+}
+```

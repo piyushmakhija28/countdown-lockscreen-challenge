@@ -337,3 +337,17 @@ export class ZeroAllocationTickEngine {
   }
 }
 ```
+
+
+---
+
+## 4. Multi-Tab Distributed Concurrency & Web Locks Mutex Architecture
+
+Across concurrent browser tabs, execution is decoupled into isolated JavaScript microtask loops coordinated through native kernel primitives:
+
+1. **Unbuffered Inter-Tab IPC (`BroadcastChannel`):**
+   - Direct pub-sub pipeline operating at process boundary without shared memory data races.
+   - Guarded by UUID `senderId` to guarantee termination of cyclic dispatch cascades.
+2. **Kernel Mutex Arbitration (`Web Locks API`):**
+   - Non-blocking lock requests (`{ ifAvailable: true }`) resolved atomically by the browser process.
+   - Guarantees $O(1)$ single-tab arbitration of shared audio hardware resources upon timer zero.

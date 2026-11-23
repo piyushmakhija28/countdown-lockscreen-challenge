@@ -28,7 +28,12 @@ sequenceDiagram
         Router->>Router: Base64 Decode & Polymorphic JSON Parse
         Router-->>App: Return Hydrated Clean State
     else No Hash / Invalid Hash / Decompression Bomb
-        Router-->>App: Return Default Demonstrative State
+        App->>Router: Query ResilientStorageService.loadState() (IndexedDB -> localStorage)
+        alt Cached State Found in Storage
+            Router-->>App: Return Tiered Persisted State
+        else Storage Empty
+            Router-->>App: Return Default Demonstrative State
+        end
     end
     App->>Store: initialize(HydratedState)
     App->>Ticker: startTicker(deadline, onTick, onExpire)
@@ -269,13 +274,13 @@ sequenceDiagram
     autonumber
     participant Browser as Browser ServiceWorker Container
     participant SW as Service Worker (sw.js)
-    participant Cache as CacheStorage (v1.0.0)
+    participant Cache as CacheStorage (v2.0.0)
     participant UI as UpdateToastNotification
     actor User as User
 
     Browser->>SW: Fetches /sw.js on page load
     alt Byte-for-Byte Different SW Available
-        Browser->>SW: Install new worker (v1.0.1)
+        Browser->>SW: Install new worker (v2.0.1)
         SW->>Cache: Pre-cache updated tokens.css, main.js
         SW-->>Browser: state = 'installed' (waiting)
         Browser->>UI: Emit 'updatefound' -> Show "New Version Available"

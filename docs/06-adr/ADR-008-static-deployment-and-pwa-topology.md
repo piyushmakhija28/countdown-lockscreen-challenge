@@ -58,7 +58,7 @@ We must decide on the hosting platform and deployment topology.
 - Served through Fastly's global CDN with native HTTP/2 and TLS 1.3 encryption.
 
 ### 5.2 Offline Progressive Web App (PWA) Precache Inventory
-To ensure flawless offline execution on mobile devices and zero dependency on CDN availability during judging, the Service Worker (`sw.js`) registers a deterministic **Cache-First** strategy using namespaced cache key `countdown-lockscreen-ghpages-v1.8.0` and dynamic relative scope `self.registration.scope`:
+To ensure flawless offline execution on mobile devices and zero dependency on CDN availability during judging, the Service Worker (`sw.js`) registers a deterministic **Cache-First** strategy using namespaced cache key `countdown-lockscreen-ghpages-v2.0.0` and dynamic relative scope `self.registration.scope`:
 - **Core Shell:** `index.html`, `manifest.json`, `favicon.ico`, `assets/icons/*`
 - **Stylesheets:** `src/css/main.css`, `src/css/tokens.css`, `src/css/glassmorphism.css`
 - **Entry & Config:** `src/js/app.js`, `src/js/config/constants.js`, `src/js/config/themes.js`
@@ -69,5 +69,5 @@ To ensure flawless offline execution on mobile devices and zero dependency on CD
 - **Self-Hosted WOFF2 Typography:** `public/fonts/inter-v13-latin-regular.woff2`, `public/fonts/inter-v13-latin-700.woff2`, `public/fonts/jetbrains-mono-v18-latin-700.woff2`
 
 ### 5.3 Cache Scoping, Old Version Eviction & Query-Flood Defense
-1. **Automated Old Cache Eviction:** During the Service Worker `activate` event, any cache key that does not match `countdown-lockscreen-ghpages-v1.8.0` is deleted via `caches.delete(cacheName)`, guaranteeing atomic version upgrades and zero stale bundle corruption.
+1. **Automated Old Cache Eviction:** During the Service Worker `activate` event, any cache key that does not match `countdown-lockscreen-ghpages-v2.0.0` is deleted via `caches.delete(cacheName)`, guaranteeing atomic version upgrades and zero stale bundle corruption.
 2. **Query-Flood Defense:** To prevent malicious or accidental query parameters (e.g. `?fbclid=...`, `?utm_source=...`) from busting the cache or filling quota with duplicate entries, `sw.js` normalizes incoming request URLs via `new URL(request.url)` and strips search parameters before matching against precached assets (`cache.match(cleanUrl)`).

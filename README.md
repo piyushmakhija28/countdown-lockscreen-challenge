@@ -37,7 +37,7 @@ countdown-lockscreen-challenge/
 │   ├── 03-api-contract.md              # Level 3: Gemini 3.8 Flash Schema, URL Codec & Component Contracts
 │   ├── 04-competition-and-platform-research.md # Level 4: 7-Page PDF Teardown, 4x25% Rubric Math & OS Specs
 │   ├── 05-srs.md                       # Level 5: Detailed Functional & Non-Functional Traceability
-│   ├── 06-adr/                         # Level 6: Architecture Decision Records (ADR-001 to ADR-010)
+│   ├── 06-adr/                         # Level 6: Architecture Decision Records (ADR-001 to ADR-012)
 │   │   ├── ADR-001-architecture-style-and-runtime.md
 │   │   ├── ADR-002-rendering-engine-canvas-vs-dom.md
 │   │   ├── ADR-003-state-serialization-and-sharing.md
@@ -47,7 +47,9 @@ countdown-lockscreen-challenge/
 │   │   ├── ADR-007-time-engine-and-milestone-chronometry.md
 │   │   ├── ADR-008-static-deployment-and-pwa-topology.md
 │   │   ├── ADR-009-procedural-web-audio-vs-prerecorded-media.md
-│   │   └── ADR-010-leaky-bucket-history-guard-vs-synchronous-pushstate.md
+│   │   ├── ADR-010-leaky-bucket-history-guard-vs-synchronous-pushstate.md
+│   │   ├── ADR-011-cross-tab-state-synchronization.md
+│   │   └── ADR-012-web-locks-single-instance-alarm-mutex.md
 │   ├── 07-architecture-tradeoffs-and-faq.md # Level 7: Tradeoff Matrices, Failure Modes & Judge FAQ
 │   ├── 08-handshake-submission-package.md # Level 8: Official Contest Deliverables & Walkthrough Script
 │   ├── 09-tech-stack-fundamentals-and-compliance-matrix.md # Level 9: Technical Fundamentals & Cross-Document Matrix
@@ -209,7 +211,7 @@ Detailed design documents are maintained in [`docs/`](docs/):
   - [DOC-03: API & Contract Specifications](docs/03-api-contract.md)
   - [DOC-04: Competition & Platform Research](docs/04-competition-and-platform-research.md)
   - [DOC-05: Software Requirements Specification (SRS)](docs/05-srs.md)
-  - [DOC-06: Architecture Decision Records (ADR 001-010)](docs/06-adr/)
+  - [DOC-06: Architecture Decision Records (ADR 001-012)](docs/06-adr/)
   - [DOC-07: Architecture Tradeoffs & FAQ](docs/07-architecture-tradeoffs-and-faq.md)
   - [DOC-08: Handshake Official Contest Submission Package](docs/08-handshake-submission-package.md)
   - [Contest Rules Summary](docs/competition-rules-summary.md)

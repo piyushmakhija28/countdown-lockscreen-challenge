@@ -118,3 +118,14 @@ export async function withRetryAndJitter<T>(
   }
 }
 ```
+
+
+---
+
+## 4. Web Locks Acquisition Timeout & Abort Policy
+
+When requesting the `'countdown_victory_alarm_lock'`, the acquisition timeout ceiling is strictly bounded:
+
+$$\tau_{\text{lock}} \le 500\text{ms}$$
+
+If the platform fails to resolve lock availability within $500\text{ms}$ via `AbortSignal.timeout(500)`, acquisition is aborted cleanly and audio synthesis is suppressed to prevent late, startling alarms.

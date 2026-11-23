@@ -5,23 +5,23 @@
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-    <mxCell id="2" value="&amp;lt;&amp;lt;component&amp;gt;&amp;gt;&amp;#xa;Frontend&amp;#xa;UIService" style="shape=mxgraph.uml.component;html=1;whiteSpace=wrap;strokeColor=#666666;fillColor=#F5F5F5;strokeWidth=2;" vertex="1" parent="1">
+    <mxCell id="2" value="&amp;lt;&amp;lt;component&amp;gt;&amp;gt;&amp;#xa;PresentationLayer" style="shape=mxgraph.uml.component;html=1;whiteSpace=wrap;strokeColor=#666666;fillColor=#F5F5F5;strokeWidth=2;" vertex="1" parent="1">
       <mxGeometry x="40" y="40" width="200" height="120" as="geometry" />
     </mxCell>
-    <mxCell id="3" value="UIService" style="ellipse;html=1;strokeColor=#000000;fillColor=#FFFFFF;strokeWidth=1;" vertex="1" parent="1">
-      <mxGeometry x="245" y="60" width="20" height="20" as="geometry" />
-    </mxCell>
-    <mxCell id="4" value="&amp;lt;&amp;lt;component&amp;gt;&amp;gt;&amp;#xa;API&amp;#xa;APIService" style="shape=mxgraph.uml.component;html=1;whiteSpace=wrap;strokeColor=#666666;fillColor=#F5F5F5;strokeWidth=2;" vertex="1" parent="1">
+    <mxCell id="3" value="&amp;lt;&amp;lt;component&amp;gt;&amp;gt;&amp;#xa;CoreEngineLayer" style="shape=mxgraph.uml.component;html=1;whiteSpace=wrap;strokeColor=#666666;fillColor=#F5F5F5;strokeWidth=2;" vertex="1" parent="1">
       <mxGeometry x="320" y="40" width="200" height="120" as="geometry" />
     </mxCell>
-    <mxCell id="5" value="APIService" style="ellipse;html=1;strokeColor=#000000;fillColor=#FFFFFF;strokeWidth=1;" vertex="1" parent="1">
-      <mxGeometry x="525" y="60" width="20" height="20" as="geometry" />
-    </mxCell>
-    <mxCell id="6" value="&amp;lt;&amp;lt;component&amp;gt;&amp;gt;&amp;#xa;DataLayer&amp;#xa;DataService" style="shape=mxgraph.uml.component;html=1;whiteSpace=wrap;strokeColor=#666666;fillColor=#F5F5F5;strokeWidth=2;" vertex="1" parent="1">
+    <mxCell id="4" value="&amp;lt;&amp;lt;component&amp;gt;&amp;gt;&amp;#xa;RenderingLayer" style="shape=mxgraph.uml.component;html=1;whiteSpace=wrap;strokeColor=#666666;fillColor=#F5F5F5;strokeWidth=2;" vertex="1" parent="1">
       <mxGeometry x="600" y="40" width="200" height="120" as="geometry" />
     </mxCell>
-    <mxCell id="7" value="DataService" style="ellipse;html=1;strokeColor=#000000;fillColor=#FFFFFF;strokeWidth=1;" vertex="1" parent="1">
-      <mxGeometry x="805" y="60" width="20" height="20" as="geometry" />
+    <mxCell id="5" value="&amp;lt;&amp;lt;component&amp;gt;&amp;gt;&amp;#xa;SensoryLayer" style="shape=mxgraph.uml.component;html=1;whiteSpace=wrap;strokeColor=#666666;fillColor=#F5F5F5;strokeWidth=2;" vertex="1" parent="1">
+      <mxGeometry x="40" y="240" width="200" height="120" as="geometry" />
+    </mxCell>
+    <mxCell id="6" value="&amp;lt;&amp;lt;component&amp;gt;&amp;gt;&amp;#xa;AILayer" style="shape=mxgraph.uml.component;html=1;whiteSpace=wrap;strokeColor=#666666;fillColor=#F5F5F5;strokeWidth=2;" vertex="1" parent="1">
+      <mxGeometry x="320" y="240" width="200" height="120" as="geometry" />
+    </mxCell>
+    <mxCell id="7" value="&amp;lt;&amp;lt;component&amp;gt;&amp;gt;&amp;#xa;ExternalCloud" style="shape=mxgraph.uml.component;html=1;whiteSpace=wrap;strokeColor=#666666;fillColor=#F5F5F5;strokeWidth=2;" vertex="1" parent="1">
+      <mxGeometry x="600" y="240" width="200" height="120" as="geometry" />
     </mxCell>
       </root>
     </mxGraphModel>

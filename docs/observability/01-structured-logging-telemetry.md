@@ -40,6 +40,10 @@ All runtime diagnostic events conform strictly to a validated, structured JSON s
         "AUTOPLAY_BLOCKED",
         "CLOCK_RESYNC_TRIGGERED",
         "DECOMPRESSION_BOMB_BLOCKED",
+        "CROSS_TAB_SYNC_DISPATCHED",
+        "CROSS_TAB_SYNC_RECEIVED",
+        "ALARM_LOCK_ACQUIRED",
+        "ALARM_LOCK_CONTENTION_SUPPRESSED",
         "AI_SAFETY_FILTER_TRIPPED",
         "FONT_PRELOAD_COMPLETED",
         "PARTICLE_PHYSICS_COMPLETED"

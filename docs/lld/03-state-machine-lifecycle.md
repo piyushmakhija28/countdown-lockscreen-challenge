@@ -177,3 +177,28 @@ stateDiagram-v2
     WORKER_TICKING --> FOREGROUND_ACTIVE : RESUME_UI
 ```
 
+
+
+---
+
+## 7. Multi-Tab Synchronization & Victory Alarm Mutex FSM
+
+```mermaid
+stateDiagram-v2
+    [*] --> UNLOCKED_LEADER : BOOT_INITIALIZED (First Tab)
+    UNLOCKED_LEADER --> BROADCASTING : USER_MUTATION_DISPATCHED
+    BROADCASTING --> UNLOCKED_LEADER : BROADCAST_CONFIRMED
+    
+    [*] --> LISTENING_SLAVE : BOOT_SECONDARY_TAB
+    LISTENING_SLAVE --> INGESTING_EXTERNAL : SYNC_MESSAGE_RECEIVED
+    INGESTING_EXTERNAL --> LISTENING_SLAVE : STATE_REDUCED (meta.isExternalSync=true)
+
+    state VictoryAlarmArbitration {
+        [*] --> CONCURRENT_EXPIRED : DELTA_ZERO_REACHED
+        CONCURRENT_EXPIRED --> ATTEMPTING_MUTEX : navigator.locks.request({ ifAvailable: true })
+        ATTEMPTING_MUTEX --> PLAYING_CHIME : LOCK_GRANTED (Winner Tab)
+        ATTEMPTING_MUTEX --> SUPPRESSED_CHIME : LOCK_DENIED (Sibling Tab)
+        PLAYING_CHIME --> [*] : AUDIO_COMPLETED (2500ms)
+        SUPPRESSED_CHIME --> [*] : SILENT_FALLBACK
+    }
+```

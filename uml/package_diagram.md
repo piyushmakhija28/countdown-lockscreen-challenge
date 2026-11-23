@@ -24,6 +24,7 @@ graph TD
             AudioServicePkg[AudioChimeService.js: Procedural Web Audio Synthesizer]
             HapticServicePkg[HapticService.js: Haptic Vibration Feedback]
             FontServicePkg[FontService.js: WebFont Loader & Kerning Ready Guard]
+            ResilientStoragePkg[ResilientStorageService.js: Tiered Persistence Adapter (IndexedDB/LocalStorage)]
         end
 
         subgraph AILayer [src/js/ai]

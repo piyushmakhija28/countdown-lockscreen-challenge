@@ -461,3 +461,38 @@ export class HeuristicGenerator {
 }
 ```
 
+
+
+---
+
+## 6. `BroadcastChannel('countdown_lockscreen_sync')` Inter-Tab Message Schema
+
+To guarantee eventual consistency across all same-origin tabs without recursive loops (`INV-017`, `FR-23`), state updates broadcast an unbuffered binary/JSON event:
+
+```typescript
+export interface BroadcastSyncMessage {
+  readonly type: 'SYNC_STATE_V1';
+  readonly senderId: string;        // crypto.randomUUID() of origin tab
+  readonly timestamp: number;       // performance.now() + timeOrigin
+  readonly sequenceNum: number;     // Monotonically increasing sequence ID
+  readonly payload: SerializedState;// Compact memento snapshot
+  readonly checksum: string;        // CRC32 / FNV-1a hash of payload
+}
+```
+
+---
+
+## 7. `Web Locks API ('countdown_victory_alarm_lock')` Mutex Protocol
+
+Upon countdown expiration ($\Delta t \le 0$), audio synthesis is strictly arbitrated via `navigator.locks.request`:
+
+```typescript
+export interface IAlarmMutexService {
+  /**
+   * Attempts non-blocking acquisition of the victory alarm mutex.
+   * If available, plays procedural chime and holds lock for 2500ms.
+   * If held by another tab, immediately returns false without audio execution.
+   */
+  requestAlarmExecution(): Promise<boolean>;
+}
+```

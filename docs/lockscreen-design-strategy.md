@@ -21,7 +21,7 @@ graph TD
     Win[Winning Submission Moat] --> Moat1[1. True Flagship Resolution: 1170x2532 with AdaptiveBufferAllocator Dynamic Scaling]
     Win --> Moat2[2. Intelligent AI Retrograde Planning: Google Gemini 3.8 Flash]
     Win --> Moat3[3. Zero Visual Occlusion: Tri-Modal Responsive Safe-Zone Engine]
-    Win --> Moat4[4. Zero Friction: 100% Stateless Edge PWA with Shareable URL State]
+    Win --> Moat4[4. Zero Friction: 100% Stateless Edge PWA with Multi-Tab BroadcastChannel & Web Locks]
 ```
 
 ---

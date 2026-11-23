@@ -132,6 +132,7 @@ graph TD
         Guard[TokenBucketHistoryGuard: Leaky Token Bucket]
         Codec[UrlStateService: Polymorphic Base64URL Codec]
         Sanitizer[InputSanitizer: Unicode NFKC & Whitelist Guard]
+        StorageSvc[ResilientStorageService: 4-Tier Persistence Adapter]
     end
 
     Store -->|Dispatches target epoch| DualClockTimeEngine
@@ -201,6 +202,25 @@ graph TD
     Shell --> OverlayGuide
     Shell --> ViewportSync
     ThemeEngine --> GlassCard
+```
+
+#### 2.3.6 Component Diagram: Multi-Tab State Synchronization & Victory Alarm Mutex Subsystem
+```mermaid
+graph TD
+    subgraph MultiTabSyncSubsystem [Multi-Tab IPC & Concurrency Arbitration]
+        StateStoreNode[StateStore: Unidirectional Store]
+        BroadcastBus[BroadcastChannel: 'countdown_lockscreen_sync']
+        CycleFilter[EchoShieldFilter: senderId UUID Guard]
+        WebLocksEngine[WebLocksMutex: 'countdown_victory_alarm_lock']
+        AudioNode[AudioChimeService: Procedural Web Audio Engine]
+    end
+
+    StateStoreNode -->|Dispatches mutation| BroadcastBus
+    BroadcastBus -->|Ingests external event| CycleFilter
+    CycleFilter -->|Unpack external state| StateStoreNode
+    StateStoreNode -->|On timer expiry| WebLocksEngine
+    WebLocksEngine -->|Lock acquired: { ifAvailable: true }| AudioNode
+    WebLocksEngine -.->|Lock denied| StateStoreNode
 ```
 
 #### 2.3.5 Component Diagram: Sensory Feedback Subsystem

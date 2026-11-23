@@ -18,16 +18,16 @@
       <mxGeometry x="0" y="178" width="220" height="44" as="geometry" />
     </mxCell>
     <mxCell id="7" value="StateStore" style="swimlane;fontStyle=1;align=center;startSize=26;container=1;collapsible=0;expand=0;html=1;fillColor=#E1D5E7;strokeColor=#9673A6;strokeWidth=2;" vertex="1" parent="1">
-      <mxGeometry x="330" y="40" width="220" height="142" as="geometry" />
+      <mxGeometry x="330" y="40" width="220" height="222" as="geometry" />
     </mxCell>
-    <mxCell id="8" value="-state: CountdownState&amp;#xa;-listeners: Function[]" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;overflow=hidden;rotatable=0;" vertex="1" parent="7">
-      <mxGeometry x="0" y="26" width="220" height="44" as="geometry" />
+    <mxCell id="8" value="-state: CountdownState&amp;#xa;-listeners: Function[]&amp;#xa;-syncChannel: BroadcastChannel&amp;#xa;-instanceId: string" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;overflow=hidden;rotatable=0;" vertex="1" parent="7">
+      <mxGeometry x="0" y="26" width="220" height="84" as="geometry" />
     </mxCell>
     <mxCell id="9" value="" style="line;html=1;strokeColor=#9673A6;strokeWidth=1;fillColor=none;" vertex="1" parent="7">
-      <mxGeometry x="0" y="70" width="220" height="8" as="geometry" />
+      <mxGeometry x="0" y="110" width="220" height="8" as="geometry" />
     </mxCell>
-    <mxCell id="10" value="+getState(): CountdownState&amp;#xa;+dispatch(action: CountdownAction): void&amp;#xa;+subscribe(listener: Function): Function" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;overflow=hidden;rotatable=0;" vertex="1" parent="7">
-      <mxGeometry x="0" y="78" width="220" height="64" as="geometry" />
+    <mxCell id="10" value="+getState(): CountdownState&amp;#xa;+dispatch(action: CountdownAction): void&amp;#xa;+subscribe(listener: Function): Function&amp;#xa;+enableCrossTabSync(): void&amp;#xa;+broadcastSync(payload: any): void" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;overflow=hidden;rotatable=0;" vertex="1" parent="7">
+      <mxGeometry x="0" y="118" width="220" height="104" as="geometry" />
     </mxCell>
     <mxCell id="11" value="DualClockTimeEngine" style="swimlane;fontStyle=1;align=center;startSize=26;container=1;collapsible=0;expand=0;html=1;fillColor=#E1D5E7;strokeColor=#9673A6;strokeWidth=2;" vertex="1" parent="1">
       <mxGeometry x="620" y="40" width="220" height="222" as="geometry" />
@@ -150,7 +150,7 @@
       <mxGeometry x="0" y="98" width="220" height="44" as="geometry" />
     </mxCell>
     <mxCell id="51" value="AudioChimeService" style="swimlane;fontStyle=1;align=center;startSize=26;container=1;collapsible=0;expand=0;html=1;fillColor=#E1D5E7;strokeColor=#9673A6;strokeWidth=2;" vertex="1" parent="1">
-      <mxGeometry x="40" y="766" width="220" height="162" as="geometry" />
+      <mxGeometry x="40" y="826" width="220" height="182" as="geometry" />
     </mxCell>
     <mxCell id="52" value="-ctx: AudioContext&amp;#xa;-limiterNode: DynamicsCompressorNode&amp;#xa;-state: string" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;overflow=hidden;rotatable=0;" vertex="1" parent="51">
       <mxGeometry x="0" y="26" width="220" height="64" as="geometry" />
@@ -158,8 +158,8 @@
     <mxCell id="53" value="" style="line;html=1;strokeColor=#9673A6;strokeWidth=1;fillColor=none;" vertex="1" parent="51">
       <mxGeometry x="0" y="90" width="220" height="8" as="geometry" />
     </mxCell>
-    <mxCell id="54" value="+unlockAudioContext(): Promise~boolean~&amp;#xa;+playVictoryChime(): Promise~boolean~&amp;#xa;+dispose(): void" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;overflow=hidden;rotatable=0;" vertex="1" parent="51">
-      <mxGeometry x="0" y="98" width="220" height="64" as="geometry" />
+    <mxCell id="54" value="+unlockAudioContext(): Promise~boolean~&amp;#xa;+playVictoryChime(): Promise~boolean~&amp;#xa;+playVictoryChimeWithLock(): Promise~boolean~&amp;#xa;+dispose(): void" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;overflow=hidden;rotatable=0;" vertex="1" parent="51">
+      <mxGeometry x="0" y="98" width="220" height="84" as="geometry" />
     </mxCell>
     <mxCell id="55" value="HapticService" style="swimlane;fontStyle=1;align=center;startSize=26;container=1;collapsible=0;expand=0;html=1;fillColor=#E1D5E7;strokeColor=#9673A6;strokeWidth=2;" vertex="1" parent="1">
       <mxGeometry x="330" y="658" width="220" height="126" as="geometry" />

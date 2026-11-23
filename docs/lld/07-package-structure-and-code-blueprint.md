@@ -27,7 +27,7 @@ countdown-lockscreen-challenge/
 │   ├── 03-api-contract.md             # Gemini 3.8 Flash Schema, URL Codec & Contracts
 │   ├── 04-competition-and-platform-research.md # 7-Page PDF Teardown, 4x25% Rubric Math & OS Specs
 │   ├── 05-srs.md                      # Canonical Software Requirements Specification
-│   ├── 06-adr/                        # Architecture Decision Records (ADR-001 through ADR-010)
+│   ├── 06-adr/                        # Architecture Decision Records (ADR-001 through ADR-012)
 │   │   ├── ADR-001-architecture-style-and-runtime.md
 │   │   ├── ADR-002-rendering-engine-canvas-vs-dom.md
 │   │   ├── ADR-003-state-serialization-and-sharing.md
@@ -157,7 +157,7 @@ countdown-lockscreen-challenge/
 │   ├── unit/                          # Unit tests
 │   └── integration/                   # Integration tests
 ├── .gitignore                         # Level 2.2 strict doc exclusions
-├── VERSION                            # Single source of truth version string (1.8.0)
+├── VERSION                            # Single source of truth version string (2.0.0)
 ├── CHANGELOG.md                       # Keep a Changelog release history
 ├── CLAUDE.md                          # Claude Code developer instructions
 └── README.md                          # Master project playbook

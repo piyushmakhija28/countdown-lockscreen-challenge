@@ -5,6 +5,42 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.0] - 2026-11-23
+
+### Added
+- **Formal Architecture Decision Records ADR-011 and ADR-012 (`docs/06-adr/`):**
+  - Authored `ADR-011-cross-tab-state-synchronization.md` in MADR 3.0 format establishing native `BroadcastChannel('countdown_lockscreen_sync')` with UUID cycle filter (`senderId`) and schema validation (`FR-23`, `INV-017`).
+  - Authored `ADR-012-web-locks-single-instance-alarm-mutex.md` in MADR 3.0 format establishing non-blocking single-instance victory audio playback arbitration via `navigator.locks.request('countdown_victory_alarm_lock', { ifAvailable: true })` (`FR-24`, `INV-016`).
+  - Expanded total ADR suite from 10 to 12 authoritative decision records.
+- **Rule 45 Draw.io Full Parity & Generic Placeholder Elimination (`drawio/`):**
+  - Converted and regenerated all 11 generic template diagrams (`activity`, `communication`, `component`, `composite`, `deployment`, `interaction`, `object`, `package`, `sequence`, `state`, `usecase`) into 100% authentic, domain-specific Draw.io XML derived directly from Mermaid source models.
+  - Achieved zero generic placeholder tokens across all 13 Draw.io files, fulfilling Rule 45 lifecycle parity.
+- **UML Model Synchronization (`uml/`):**
+  - Updated `uml/component_diagram.md`: added `ResilientStorageService` and `LifecycleScope` to `CoreEngineLayer`, and `WebLocksMutex` and `BroadcastChannel` to `SensoryLayer`.
+  - Updated `uml/package_diagram.md`: added `ResilientStorageService.js` to `ServicesLayer`.
+  - Updated `uml/class_diagram.md`: added `#syncChannel: BroadcastChannel` and `enableCrossTabSync()` to `StateStore`; added `playVictoryChimeWithLock()` to `AudioChimeService`.
+- **Cross-Specification Architecture Hardening:**
+  - Expanded `DOC-00-PROBLEM-STATEMENT` Section 2 to 17 System Invariants by codifying `INV-017` (Multi-Tab Eventual Consistency & Echo Shield).
+  - Added Section 2.3.6 (Multi-Tab Synchronization & Victory Alarm Mutex Subsystem) to `DOC-02-HLD` with dedicated component architecture diagram.
+  - Added Sections 6 and 7 to `DOC-03-API-CONTRACT` specifying `BroadcastChannel` message schemas and `Web Locks API` invocation contracts.
+  - Added State 7 (Cross-Tab External Synchronization Pulse) to `DOC-UI-01` Section 6.
+  - Added Section 7 (Multi-Tab Sync & Alarm Mutex FSM) to `DOC-LLD-03`.
+  - Added Section 4 (Multi-Tab Distributed Concurrency & Web Locks Mutex) to `DOC-LLD-04`.
+  - Added Section 1.9 (Mutex / Concurrency Lock Pattern) to `DOC-LLD-05` and Module 1.7 to `DOC-LLD-11`.
+  - Added `BroadcastChannelSyncError` and `LockAcquisitionTimeoutError` to `DOC-LLD-06`.
+  - Added STRIDE threats `T-11` and `D-12` to `DOC-SEC-01`.
+  - Added multi-tab bulkheads to `DOC-RES-01` and Section 4 acquisition timeout policy to `DOC-RES-02`.
+  - Added telemetry event codes (`CROSS_TAB_SYNC_DISPATCHED`, `CROSS_TAB_SYNC_RECEIVED`, `ALARM_LOCK_ACQUIRED`, `ALARM_LOCK_CONTENTION_SUPPRESSED`) to `DOC-OBS-01`.
+  - Added Stage 3 ADR and Draw.io parity gates to `DOC-DEVOPS-02`.
+  - Updated `DOC-MGT-03` Traceability Matrix Tables 3 & 4 mapping ADR-011 and ADR-012 to Pillars P-07 and P-09.
+- **Physical Submission Package Mockup Asset (`assets/`):**
+  - Programmatically synthesized the official $1170 	imes 2532\text{px}$ flagship lock screen wallpaper mockup in `assets/cover-showcase-iphone16pro-mockup.png` following exact specs in `DOC-UI-01`, `DOC-UI-02`, and `DOC-LLD-09`.
+
+### Changed
+- **Version String Unification (`v2.0.0`):**
+  - Resolved all outdated cache key and release strings across `DOC-07` Q14, `ADR-007`, `ADR-008`, `DOC-09`, `DOC-DEVOPS-01`, `DOC-LLD-07`, and `DOC-LLD-10` to `v2.0.0`.
+  - Updated `VERSION` to `2.0.0` as single source of truth semver string.
+
 ## [1.9.0] - 2026-11-23
 
 ### Added

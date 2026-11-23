@@ -75,3 +75,21 @@ Where:
   1. Decompression of URL payloads is bound by a strict $32\text{ KB}$ ceiling, rejecting decompression bomb payloads.
   2. Canvas allocations are constrained by `AdaptiveBufferAllocator`, guaranteeing that total buffer area never exceeds $16,777,216\text{ pixels}$ ($2^{24}$) and maximum linear dimension never exceeds $4096\text{px}$ on memory-constrained devices.
   3. WebKit `history.replaceState` 100-call quota DoS is mitigated via `TokenBucketHistoryGuard` enforcing a 30-token capacity with 2 tokens/second refill rate, combined with immediate synchronous `sessionStorage` micro-persistence.
+
+
+---
+
+## 7. STRIDE Expansion: Multi-Tab IPC & Web Locks Threat Mitigations
+
+```
++-----------------------------------------------------------------------------------------------------------------+
+|                                 MULTI-TAB IPC & CONCURRENCY THREAT MODEL                                        |
++----+-------------------+-----------------------+---------------------------------------+------------------------+
+| #  | STRIDE Category   | Threat Description    | Attack Vector / Impact                | Architectural Defense  |
++----+-------------------+-----------------------+---------------------------------------+------------------------+
+|T-11| Tampering         | Cross-Tab State Flood | Malformed payload injected via IPC    | Strict CRC32 checksum, |
+|    |                   | & Infinite Echo Storm | triggers cyclic re-broadcast storm.   | senderId UUID filter.  |
+|D-12| Denial of Service | Victory Alarm Lock    | Sibling tab hangs holding Web Lock,   | 500ms acquisition limit|
+|    |                   | Squatting / Deadlock  | permanently muting user victory alarm.| + auto OS release.     |
++----+-------------------+-----------------------+---------------------------------------+------------------------+
+```

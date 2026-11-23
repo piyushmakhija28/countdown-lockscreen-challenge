@@ -138,3 +138,8 @@ When generating high-resolution wallpapers on mobile devices with constrained he
 1. **Pre-Allocation Heap Check:** If `performance.memory?.usedJSHeapSize` exceeds $45\text{ MB}$, the rasterizer automatically downgrades supersampling from $2\times$ to $1\times$, dropping buffer memory from $47.4\text{ MB}$ to $11.8\text{ MB}$.
 2. **Context Loss Recovery:** Listens for `canvas.addEventListener('contextlost')`, immediately tearing down textures, invoking `event.preventDefault()`, and recreating the 2D surface.
 3. **Sensory Isolation:** Audio and haptic exceptions are caught internally, ensuring that an unsupported `AudioContext` or disabled `navigator.vibrate` never halts the particle celebration engine.
+
+
+## 4. Multi-Tab IPC & Web Locks Bulkhead Guarantees
+1. **BroadcastChannel Isolation:** A corrupted payload or closed port on `BroadcastChannel` is caught internally; the local store continues running unhindered.
+2. **Web Locks Mutex Fallback:** If `navigator.locks` throws a `SecurityError` (e.g. in sandboxed iframes), the audio engine falls back safely to immediate local chime synthesis.

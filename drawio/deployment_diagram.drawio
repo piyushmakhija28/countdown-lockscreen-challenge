@@ -5,31 +5,46 @@
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-    <mxCell id="2" value="&amp;lt;&amp;lt;server&amp;gt;&amp;gt;&amp;#xa;Web Server" style="shape=cube;html=1;whiteSpace=wrap;fontStyle=1;perimeter=cubePerimeter;fillColor=#FFE6CC;strokeColor=#D79B00;strokeWidth=2;" vertex="1" parent="1">
-      <mxGeometry x="40" y="40" width="240" height="156" as="geometry" />
+    <mxCell id="2" value="&amp;lt;&amp;lt;server&amp;gt;&amp;gt;&amp;#xa;GitHub Pages Fastly Edge CDN" style="shape=cube;html=1;whiteSpace=wrap;fontStyle=1;perimeter=cubePerimeter;fillColor=#FFE6CC;strokeColor=#D79B00;strokeWidth=2;" vertex="1" parent="1">
+      <mxGeometry x="40" y="40" width="240" height="270" as="geometry" />
     </mxCell>
-    <mxCell id="3" value="nginx:80" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;" vertex="1" parent="2">
+    <mxCell id="3" value="index.html" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;" vertex="1" parent="2">
       <mxGeometry x="10" y="60" width="220" height="32" as="geometry" />
     </mxCell>
-    <mxCell id="4" value="Frontend App" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;" vertex="1" parent="2">
+    <mxCell id="4" value="tokens.css" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;" vertex="1" parent="2">
       <mxGeometry x="10" y="98" width="220" height="32" as="geometry" />
     </mxCell>
-    <mxCell id="5" value="&amp;lt;&amp;lt;server&amp;gt;&amp;gt;&amp;#xa;Application Server" style="shape=cube;html=1;whiteSpace=wrap;fontStyle=1;perimeter=cubePerimeter;fillColor=#FFE6CC;strokeColor=#D79B00;strokeWidth=2;" vertex="1" parent="1">
-      <mxGeometry x="360" y="40" width="240" height="156" as="geometry" />
+    <mxCell id="5" value="glassmorphism.css" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;" vertex="1" parent="2">
+      <mxGeometry x="10" y="136" width="220" height="32" as="geometry" />
     </mxCell>
-    <mxCell id="6" value="Python API" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;" vertex="1" parent="5">
+    <mxCell id="6" value="sw.js" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;" vertex="1" parent="2">
+      <mxGeometry x="10" y="174" width="220" height="32" as="geometry" />
+    </mxCell>
+    <mxCell id="7" value="manifest.json" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;" vertex="1" parent="2">
+      <mxGeometry x="10" y="212" width="220" height="32" as="geometry" />
+    </mxCell>
+    <mxCell id="8" value="&amp;lt;&amp;lt;device&amp;gt;&amp;gt;&amp;#xa;Client Browser Runtime" style="shape=cube;html=1;whiteSpace=wrap;fontStyle=1;perimeter=cubePerimeter;fillColor=#FFE6CC;strokeColor=#D79B00;strokeWidth=2;" vertex="1" parent="1">
+      <mxGeometry x="360" y="40" width="240" height="232" as="geometry" />
+    </mxCell>
+    <mxCell id="9" value="Main UI Thread (60Hz RAF)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;" vertex="1" parent="8">
       <mxGeometry x="10" y="60" width="220" height="32" as="geometry" />
     </mxCell>
-    <mxCell id="7" value="Worker Process" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;" vertex="1" parent="5">
+    <mxCell id="10" value="Unthrottled Worker (1Hz)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;" vertex="1" parent="8">
       <mxGeometry x="10" y="98" width="220" height="32" as="geometry" />
     </mxCell>
-    <mxCell id="8" value="&amp;lt;&amp;lt;database&amp;gt;&amp;gt;&amp;#xa;Database Server" style="shape=cube;html=1;whiteSpace=wrap;perimeter=cubePerimeter;fillColor=#DAE8FC;strokeColor=#6C8EBF;strokeWidth=2;" vertex="1" parent="1">
+    <mxCell id="11" value="IndexedDB &amp; LocalStorage" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;" vertex="1" parent="8">
+      <mxGeometry x="10" y="136" width="220" height="32" as="geometry" />
+    </mxCell>
+    <mxCell id="12" value="Web Audio Context" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;" vertex="1" parent="8">
+      <mxGeometry x="10" y="174" width="220" height="32" as="geometry" />
+    </mxCell>
+    <mxCell id="13" value="&amp;lt;&amp;lt;cloud&amp;gt;&amp;gt;&amp;#xa;Google Cloud AI Platform" style="shape=cube;html=1;whiteSpace=wrap;fontStyle=1;perimeter=cubePerimeter;fillColor=#FFE6CC;strokeColor=#D79B00;strokeWidth=2;" vertex="1" parent="1">
       <mxGeometry x="680" y="40" width="240" height="156" as="geometry" />
     </mxCell>
-    <mxCell id="9" value="PostgreSQL:5432" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;" vertex="1" parent="8">
+    <mxCell id="14" value="Gemini 3.8 Flash REST Endpoint" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;" vertex="1" parent="13">
       <mxGeometry x="10" y="60" width="220" height="32" as="geometry" />
     </mxCell>
-    <mxCell id="10" value="Redis:6379" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;" vertex="1" parent="8">
+    <mxCell id="15" value="Safety &amp; Harm Filters" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;" vertex="1" parent="13">
       <mxGeometry x="10" y="98" width="220" height="32" as="geometry" />
     </mxCell>
       </root>

@@ -5,28 +5,94 @@
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-    <mxCell id="2" value="Client" style="shape=mxgraph.uml.lifeline;align=center;startSize=40;strokeColor=#000000;strokeWidth=2;fillColor=#FFFFFF;html=1;resizable=0;" vertex="1" parent="1">
-      <mxGeometry x="60" y="20" width="140" height="360" as="geometry" />
+    <mxCell id="2" value="User" style="shape=mxgraph.uml.lifeline;align=center;startSize=40;strokeColor=#000000;strokeWidth=2;fillColor=#FFFFFF;html=1;resizable=0;" vertex="1" parent="1">
+      <mxGeometry x="60" y="20" width="140" height="960" as="geometry" />
     </mxCell>
-    <mxCell id="3" value="Service" style="shape=mxgraph.uml.lifeline;align=center;startSize=40;strokeColor=#000000;strokeWidth=2;fillColor=#FFFFFF;html=1;resizable=0;" vertex="1" parent="1">
-      <mxGeometry x="280" y="20" width="140" height="360" as="geometry" />
+    <mxCell id="3" value="CountdownApp" style="shape=mxgraph.uml.lifeline;align=center;startSize=40;strokeColor=#000000;strokeWidth=2;fillColor=#FFFFFF;html=1;resizable=0;" vertex="1" parent="1">
+      <mxGeometry x="280" y="20" width="140" height="960" as="geometry" />
     </mxCell>
-    <mxCell id="4" value="Repository" style="shape=mxgraph.uml.lifeline;align=center;startSize=40;strokeColor=#000000;strokeWidth=2;fillColor=#FFFFFF;html=1;resizable=0;" vertex="1" parent="1">
-      <mxGeometry x="500" y="20" width="140" height="360" as="geometry" />
+    <mxCell id="4" value="InputSanitizer" style="shape=mxgraph.uml.lifeline;align=center;startSize=40;strokeColor=#000000;strokeWidth=2;fillColor=#FFFFFF;html=1;resizable=0;" vertex="1" parent="1">
+      <mxGeometry x="500" y="20" width="140" height="960" as="geometry" />
     </mxCell>
-    <mxCell id="5" value="Database" style="shape=mxgraph.uml.lifeline;align=center;startSize=40;strokeColor=#000000;strokeWidth=2;fillColor=#FFFFFF;html=1;resizable=0;" vertex="1" parent="1">
-      <mxGeometry x="720" y="20" width="140" height="360" as="geometry" />
+    <mxCell id="5" value="GeminiAiClient" style="shape=mxgraph.uml.lifeline;align=center;startSize=40;strokeColor=#000000;strokeWidth=2;fillColor=#FFFFFF;html=1;resizable=0;" vertex="1" parent="1">
+      <mxGeometry x="720" y="20" width="140" height="960" as="geometry" />
     </mxCell>
-    <mxCell id="6" value="request()" style="endArrow=block;endFill=1;html=1;strokeColor=#000000;strokeWidth=2;" edge="1" parent="1">
+    <mxCell id="6" value="StateStore" style="shape=mxgraph.uml.lifeline;align=center;startSize=40;strokeColor=#000000;strokeWidth=2;fillColor=#FFFFFF;html=1;resizable=0;" vertex="1" parent="1">
+      <mxGeometry x="940" y="20" width="140" height="960" as="geometry" />
+    </mxCell>
+    <mxCell id="7" value="BroadcastChannel" style="shape=mxgraph.uml.lifeline;align=center;startSize=40;strokeColor=#000000;strokeWidth=2;fillColor=#FFFFFF;html=1;resizable=0;" vertex="1" parent="1">
+      <mxGeometry x="1160" y="20" width="140" height="960" as="geometry" />
+    </mxCell>
+    <mxCell id="8" value="DualClockTimeEngine" style="shape=mxgraph.uml.lifeline;align=center;startSize=40;strokeColor=#000000;strokeWidth=2;fillColor=#FFFFFF;html=1;resizable=0;" vertex="1" parent="1">
+      <mxGeometry x="1380" y="20" width="140" height="960" as="geometry" />
+    </mxCell>
+    <mxCell id="9" value="WebLocksMutex" style="shape=mxgraph.uml.lifeline;align=center;startSize=40;strokeColor=#000000;strokeWidth=2;fillColor=#FFFFFF;html=1;resizable=0;" vertex="1" parent="1">
+      <mxGeometry x="1600" y="20" width="140" height="960" as="geometry" />
+    </mxCell>
+    <mxCell id="10" value="submitGoal(title, date)" style="endArrow=block;endFill=1;html=1;strokeColor=#000000;strokeWidth=2;" edge="1" parent="1">
       <mxGeometry relative="1" as="geometry">
         <mxPoint x="130" y="100" as="sourcePoint" />
         <mxPoint x="350" y="100" as="targetPoint" />
       </mxGeometry>
     </mxCell>
-    <mxCell id="7" value="response()" style="dashed=1;endArrow=open;html=1;strokeColor=#000000;strokeWidth=1;" edge="1" parent="1">
+    <mxCell id="11" value="sanitizeTitle(rawTitle)" style="endArrow=block;endFill=1;html=1;strokeColor=#000000;strokeWidth=2;" edge="1" parent="1">
       <mxGeometry relative="1" as="geometry">
-        <mxPoint x="790" y="160" as="sourcePoint" />
-        <mxPoint x="130" y="160" as="targetPoint" />
+        <mxPoint x="350" y="160" as="sourcePoint" />
+        <mxPoint x="570" y="160" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="12" value="decomposeGoal(cleanTitle, date)" style="endArrow=block;endFill=1;html=1;strokeColor=#000000;strokeWidth=2;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="350" y="220" as="sourcePoint" />
+        <mxPoint x="790" y="220" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="13" value="return structuredMilestones" style="endArrow=block;endFill=1;html=1;strokeColor=#000000;strokeWidth=2;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="790" y="280" as="sourcePoint" />
+        <mxPoint x="350" y="280" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="14" value="dispatch(SET_PLAN)" style="endArrow=block;endFill=1;html=1;strokeColor=#000000;strokeWidth=2;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="350" y="340" as="sourcePoint" />
+        <mxPoint x="1010" y="340" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="15" value="postMessage(syncPayload)" style="endArrow=block;endFill=1;html=1;strokeColor=#000000;strokeWidth=2;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="1010" y="400" as="sourcePoint" />
+        <mxPoint x="1230" y="400" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="16" value="startTicker(deadline)" style="endArrow=block;endFill=1;html=1;strokeColor=#000000;strokeWidth=2;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="1010" y="460" as="sourcePoint" />
+        <mxPoint x="1450" y="460" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="17" value="onTick(remaining)" style="endArrow=block;endFill=1;html=1;strokeColor=#000000;strokeWidth=2;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="1450" y="520" as="sourcePoint" />
+        <mxPoint x="350" y="520" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="18" value="dispatch(TIMER_EXPIRED)" style="endArrow=block;endFill=1;html=1;strokeColor=#000000;strokeWidth=2;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="1450" y="580" as="sourcePoint" />
+        <mxPoint x="1010" y="580" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="19" value="request(countdown_victory_alarm_lock)" style="endArrow=block;endFill=1;html=1;strokeColor=#000000;strokeWidth=2;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="1010" y="640" as="sourcePoint" />
+        <mxPoint x="1670" y="640" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="20" value="clickDownloadWallpaper()" style="endArrow=block;endFill=1;html=1;strokeColor=#000000;strokeWidth=2;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="130" y="760" as="sourcePoint" />
+        <mxPoint x="350" y="760" as="targetPoint" />
       </mxGeometry>
     </mxCell>
       </root>

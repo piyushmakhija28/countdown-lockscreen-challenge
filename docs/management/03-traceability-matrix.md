@@ -88,6 +88,8 @@
 | **ADR-008**| Cache-First PWA Topology        | 100% offline edge resilience      | `public/sw.js`                      |
 | **ADR-009**| Autoplay-Primed Web Audio Chime | Zero asset overhead, no rejection | `js/services/AudioChimeService.js`  |
 | **ADR-010**| Token Bucket History Limiter    | WebKit 100-call quota immunity    | `js/core/TokenBucketHistoryGuard.js`|
+| **ADR-011**| Cross-Tab State Synchronization | Native same-origin broadcast sync | `js/core/StateStore.js`              |
+| **ADR-012**| Single-Instance Alarm Mutex     | Non-blocking victory audio lock   | `js/services/AudioChimeService.js`   |
 +---------+-----------------------------------+-----------------------------------+-------------------------------------+
 ```
 
@@ -133,9 +135,9 @@
 | **P-04**| Safe-Zone Ergonomics & Tri-Modal  | `ADR-002`          | `FR-09`, `FR-10`, `FR-20` | `DOC-UI-02`, `DOC-09` |
 | **P-05**| DualClock Chronometry Engine      | `ADR-007`          | `FR-05`, `FR-06`   | `DOC-LLD-10`, `DOC-09`|
 | **P-06**| Gemini 3.8 Flash Backward Plan    | `ADR-001`          | `FR-02`, `FR-03`, `FR-04` | `DOC-03`, `DOC-09` |
-| **P-07**| Procedural Web Audio & Haptics    | `ADR-009`          | `FR-16`, `FR-17`, `FR-24`| `DOC-RES-01`, `DOC-09`|
+| **P-07**| Procedural Web Audio & Haptics    | `ADR-009`, `ADR-012`| `FR-16`, `FR-17`, `FR-24`| `DOC-RES-01`, `DOC-09`|
 | **P-08**| Float32Array Confetti Physics     | `ADR-002`          | `FR-21`            | `DOC-LLD-04`, `DOC-09`|
-| **P-09**| TokenBucket History & State Codec | `ADR-003`, `ADR-010`| `FR-14`, `FR-18`, `FR-23`| `DOC-SEC-04`, `DOC-09`|
+| **P-09**| TokenBucket History & State Codec | `ADR-003`, `ADR-010`, `ADR-011`| `FR-14`, `FR-18`, `FR-23`| `DOC-SEC-04`, `DOC-09`|
 | **P-10**| Zero-PII Security & PWA Offline   | `ADR-006`, `ADR-008`| `FR-19`, `NFR-06`, `NFR-11`| `DOC-SEC-02`, `DOC-09`|
 +---------+-----------------------------------+--------------------+--------------------+-----------------------+
 ```

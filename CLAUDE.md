@@ -16,14 +16,14 @@ countdown-lockscreen-challenge/
 ├── CLAUDE.md                          # Developer instructions & context
 ├── README.md                          # Main documentation & challenge playbook
 ├── drawio/                            # The 13 Canonical Draw.io XML Diagrams (Rule 45 Parity)
-├── docs/                              # Level 2.2 Deep Architecture & Governance (54 Specs)
+├── docs/                              # Level 2.2 Deep Architecture & Governance (56 Specs)
 │   ├── 00-problem-statement.md        # Problem Statement, Invariants & Ground Truth
 │   ├── 01-prd.md                      # PRD, User Personas & Journey Maps
 │   ├── 02-hld.md                      # High-Level Design, C4 Models & Dual Engine
 │   ├── 03-api-contract.md             # Gemini 3.8 Flash Schema, URL Codec & APIs
 │   ├── 04-competition-and-platform-research.md # 7-Page PDF Teardown & Rubric Math
 │   ├── 05-srs.md                      # Authoritative Software Requirements Specification
-│   ├── 06-adr/                        # Architecture Decision Records (ADR-001 to ADR-010)
+│   ├── 06-adr/                        # Architecture Decision Records (ADR-001 to ADR-012)
 │   ├── 07-architecture-tradeoffs-and-faq.md # Tradeoff Matrices & Judge FAQ
 │   ├── 08-handshake-submission-package.md # Official Contest Submission Package
 │   ├── competition-rules-summary.md   # Official Contest Rules Teardown
@@ -44,7 +44,7 @@ countdown-lockscreen-challenge/
 ```
 
 ## Development Guidelines
-- **Strict Level 2.2 Governance:** Root directory strictly contains only 5 project management files: `README.md`, `CLAUDE.md`, `VERSION`, `CHANGELOG.md`, and `.gitignore`. All 54 architectural, functional, and requirement specifications reside strictly in `docs/`, all 13 Mermaid diagrams in `uml/`, and all 13 XML diagrams in `drawio/` to preserve a clean single source of truth.
+- **Strict Level 2.2 Governance:** Root directory strictly contains only 5 project management files: `README.md`, `CLAUDE.md`, `VERSION`, `CHANGELOG.md`, and `.gitignore`. All 56 architectural, functional, and requirement specifications reside strictly in `docs/`, all 13 Mermaid diagrams in `uml/`, and all 13 XML diagrams in `drawio/` to preserve a clean single source of truth.
 - **Sprint Phasing Status:** Sprint 1 (Enterprise Architecture & Level 2.2 Documentation Governance Suite) is 100% complete and approved. `src/` represents the upcoming Sprint 2 target implementation delivery blueprint.
 - **Level 2.2 Docstrings-Only:** Every public function and class must include contract docstrings specifying inputs, outputs, errors, and invariants. Redundant inline commentary narrating trivial statements is strictly banned.
 - **Ergonomics First:** Every visual design must respect phone lock screen constraints: top 25-30% reserved for system clock/date/widgets, middle 50% for countdown & milestones, bottom 10-15% for system indicators.

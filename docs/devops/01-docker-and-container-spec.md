@@ -38,7 +38,7 @@ FROM nginx:1.27-alpine AS production
 LABEL maintainer="Piyush Makhija <contact@piyushmakhija.dev>"
 LABEL org.opencontainers.image.title="Countdown Lock Screen Challenge"
 LABEL org.opencontainers.image.description="Handshake AI Skills Studio X Google Countdown Lock Screen & Wallpaper Generator"
-LABEL org.opencontainers.image.version="1.5.0"
+LABEL org.opencontainers.image.version="2.0.0"
 
 # Remove default nginx static welcome pages
 RUN rm -rf /usr/share/nginx/html/*

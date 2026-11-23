@@ -8,46 +8,106 @@
     <mxCell id="2" value="" style="ellipse;html=1;strokeColor=#000000;fillColor=#000000;" vertex="1" parent="1">
       <mxGeometry x="405" y="30" width="30" height="30" as="geometry" />
     </mxCell>
-    <mxCell id="3" value="Receive Request" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1D5E7;strokeColor=#9673A6;strokeWidth=2;" vertex="1" parent="1">
+    <mxCell id="3" value="Enter Goal &amp; Deadline" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1D5E7;strokeColor=#9673A6;strokeWidth=2;" vertex="1" parent="1">
       <mxGeometry x="320" y="100" width="200" height="50" as="geometry" />
     </mxCell>
     <mxCell id="4" value="" style="endArrow=classic;html=1;strokeColor=#000000;strokeWidth=2;edgeStyle=orthogonalEdgeStyle;" edge="1" source="2" target="3" parent="1">
       <mxGeometry relative="1" as="geometry" />
     </mxCell>
-    <mxCell id="5" value="Validate Input" style="rhombus;html=1;strokeColor=#000000;strokeWidth=2;fillColor=#FFFFFF;perimeter=rhombusPerimeter;whiteSpace=wrap;" vertex="1" parent="1">
+    <mxCell id="5" value="Validate Title NFKC &amp; Future Time" style="rhombus;html=1;strokeColor=#000000;strokeWidth=2;fillColor=#FFFFFF;perimeter=rhombusPerimeter;whiteSpace=wrap;" vertex="1" parent="1">
       <mxGeometry x="380" y="190" width="80" height="80" as="geometry" />
     </mxCell>
     <mxCell id="6" value="" style="endArrow=classic;html=1;strokeColor=#000000;strokeWidth=2;edgeStyle=orthogonalEdgeStyle;" edge="1" source="3" target="5" parent="1">
       <mxGeometry relative="1" as="geometry" />
     </mxCell>
-    <mxCell id="7" value="[yes] Input ok" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1D5E7;strokeColor=#9673A6;strokeWidth=2;" vertex="1" parent="1">
+    <mxCell id="7" value="[yes] Time ok" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1D5E7;strokeColor=#9673A6;strokeWidth=2;" vertex="1" parent="1">
       <mxGeometry x="320" y="310" width="200" height="50" as="geometry" />
     </mxCell>
     <mxCell id="8" value="[yes]" style="endArrow=classic;html=1;strokeColor=#000000;strokeWidth=2;edgeStyle=orthogonalEdgeStyle;" edge="1" source="5" target="7" parent="1">
       <mxGeometry relative="1" as="geometry" />
     </mxCell>
-    <mxCell id="9" value="Process Business Logic" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1D5E7;strokeColor=#9673A6;strokeWidth=2;" vertex="1" parent="1">
+    <mxCell id="9" value="Trigger Gemini 3.8 Flash Backward Planning" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1D5E7;strokeColor=#9673A6;strokeWidth=2;" vertex="1" parent="1">
       <mxGeometry x="320" y="400" width="200" height="50" as="geometry" />
     </mxCell>
     <mxCell id="10" value="" style="endArrow=classic;html=1;strokeColor=#000000;strokeWidth=2;edgeStyle=orthogonalEdgeStyle;" edge="1" source="7" target="9" parent="1">
       <mxGeometry relative="1" as="geometry" />
     </mxCell>
-    <mxCell id="11" value="Persist to DB" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1D5E7;strokeColor=#9673A6;strokeWidth=2;" vertex="1" parent="1">
-      <mxGeometry x="320" y="490" width="200" height="50" as="geometry" />
+    <mxCell id="11" value="API Check: 200 OK within 4000ms?" style="rhombus;html=1;strokeColor=#000000;strokeWidth=2;fillColor=#FFFFFF;perimeter=rhombusPerimeter;whiteSpace=wrap;" vertex="1" parent="1">
+      <mxGeometry x="380" y="490" width="80" height="80" as="geometry" />
     </mxCell>
     <mxCell id="12" value="" style="endArrow=classic;html=1;strokeColor=#000000;strokeWidth=2;edgeStyle=orthogonalEdgeStyle;" edge="1" source="9" target="11" parent="1">
       <mxGeometry relative="1" as="geometry" />
     </mxCell>
-    <mxCell id="13" value="Send Response" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1D5E7;strokeColor=#9673A6;strokeWidth=2;" vertex="1" parent="1">
-      <mxGeometry x="320" y="580" width="200" height="50" as="geometry" />
+    <mxCell id="13" value="[yes] 4000ms? ok" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1D5E7;strokeColor=#9673A6;strokeWidth=2;" vertex="1" parent="1">
+      <mxGeometry x="320" y="610" width="200" height="50" as="geometry" />
     </mxCell>
-    <mxCell id="14" value="" style="endArrow=classic;html=1;strokeColor=#000000;strokeWidth=2;edgeStyle=orthogonalEdgeStyle;" edge="1" source="11" target="13" parent="1">
+    <mxCell id="14" value="[yes]" style="endArrow=classic;html=1;strokeColor=#000000;strokeWidth=2;edgeStyle=orthogonalEdgeStyle;" edge="1" source="11" target="13" parent="1">
       <mxGeometry relative="1" as="geometry" />
     </mxCell>
-    <mxCell id="15" value="" style="shape=doubleEllipse;html=1;strokeColor=#000000;fillColor=#000000;" vertex="1" parent="1">
-      <mxGeometry x="405" y="670" width="30" height="30" as="geometry" />
+    <mxCell id="15" value="Parse &amp; Validate JSON Milestones" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1D5E7;strokeColor=#9673A6;strokeWidth=2;" vertex="1" parent="1">
+      <mxGeometry x="320" y="700" width="200" height="50" as="geometry" />
     </mxCell>
     <mxCell id="16" value="" style="endArrow=classic;html=1;strokeColor=#000000;strokeWidth=2;edgeStyle=orthogonalEdgeStyle;" edge="1" source="13" target="15" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="17" value="Fallback: Heuristic Retrograde Sprints" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1D5E7;strokeColor=#9673A6;strokeWidth=2;" vertex="1" parent="1">
+      <mxGeometry x="320" y="790" width="200" height="50" as="geometry" />
+    </mxCell>
+    <mxCell id="18" value="" style="endArrow=classic;html=1;strokeColor=#000000;strokeWidth=2;edgeStyle=orthogonalEdgeStyle;" edge="1" source="15" target="17" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="19" value="Dispatch State to StateStore" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1D5E7;strokeColor=#9673A6;strokeWidth=2;" vertex="1" parent="1">
+      <mxGeometry x="320" y="880" width="200" height="50" as="geometry" />
+    </mxCell>
+    <mxCell id="20" value="" style="endArrow=classic;html=1;strokeColor=#000000;strokeWidth=2;edgeStyle=orthogonalEdgeStyle;" edge="1" source="17" target="19" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="21" value="Broadcast State via BroadcastChannel" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1D5E7;strokeColor=#9673A6;strokeWidth=2;" vertex="1" parent="1">
+      <mxGeometry x="320" y="970" width="200" height="50" as="geometry" />
+    </mxCell>
+    <mxCell id="22" value="" style="endArrow=classic;html=1;strokeColor=#000000;strokeWidth=2;edgeStyle=orthogonalEdgeStyle;" edge="1" source="19" target="21" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="23" value="DualClock Hybrid Ticker 60FPS Loop" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1D5E7;strokeColor=#9673A6;strokeWidth=2;" vertex="1" parent="1">
+      <mxGeometry x="320" y="1060" width="200" height="50" as="geometry" />
+    </mxCell>
+    <mxCell id="24" value="" style="endArrow=classic;html=1;strokeColor=#000000;strokeWidth=2;edgeStyle=orthogonalEdgeStyle;" edge="1" source="21" target="23" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="25" value="Timer Expired (Delta &lt;= 0)?" style="rhombus;html=1;strokeColor=#000000;strokeWidth=2;fillColor=#FFFFFF;perimeter=rhombusPerimeter;whiteSpace=wrap;" vertex="1" parent="1">
+      <mxGeometry x="380" y="1150" width="80" height="80" as="geometry" />
+    </mxCell>
+    <mxCell id="26" value="" style="endArrow=classic;html=1;strokeColor=#000000;strokeWidth=2;edgeStyle=orthogonalEdgeStyle;" edge="1" source="23" target="25" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="27" value="[yes] 0)? ok" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1D5E7;strokeColor=#9673A6;strokeWidth=2;" vertex="1" parent="1">
+      <mxGeometry x="320" y="1270" width="200" height="50" as="geometry" />
+    </mxCell>
+    <mxCell id="28" value="[yes]" style="endArrow=classic;html=1;strokeColor=#000000;strokeWidth=2;edgeStyle=orthogonalEdgeStyle;" edge="1" source="25" target="27" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="29" value="Acquire Web Locks Victory Mutex" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1D5E7;strokeColor=#9673A6;strokeWidth=2;" vertex="1" parent="1">
+      <mxGeometry x="320" y="1360" width="200" height="50" as="geometry" />
+    </mxCell>
+    <mxCell id="30" value="" style="endArrow=classic;html=1;strokeColor=#000000;strokeWidth=2;edgeStyle=orthogonalEdgeStyle;" edge="1" source="27" target="29" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="31" value="Single Tab Chime &amp; Confetti Burst" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1D5E7;strokeColor=#9673A6;strokeWidth=2;" vertex="1" parent="1">
+      <mxGeometry x="320" y="1450" width="200" height="50" as="geometry" />
+    </mxCell>
+    <mxCell id="32" value="" style="endArrow=classic;html=1;strokeColor=#000000;strokeWidth=2;edgeStyle=orthogonalEdgeStyle;" edge="1" source="29" target="31" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="33" value="Render &amp; Export 1170x2532 Wallpaper" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1D5E7;strokeColor=#9673A6;strokeWidth=2;" vertex="1" parent="1">
+      <mxGeometry x="320" y="1540" width="200" height="50" as="geometry" />
+    </mxCell>
+    <mxCell id="34" value="" style="endArrow=classic;html=1;strokeColor=#000000;strokeWidth=2;edgeStyle=orthogonalEdgeStyle;" edge="1" source="31" target="33" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="35" value="" style="shape=doubleEllipse;html=1;strokeColor=#000000;fillColor=#000000;" vertex="1" parent="1">
+      <mxGeometry x="405" y="1630" width="30" height="30" as="geometry" />
+    </mxCell>
+    <mxCell id="36" value="" style="endArrow=classic;html=1;strokeColor=#000000;strokeWidth=2;edgeStyle=orthogonalEdgeStyle;" edge="1" source="33" target="35" parent="1">
       <mxGeometry relative="1" as="geometry" />
     </mxCell>
       </root>

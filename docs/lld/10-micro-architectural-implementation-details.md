@@ -416,7 +416,7 @@ To guarantee that the countdown lock screen web application executes flawlessly 
 | 12| **LLD-AI-02: XML Escaping** | escapeXmlEntities() pre-prompt    | `GeminiAiClient.js` & `TC-NEG-14`       |
 | 13| **LLD-ST-01: Safari Incog** | isStorageAvailable() startup probe| `ResilientStorageService.js`            |
 | 14| **LLD-ST-02: Schema Drift** | Tuple Codec + Base64URL padding   | `UrlStateService.js` & `TC-POS-104..105`|
-| 15| **LLD-ST-03: SW HTTP Cache**| Scoped cache key v1.8.0 / v1.9.0  | `sw.js` & `ADR-008` (NFR-11)            |
+| 15| **LLD-ST-03: SW HTTP Cache**| Scoped cache key v2.0.0  | `sw.js` & `ADR-008` (NFR-11)            |
 | 16| **LLD-AU-01: Audio Desync** | Dynamic sample rate silent buffer | `AudioChimeService.js` & `TC-POS-108`   |
 | 17| **LLD-UI-01: DPI CSS Blur** | Synchronized width/style.width    | `src/canvas/` & `TC-POS-09`             |
 | 18| **LLD-FS-01: Safari Download| Web Share API + fallback modal    | `src/canvas/` & `TC-POS-10`             |
