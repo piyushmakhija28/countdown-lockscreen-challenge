@@ -52,15 +52,35 @@ classDiagram
     class StateSerializationError {
         +string rawPayload
     }
+    class AudioAutoplayBlockedError {
+        +string audioState
+    }
+    class HistoryThrottledError {
+        +number callsPerWindow
+    }
+    class ClipboardPermissionError {
+        +string permissionState
+    }
+    class WebShareDismissedError {
+        +boolean userInitiated
+    }
+    class Context2DUnavailableError {
+        +string canvasId
+    }
 
     AppError <|-- ValidationError
     AppError <|-- AiServiceError
     AppError <|-- CanvasRenderError
     CanvasRenderError <|-- CanvasAreaExceededError
+    CanvasRenderError <|-- Context2DUnavailableError
     AppError <|-- FontLoadTimeoutError
     AppError <|-- AsyncAbortedError
     AppError <|-- QuotaExceededError
     AppError <|-- StateSerializationError
+    AppError <|-- AudioAutoplayBlockedError
+    AppError <|-- HistoryThrottledError
+    AppError <|-- ClipboardPermissionError
+    AppError <|-- WebShareDismissedError
 ```
 
 ---
@@ -80,9 +100,14 @@ classDiagram
 | `AiServiceError`      | `ERR_AI_HTTP_429`  | Quota exceeded        | Trips circuit breaker; falls back. |
 | `CanvasRenderError`   | `ERR_CANVAS_OOM`   | Memory allocation fail| Retries at native 1x resolution.   |
 | `CanvasAreaExceeded`  | `ERR_CANVAS_CEIL`  | Area > 16.7M pixels   | Auto-clamps DPR to 2.0x max.       |
-| `FontLoadTimeoutError`| `ERR_FONT_TIMEOUT` | Web font load > 2500ms | Falls back to system sans-serif.   |
+| `Context2DUnavailable`| `ERR_NO_CTX_2D`    | Mobile GPU crash/null | Prompts user to refresh tab.       |
+| `FontLoadTimeoutError`| `ERR_FONT_TIMEOUT` | Web font load > 2500ms| Falls back to system sans-serif.   |
 | `AsyncAbortedError`   | `ERR_ASYNC_ABORT`  | Request superceded    | Silently discards stale response.  |
 | `QuotaExceededError`  | `ERR_STORAGE_FULL` | LocalStorage quota    | Falls back to in-memory transient. |
 | `StateSerialization`  | `ERR_HASH_CORRUPT` | Invalid Base64 payload| Logs warning; loads default state. |
+| `AudioAutoplayBlocked`| `ERR_AUDIO_LOCKED` | No prior gesture      | Arms one-time click/touch listener.|
+| `HistoryThrottled`    | `ERR_HIST_THROTTLE`| > 100 calls in 30s    | Queues state in 300ms leaky bucket.|
+| `ClipboardPermission` | `ERR_CLIP_DENIED`  | Focus-less copy fail  | Falls back to legacy execCommand.  |
+| `WebShareDismissed`   | `ERR_SHARE_ABORT`  | User swiped down sheet| Silently dismissed; no error toast.|
 +-----------------------+--------------------+-----------------------+------------------------------------+
 ```

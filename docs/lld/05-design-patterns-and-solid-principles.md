@@ -30,6 +30,15 @@
 | **Memento**       | Behavioral            | `UrlStateService`     | Captures & restores state     |
 |                   |                       |                       | snapshots into URL Base64.    |
 +-------------------+-----------------------+-----------------------+-------------------------------+
+| **Flyweight**     | Structural            | `TWO_DIGIT_LUT`       | Reuses static 100-string array|
+|                   |                       | `ParticleTrigLUT`     | & pre-computed sin/cos arrays.|
++-------------------+-----------------------+-----------------------+-------------------------------+
+| **Chain of Resp.**| Behavioral            | `SharePipeline`       | Falls through: Web Share API  |
+|                   |                       |                       | -> Anchor Download -> Modal.  |
++-------------------+-----------------------+-----------------------+-------------------------------+
+| **State**         | Behavioral            | `CountdownFSM`        | Encapsulates behaviors for    |
+|                   |                       |                       | IDLE, EXPIRED, MODAL states.  |
++-------------------+-----------------------+-----------------------+-------------------------------+
 ```
 
 ---

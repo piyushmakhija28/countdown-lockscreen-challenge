@@ -50,14 +50,21 @@ countdown-lockscreen-challenge/
 │       │   └── themes.js              # Theme definitions & color tokens
 │       ├── core/
 │       │   ├── TimeEngine.js          # Drift-compensated countdown engine
+│       │   ├── ZeroAllocationTickEngine.js # Pre-allocated GC-free tick engine
 │       │   ├── MilestoneManager.js    # Checkpoint sequencing & progress
-│       │   └── UrlStateService.js     # Base64 URL hash serialization
+│       │   ├── UrlStateService.js     # Base64 URL hash serialization
+│       │   └── HistoryQuotaGuard.js   # 300ms leaky bucket history rate limiter
 │       ├── ai/
 │       │   ├── GeminiClient.js        # Google Gemini 3.8 Flash SDK client
 │       │   └── HeuristicGenerator.js  # Deterministic offline fallback
 │       ├── canvas/
 │       │   ├── CanvasRenderer.js      # 1170x2532 2D rasterizer
+│       │   ├── CanvasTextWrapper.js   # Greedy word-wrapping & font fit engine
+│       │   ├── ParticleEngine.js      # Float32Array zero-allocation celebration physics
 │       │   └── SafeZoneOverlay.js     # Lock screen simulator overlay
+│       ├── services/
+│       │   ├── AudioChimeService.js   # Web Audio procedural sound synthesis
+│       │   └── HapticService.js       # Vibration API tactile patterns
 │       └── app.js                     # Root view controller & event bindings
 ├── tests/                             # Test Suite
 │   ├── unit/                          # TimeEngine, UrlState unit tests
