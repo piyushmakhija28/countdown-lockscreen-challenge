@@ -8,7 +8,7 @@
 **Author:** Piyush Makhija (Lead Systems Architect & Developer)  
 **Reviewer:** Architecture Review Board  
 **Status:** APPROVED  
-**Version:** 2.3.0  
+**Version:** 2.3.1  
 **Detailed Technical Specification:** [docs/05-srs.md](docs/05-srs.md)  
 
 ---
@@ -131,3 +131,16 @@ The following capabilities are deliberately excluded from this release:
 2. **Native Mobile App Store Packaging (App Store / Google Play):** The application is packaged as a standard W3C Progressive Web Application (PWA) with direct image export; native Swift/Kotlin wrapper compilation is out of scope.
 3. **Real-time Multi-User Collaborative Planning:** Goal tracking is designed for personal focus; multi-tenant live document editing is excluded.
 4. **Automated OS Lock Screen Wallpaper API Invocation:** Mobile operating systems (iOS and Android) sandbox background wallpapers from browser web pages; wallpaper installation requires standard 1-click user confirmation via the native share sheet or photo settings.
+
+---
+
+## 6. Change Log
+
+| Date | Version | Task | Change Summary | Status |
+|---|---|---|---|---|
+| 2026-11-20 | 1.0.0 | Initial Specification | Baseline SRS for Countdown Lockscreen Studio | Done |
+| 2026-11-22 | 2.0.0 | Core Architecture Overhaul | Integrated Gemini 3.8 Flash, Safe-Zones, and Canvas 2D | Done |
+| 2026-11-23 | 2.1.0 | P3 Color & Audio Synthesizer | Procedural Web Audio API and Display P3 wide-gamut support | Done |
+| 2026-11-23 | 2.2.0 | Multi-Tab Sync & Mutex | BroadcastChannel state sync and Web Locks single-instance audio | Done |
+| 2026-11-23 | 2.3.0 | Foundational Architectural Hardening | Added FR-25..30, ADR-013..015, and canonical 92-asset alignment | Done |
+| 2026-11-23 | 2.3.1 | Test Triad & Lifecycle Hardening | Added ISO Change Log, TC-POS-21..26, TC-NEG-17..20, TC-EDGE-27..30, LLD FSMs | Done |

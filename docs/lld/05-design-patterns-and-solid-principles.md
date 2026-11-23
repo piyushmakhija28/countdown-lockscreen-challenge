@@ -7,7 +7,7 @@
 **Reviewer:** Architecture Review Board  
 **Status:** APPROVED  
 **Standard:** Level 2.2 Documentation Governance (Gang of Four & SOLID Conformance)  
-**Version:** 2.3.0
+**Version:** 2.3.1
 
 ---
 
@@ -68,6 +68,16 @@
 |                   |                       |                       | preventing stack overflow &   |
 |                   |                       |                       | dropped action metadata.      |
 +-------------------+-----------------------+-----------------------+-------------------------------+
+| **Stage-Chain Pipeline**| Structural/Behav. | `CanvasCompositionPipeline`| Executes 9 ordered offscreen   |
+|                   |                       |                       | rendering stages sequentially. |
++-------------------+-----------------------+-----------------------+-------------------------------+
+| **Strategy**      | Behavioral            | `FontReadinessStrategy`| Toggles between WebFont and    |
+|                   |                       |                       | system monospace fallback.    |
++-------------------+-----------------------+-----------------------+-------------------------------+
+| **Observer/Sync** | Behavioral            | `TriModalSensorySync` | Synchronizes audio, haptic, & |
+|                   |                       |                       | particle physics in < 20ms.   |
++-------------------+-----------------------+-----------------------+-------------------------------+
+
 | **Adapter**       | Structural            | `WorkerTickerAdapter` | Adapts inline Web Worker to   |
 |                   |                       |                       | ITickScheduler for background.|
 +-------------------+-----------------------+-----------------------+-------------------------------+

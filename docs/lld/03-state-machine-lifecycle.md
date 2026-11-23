@@ -7,7 +7,7 @@
 **Reviewer:** Architecture Review Board  
 **Status:** APPROVED  
 **Standard:** Level 2.2 Documentation Governance (Formal Finite State Machine)  
-**Version:** 2.3.0
+**Version:** 2.3.1
 
 ---
 
@@ -202,4 +202,45 @@ stateDiagram-v2
         PLAYING_CHIME --> [*] : AUDIO_COMPLETED (2500ms)
         SUPPRESSED_CHIME --> [*] : SILENT_FALLBACK
     }
+```
+
+---
+
+## 4. Subsystem Finite State Machines
+
+### 4.1 `FontReadinessFSM` (FOIT Barrier Gate)
+
+```mermaid
+stateDiagram-v2
+    [*] --> UNLOADED
+    UNLOADED --> PRELOADING : LOAD_FONTS (Inter, JetBrains Mono)
+    PRELOADING --> READY : FONTS_RESOLVED (Elapsed < 150ms)
+    PRELOADING --> TIMEOUT_FALLBACK : TIMER_EXPIRED (Elapsed >= 150ms)
+    TIMEOUT_FALLBACK --> READY : SYSTEM_FONTS_MOUNTED
+    READY --> [*]
+```
+
+### 4.2 `CanvasWallpaperFSM` (9-Stage Pipeline)
+
+```mermaid
+stateDiagram-v2
+    [*] --> IDLE
+    IDLE --> ALLOCATING_BUFFER : CLICK_EXPORT
+    ALLOCATING_BUFFER --> SAMPLING_SCRIM : BUFFER_READY (Scale Clamped)
+    SAMPLING_SCRIM --> RENDERING_9_STAGES : SCRIM_COMPUTED (Y > 0.35)
+    RENDERING_9_STAGES --> BLOB_GENERATED : CANVAS_TO_BLOB
+    BLOB_GENERATED --> DOWNLOADED_OR_SHARED : FILE_SAVED / WEB_SHARE
+    DOWNLOADED_OR_SHARED --> IDLE : DISPOSE_BUFFER (0x0 Collapsed)
+```
+
+### 4.3 `VictorySensoryFSM` (Tri-Modal Synchronization)
+
+```mermaid
+stateDiagram-v2
+    [*] --> IDLE
+    IDLE --> ACQUIRING_LOCK : TIMER_ZERO
+    ACQUIRING_LOCK --> TRIGGERING_TRIMODAL : LOCK_GRANTED (Web Locks API)
+    ACQUIRING_LOCK --> IDLE : LOCK_CONTENTION_MUTED (Sibling Tab)
+    TRIGGERING_TRIMODAL --> COOLDOWN : SYNTH_COMPLETE (< 20ms Jitter)
+    COOLDOWN --> IDLE : RESET_GOAL
 ```

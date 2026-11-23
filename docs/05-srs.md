@@ -7,7 +7,7 @@
 **Reviewer:** Architecture Review Board  
 **Status:** APPROVED  
 **Standard:** Level 2.2 Documentation Governance (ISO/IEC/IEEE 29148 Standard)  
-**Version:** 2.3.0
+**Version:** 2.3.1
 
 ---
 
@@ -294,4 +294,15 @@ To maintain a zero-infrastructure, client-side serverless architecture:
 - **System Vulnerability Audit:** `docs/lld/08-system-design-vulnerability-audit.md` (`DOC-LLD-08`) covers the exhaustive 100-vulnerability resilience suite across 44 architectural dimensions.
 - **Deep-Dive Design Patterns & Security Architecture:** `docs/lld/11-deep-dive-design-patterns-and-security-architecture.md` (`DOC-LLD-11`) specifies GoF patterns, fixed-timestep game loops, and client-side zero-trust security hardening.
 
+---
 
+## 8. Change Log
+
+| Date | Version | Task | Change Summary | Status |
+|---|---|---|---|---|
+| 2026-11-20 | 1.0.0 | Initial Specification | Baseline SRS for Countdown Lockscreen Studio | Done |
+| 2026-11-22 | 2.0.0 | Core Architecture Overhaul | Integrated Gemini 3.8 Flash, Safe-Zones, and Canvas 2D | Done |
+| 2026-11-23 | 2.1.0 | P3 Color & Audio Synthesizer | Procedural Web Audio API and Display P3 wide-gamut support | Done |
+| 2026-11-23 | 2.2.0 | Multi-Tab Sync & Mutex | BroadcastChannel state sync and Web Locks single-instance audio | Done |
+| 2026-11-23 | 2.3.0 | Foundational Architectural Hardening | Added FR-25..30, ADR-013..015, and canonical 92-asset alignment | Done |
+| 2026-11-23 | 2.3.1 | Test Triad & Lifecycle Hardening | Added ISO Change Log, TC-POS-21..26, TC-NEG-17..20, TC-EDGE-27..30, LLD FSMs | Done |

@@ -7,7 +7,7 @@
 **Reviewer:** Architecture Review Board  
 **Status:** APPROVED  
 **Standard:** Level 2.2 Documentation Governance (Robust Exception Hierarchy)  
-**Version:** 2.3.0
+**Version:** 2.3.1
 
 ---
 
@@ -67,6 +67,9 @@ classDiagram
     }
     class AudioAutoplayBlockedError {
         +string audioState
+    }
+    class HapticUnsupportedError {
+        +string hardwareStatus
     }
     class HistoryThrottledError {
         +number callsPerWindow
@@ -146,3 +149,9 @@ classDiagram
 | `FontLoadError`         | `ERR_FONT_LOAD_FAILED`   | Missing font file 404 | Employs fallback metric scaling. |
 +-------------------------+--------------------------+-----------------------+----------------------------------+
 ```
+
+### 2.14 `HapticUnsupportedError`
+- **Error Code:** `ERR_HAPTIC_BLOCKED` (1401)
+- **Severity:** `LOW`
+- **Trigger:** Browser environment lacks `navigator.vibrate` or hardware permission is denied.
+- **Recovery Policy:** Suppress silently or substitute with visual CSS screen pulse; do not interrupt timer celebration.

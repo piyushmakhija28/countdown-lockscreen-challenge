@@ -7,7 +7,7 @@
 **Reviewer:** Architecture Review Board  
 **Status:** APPROVED  
 **Standard:** Level 2.2 Documentation Governance (3-Tier Testing Pyramid & Coverage Enforcement)  
-**Version:** 2.3.0
+**Version:** 2.3.1
 
 ---
 
@@ -37,8 +37,8 @@ Conforming to `~/.claude/rules/28-test-coverage-enforcement.md`, the testing str
 3. **End-to-End & Visual Canvas Testing Layer (10% of Suite — 10 Scenarios):**
    - **Scope:** Full user journeys in headless Chromium: `CountdownApp` bootstrapping; `CanvasRenderer` rasterization at $1170 \times 2532$; `SafeZoneOverlay` guide bounds; theme switching (Cyber Obsidian, Deep Focus Zen, Aurora Botanical); 1-click PNG blob download; PWA offline cache recovery.
 
-### 1.2 Full Requirements Coverage (FR-01 to FR-24)
-The test suite maps directly to all 24 Functional Requirements (`FR-01` to `FR-24`) and 11 Non-Functional Requirements (`NFR-01` to `NFR-11`), providing 100% bidirectional verification across all concrete application classes and architectural subsystems.
+### 1.2 Full Requirements Coverage (FR-01 to FR-30)
+The test suite maps directly to all 30 Functional Requirements (`FR-01` to `FR-30`) and 11 Non-Functional Requirements (`NFR-01` to `NFR-11`), providing 100% bidirectional verification across all concrete application classes and architectural subsystems.
 
 ---
 
@@ -187,3 +187,30 @@ export function installGlobalTestMocks(): void {
 - **Multi-Tab Isolation:** `MockBroadcastChannel` routes messages strictly to peer instances on the same channel name, reproducing browser event loop semantics.
 - **Mutex Non-Blocking Arbitration:** `MockWebLocks` supports `{ ifAvailable: true }` parameter testing, simulating instantaneous grant or contention suppression without unhandled promise rejections.
 
+// Mock Document FontFaceSet API for Headless Font Preloading Testing
+export class MockFontFaceSet {
+  private loadedFonts = new Set<string>();
+
+  async load(font: string, text?: string): Promise<FontFace[]> {
+    this.loadedFonts.add(font);
+    return [];
+  }
+
+  check(font: string): boolean {
+    return this.loadedFonts.has(font);
+  }
+
+  get ready(): Promise<void> {
+    return Promise.resolve();
+  }
+}
+
+// Mock Navigator Vibration API
+export class MockNavigatorVibrate {
+  public callHistory: (number | number[])[] = [];
+
+  vibrate(pattern: number | number[]): boolean {
+    this.callHistory.push(pattern);
+    return true;
+  }
+}

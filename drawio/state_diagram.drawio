@@ -14,10 +14,10 @@
     <mxCell id="4" value="COUNTING_DOWN" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D5E8D4;strokeColor=#82B366;strokeWidth=2;arcSize=25;" vertex="1" parent="1">
       <mxGeometry x="280" y="100" width="160" height="60" as="geometry" />
     </mxCell>
-    <mxCell id="5" value="CELEBRATION_TRIGGERED" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D5E8D4;strokeColor=#82B366;strokeWidth=2;arcSize=25;" vertex="1" parent="1">
+    <mxCell id="5" value="CELEBRATION_TRIMODAL (Audio+Haptic+Confetti)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D5E8D4;strokeColor=#82B366;strokeWidth=2;arcSize=25;" vertex="1" parent="1">
       <mxGeometry x="520" y="100" width="160" height="60" as="geometry" />
     </mxCell>
-    <mxCell id="6" value="EXPORT_GENERATING" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D5E8D4;strokeColor=#82B366;strokeWidth=2;arcSize=25;" vertex="1" parent="1">
+    <mxCell id="6" value="FONT_PRELOADING &amp; RASTERIZING_9_STAGES" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D5E8D4;strokeColor=#82B366;strokeWidth=2;arcSize=25;" vertex="1" parent="1">
       <mxGeometry x="40" y="240" width="160" height="60" as="geometry" />
     </mxCell>
     <mxCell id="7" value="MODAL_REVEALED" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D5E8D4;strokeColor=#82B366;strokeWidth=2;arcSize=25;" vertex="1" parent="1">
@@ -32,7 +32,7 @@
     <mxCell id="10" value="TIMER_EXPIRED" style="endArrow=classic;html=1;strokeColor=#000000;strokeWidth=2;edgeStyle=orthogonalEdgeStyle;" edge="1" source="4" target="5" parent="1">
       <mxGeometry relative="1" as="geometry" />
     </mxCell>
-    <mxCell id="11" value="DOWNLOAD_CLICKED" style="endArrow=classic;html=1;strokeColor=#000000;strokeWidth=2;edgeStyle=orthogonalEdgeStyle;" edge="1" source="4" target="6" parent="1">
+    <mxCell id="11" value="EXPORT_CLICKED (Font Barrier)" style="endArrow=classic;html=1;strokeColor=#000000;strokeWidth=2;edgeStyle=orthogonalEdgeStyle;" edge="1" source="4" target="6" parent="1">
       <mxGeometry relative="1" as="geometry" />
     </mxCell>
     <mxCell id="12" value="STANDALONE_PWA" style="endArrow=classic;html=1;strokeColor=#000000;strokeWidth=2;edgeStyle=orthogonalEdgeStyle;" edge="1" source="6" target="7" parent="1">

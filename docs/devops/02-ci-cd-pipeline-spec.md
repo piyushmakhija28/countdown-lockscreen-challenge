@@ -7,7 +7,7 @@
 **Reviewer:** Architecture Review Board  
 **Status:** APPROVED  
 **Standard:** Level 2.2 Documentation Governance (Automated GitHub Actions CI/CD)  
-**Version:** 2.3.0
+**Version:** 2.3.1
 
 ---
 
@@ -122,7 +122,7 @@ jobs:
 | **Gate 4: Triad Test Suite**      | Vitest unit, negative, and edge tests   | 100% test pass rate required.           |
 | **Gate 5: Lighthouse CWV**        | Performance $\ge 95$, a11y $= 100$      | Blocks merge if regression occurs.      |
 | **Gate 6: Edge CDN Promotion**    | Fastly Anycast POP auto-invalidation    | Atomic rollback on deployment failure.  |
-| **Gate 7: Architecture & UML**    | Assertion script checking 12 ADRs & 13 Draw.io / Mermaid diagrams | Blocks PR on architecture drift. |
+| **Gate 7: Architecture & UML**    | Assertion script checking 15 ADRs & 13 Draw.io / Mermaid diagrams | Blocks PR on architecture drift. |
 | **Gate 8: Invariant & Triads**    | Automated check of 17 Invariants and 24 FR test triads            | Blocks PR on verification gap.   |
 +-----------------------------------+-----------------------------------------+-----------------------------------------+
 ```

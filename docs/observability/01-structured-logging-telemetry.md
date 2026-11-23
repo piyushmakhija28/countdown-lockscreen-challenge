@@ -7,7 +7,7 @@
 **Reviewer:** Architecture Review Board  
 **Status:** APPROVED  
 **Standard:** Level 2.2 Documentation Governance (Structured JSON Telemetry)  
-**Version:** 2.3.0
+**Version:** 2.3.1
 
 ---
 
@@ -47,7 +47,11 @@ All runtime diagnostic events conform strictly to a validated, structured JSON s
         "ALARM_LOCK_CONTENTION_SUPPRESSED",
         "AI_SAFETY_FILTER_TRIPPED",
         "FONT_PRELOAD_COMPLETED",
-        "PARTICLE_PHYSICS_COMPLETED"
+        "PARTICLE_PHYSICS_COMPLETED",
+        "SCRIM_NORMALIZATION_COMPLETED",
+        "TABULAR_NUMERAL_VERIFIED",
+        "FONT_TIMEOUT_FALLBACK",
+        "CANVAS_DPR_CLAMPED"
       ] 
     },
     "duration_ms": { "type": "number", "minimum": 0 },

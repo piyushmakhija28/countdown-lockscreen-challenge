@@ -7,7 +7,7 @@
 **Reviewer:** Architecture Review Board  
 **Status:** APPROVED  
 **Standard:** Level 2.2 Documentation Governance (Bidirectional Traceability Standard)  
-**Version:** 2.3.0
+**Version:** 2.3.1
 
 ---
 

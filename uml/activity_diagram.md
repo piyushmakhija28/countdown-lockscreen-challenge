@@ -1,4 +1,4 @@
-# Activity Diagram — Countdown Creation & Wallpaper Export
+# Activity Diagram — Countdown Creation & 9-Stage Wallpaper Export
 
 ```mermaid
 flowchart TD
@@ -24,14 +24,18 @@ flowchart TD
     NormalPreview --> SelectTheme
     
     SelectTheme --> ExportAction[Click 'Generate Wallpaper']
-    ExportAction --> AllocBuffer[Allocate 1170x2532 Offscreen Canvas Buffer]
-    AllocBuffer --> DrawBackground[Draw OLED Theme Gradient]
-    DrawBackground --> DrawSafeZone[Reserve Top 28% for Device Clock]
-    DrawSafeZone --> DrawTimer[Render Countdown Numerals & Progress Arc]
-    DrawTimer --> DrawMilestones[Render Milestone Checklist & Badges]
-    DrawMilestones --> DrawAffirmation[Render Daily Motivational Affirmation]
-    DrawAffirmation --> ExportBlob[Generate High-DPI PNG Blob]
-    ExportBlob --> TriggerDownload[Trigger Browser File Download]
+    ExportAction --> FontGate[Font Readiness Barrier: ensureFontsLoaded]
+    FontGate --> AllocBuffer[Allocate 1170x2532 Offscreen Canvas Buffer]
+    AllocBuffer --> Stage1[Stage 1: Base OLED Background Layer]
+    Stage1 --> Stage2[Stage 2: Dynamic Ambient Scrim Normalization]
+    Stage2 --> Stage3[Stage 3: Safe-Zone Geometry Reservation]
+    Stage3 --> Stage4[Stage 4: Milestone Progress Arcs & Ticks]
+    Stage4 --> Stage5[Stage 5: Tabular Numeral Countdown Digits]
+    Stage5 --> Stage6[Stage 6: Milestone Checklist & Badges]
+    Stage6 --> Stage7[Stage 7: Daily Affirmation Typography]
+    Stage7 --> Stage8[Stage 8: Sub-Pixel Sharpening & Anti-Aliasing]
+    Stage8 --> Stage9[Stage 9: Export PNG Blob & Clear Buffer]
+    Stage9 --> TriggerDownload[Trigger Browser File Download / Web Share]
     TriggerDownload --> SetPhone[User Sets as Phone Lock Screen]
     SetPhone --> End([Daily Glance Habit Established])
 ```

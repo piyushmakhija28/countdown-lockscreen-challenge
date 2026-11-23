@@ -92,13 +92,13 @@
     <mxCell id="30" value="" style="endArrow=classic;html=1;strokeColor=#000000;strokeWidth=2;edgeStyle=orthogonalEdgeStyle;" edge="1" source="27" target="29" parent="1">
       <mxGeometry relative="1" as="geometry" />
     </mxCell>
-    <mxCell id="31" value="Single Tab Chime &amp; Confetti Burst" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1D5E7;strokeColor=#9673A6;strokeWidth=2;" vertex="1" parent="1">
+    <mxCell id="31" value="Tri-Modal Sensory Sync: Web Audio ADSR, Haptics &amp; ODE Confetti (ADR-015)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1D5E7;strokeColor=#9673A6;strokeWidth=2;" vertex="1" parent="1">
       <mxGeometry x="320" y="1450" width="200" height="50" as="geometry" />
     </mxCell>
     <mxCell id="32" value="" style="endArrow=classic;html=1;strokeColor=#000000;strokeWidth=2;edgeStyle=orthogonalEdgeStyle;" edge="1" source="29" target="31" parent="1">
       <mxGeometry relative="1" as="geometry" />
     </mxCell>
-    <mxCell id="33" value="Render &amp; Export 1170x2532 Wallpaper" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1D5E7;strokeColor=#9673A6;strokeWidth=2;" vertex="1" parent="1">
+    <mxCell id="33" value="9-Stage Offscreen Canvas Wallpaper Composition Pipeline (ADR-014)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1D5E7;strokeColor=#9673A6;strokeWidth=2;" vertex="1" parent="1">
       <mxGeometry x="320" y="1540" width="200" height="50" as="geometry" />
     </mxCell>
     <mxCell id="34" value="" style="endArrow=classic;html=1;strokeColor=#000000;strokeWidth=2;edgeStyle=orthogonalEdgeStyle;" edge="1" source="31" target="33" parent="1">

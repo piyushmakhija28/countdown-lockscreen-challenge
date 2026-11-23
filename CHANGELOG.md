@@ -1,5 +1,29 @@
 # Changelog
 
+## [2.3.1] - 2026-11-23
+### Added
+- **SRS Lifecycle Governance Compliance (`44-srs-lifecycle.md`):** Appended Section 6 `## 6. Change Log` table to root `SRS.md` and `docs/05-srs.md` conforming to ISO/IEC/IEEE 29148:2018.
+- **Testing Triad Expansion (`33-test-case-roadmap.md`):**
+  - Added `TC-POS-21` through `TC-POS-26` covering tabular numerals, font barrier, 9-stage canvas pipeline, dynamic scrimming, and tri-modal sensory sync.
+  - Added `TC-NEG-17` through `TC-NEG-20` fault injection for font timeouts, canvas OOM clamp, and audio/haptic blocks.
+  - Added `TC-EDGE-27` through `TC-EDGE-30` covering high-luminance scrims, multi-tab mutex race, low-RAM downgrade, and NTP clock step jitter.
+  - Added Mock FontFaceSet and Mock Haptics harness to `docs/testing/01-test-strategy-and-pyramid.md`.
+  - Added Section 5 subsystem latency benchmarks to `docs/testing/03-performance-load-testing.md`.
+- **Architectural Trade-offs & Contest Submission Alignment:**
+  - Added Trade-off 7 (ADR-013), Trade-off 8 (ADR-014), and Trade-off 9 (ADR-015) with FAQs 15..17 to `docs/07-architecture-tradeoffs-and-faq.md`.
+  - Updated `docs/08-handshake-submission-package.md` with ADR-013..015, FR-25..FR-30, and 92 canonical assets certification.
+- **LLD Deep-Dive Hardening:**
+  - Formalized FSMs for `FontReadinessFSM`, `CanvasWallpaperFSM`, and `VictorySensoryFSM` in `docs/lld/03-state-machine-lifecycle.md`.
+  - Added Stage-Chain Pipeline, Strategy, and Observer patterns to `docs/lld/05-design-patterns-and-solid-principles.md`.
+  - Added `HapticUnsupportedError` to `docs/lld/06-exception-hierarchy-and-error-handling.md`.
+- **Observability & DevOps Spec Hardening:**
+  - Added telemetry event schemas for font, canvas, audio, haptic, and scrim metrics in `docs/observability/01-structured-logging-telemetry.md`.
+  - Updated `docs/devops/02-ci-cd-pipeline-spec.md` gate assertions from 12 ADRs to 15 ADRs.
+- **UML & Draw.io Synchronization:**
+  - Updated `uml/state_diagram.md` with 12-state FSM including `FONT_PRELOADING`.
+  - Updated `uml/activity_diagram.md` with complete 9-stage offscreen canvas rendering pipeline.
+
+
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),

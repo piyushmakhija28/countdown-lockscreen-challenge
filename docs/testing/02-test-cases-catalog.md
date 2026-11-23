@@ -7,7 +7,7 @@
 **Reviewer:** Architecture Review Board  
 **Status:** APPROVED  
 **Standard:** Level 2.2 Documentation Governance (Positive, Negative, Edge-Case Triad Standard)  
-**Version:** 2.3.0
+**Version:** 2.3.1
 
 ---
 
@@ -39,7 +39,14 @@ Conforming to `~/.claude/rules/35-positive-testing-standards.md`:
 | TC-POS-18 | Tri-Modal & Viewport Keyboard Sync| Soft keyboard focus / resize      | ResponsiveLayoutEngine adapts.    |
 | TC-POS-19 | Confetti Physics Aerodynamics & SoA| Expired timer celebration blast   | 3000ms Float32Array drag physics.  |
 | TC-POS-20 | FontService Asynchronous Preload  | document.fonts.load('Inter')      | FOIT eliminated before canvas draw.|
+| TC-POS-21 | Tabular Numeral Layout Invariant   | Font rendering with tnum feature   | CLS = 0.000 across second updates. |
+| TC-POS-22 | Hardware Font Readiness Barrier    | FontService.ensureFontsLoaded()    | Font load completes in < 35ms.     |
+| TC-POS-23 | 9-Stage Canvas Pipeline Execution  | CanvasRenderer.renderToCanvas()    | 9 stages execute in sub-350ms.     |
+| TC-POS-24 | Ambient Scrim Dynamic Adaptation   | Light background sample (Y > 0.35) | Injects scrim; APCA Lc >= 75.      |
+| TC-POS-25 | Dual-Mode Kinetic Particle Physics | Timer zero celebration trigger     | Confetti ODE drag + gravity runs.  |
+| TC-POS-26 | Tri-Modal Sensory Synchronization  | Expiration event dispatch          | Audio, haptics, physics < 20ms sync|
 +-----------+-----------------------------------+-----------------------------------+-----------------------------------+
+
 ```
 
 ---
@@ -68,6 +75,10 @@ Conforming to `~/.claude/rules/36-negative-testing-standards.md`:
 | TC-NEG-14 | Gemini AI Content Filter Safety   | Toxic prompt triggers SAFETY block| Throws ERR_AI_SAFETY_BLOCK.       |
 | TC-NEG-15 | Cross-Tab Corrupted Message Ingress| Corrupted JSON / CRC32 mismatch   | Throws BroadcastChannelSyncError. |
 | TC-NEG-16 | Web Locks Security Exception      | navigator.locks throws SecurityErr | Soft single-tab fallback without unhandled rejection. |
+| TC-NEG-17 | Font Loading Promise Timeout       | document.fonts.load() stalls >150ms| Throws ERR_FONT_TIMEOUT; fallback. |
+| TC-NEG-18 | Canvas Buffer Dimension Ceiling    | Canvas dimensions exceed 16.7M px  | Throws ERR_CANVAS_CEIL; clamps DPR|
+| TC-NEG-19 | Web Audio Context Suspended        | Expire trigger with zero user tap  | Emits audio:autoplay-blocked event|
+| TC-NEG-20 | Navigator Vibration API Blocked    | navigator.vibrate throws/denied    | Throws ERR_HAPTIC_BLOCKED; pulses.|
 +-----------+-----------------------------------+-----------------------------------+-----------------------------------+
 ```
 
@@ -87,8 +98,8 @@ Conforming to `~/.claude/rules/37-edge-case-testing-standards.md`:
 | TC-EDGE-04| Legacy 4096px Max Dimension       | Canvas allocated on iPhone SE     | Max dimension clamped <= 4096px.  |
 | TC-EDGE-05| Foldable Inner Display (1.2:1 AR) | Device aspect ratio R < 1.70      | Selects Dual-Column Split layout. |
 | TC-EDGE-06| Ultra-Tall Phone (23.1:9 AR)      | Device aspect ratio R >= 2.15     | Selects Compact Single-Column.    |
-| TC-EDGE-07| Indic Devanagari Matra Shaping    | Goal title contains "हिंदी लक्ष्य" | Programmatic SVG shapes text.     |
-| TC-EDGE-08| Arabic RTL Bidi Run Inversion     | Goal title contains "12 يوم"      | Unicode Bidi formatting intact.   |
+| TC-EDGE-07| Indic Devanagari Matra Shaping    | Goal title contains Indic conjuncts| Programmatic SVG shapes text.     |
+| TC-EDGE-08| Arabic RTL Bidi Run Inversion     | Goal title contains Arabic Bidi Run| Unicode Bidi formatting intact.   |
 | TC-EDGE-09| Display P3 Wide Gamut Active      | Modern OLED display P3 match      | Canvas initializes display-p3.    |
 | TC-EDGE-10| Tab Closed Within 300ms of Edit   | User closes tab immediately       | Preserved via sessionStorage sync.|
 | TC-EDGE-11| Immediate Share Button Click      | User edits & clicks Share in 10ms | getFreshUrl() flushes latest state|
@@ -107,6 +118,8 @@ Conforming to `~/.claude/rules/37-edge-case-testing-standards.md`:
 | TC-EDGE-24| Canvas Web Font FOIT Elimination  | Web font not yet cached           | FontService awaits readiness gate.|
 | TC-EDGE-27| Concurrent Multi-Tab Keystroke Race| Simultaneous edits in 2 tabs      | Lamport timestamp & LWW resolve race in <= 50ms. |
 | TC-EDGE-28| Abrupt Tab Teardown Mid-Victory Lock| Active alarm tab killed abruptly   | Browser kernel auto-releases lock; no deadlock. |
+| TC-EDGE-29| Extreme Mobile Memory Pressure     | Device memory reported < 2GB RAM  | Auto-downgrades supersample to 1x |
+| TC-EDGE-30| Monotonic System Time Step Inward  | OS clock steps back 5 seconds      | Delta clamped >= 0ms (no rewind). |
 +-----------+-----------------------------------+-----------------------------------+-----------------------------------+
 ```
 
