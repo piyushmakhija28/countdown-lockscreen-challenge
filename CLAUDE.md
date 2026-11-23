@@ -12,7 +12,7 @@ This repository contains the design, code, and documentation for the **Handshake
 countdown-lockscreen-challenge/
 ├── .gitignore                         # Ignored files & Level 2.2 doc exclusions
 ├── SRS.md                             # Authoritative ISO/IEC/IEEE 29148 Software Requirements Specification
-├── VERSION                            # Single source of truth version (2.3.2)
+├── VERSION                            # Single source of truth version (2.3.3)
 ├── CHANGELOG.md                       # Keep a Changelog release history
 ├── CLAUDE.md                          # Developer instructions & context
 ├── README.md                          # Main documentation & challenge playbook
@@ -45,7 +45,7 @@ countdown-lockscreen-challenge/
 ```
 
 ## Development Guidelines
-- **Strict Level 2.2 Governance:** Root directory strictly contains only 5 project management files: `README.md`, `CLAUDE.md`, `VERSION`, `CHANGELOG.md`, and `.gitignore`. All 60 architectural, functional, and requirement specifications reside strictly in `docs/`, all 13 Mermaid diagrams in `uml/`, and all 13 XML diagrams in `drawio/` to preserve a clean single source of truth.
+- **Strict Level 2.2 Governance:** Root directory strictly contains the canonical tracked project management files: `SRS.md`, `README.md`, `CLAUDE.md`, `VERSION`, `CHANGELOG.md`, and `.gitignore`. All 66 architectural, functional, and requirement specifications reside strictly in `docs/`, all 13 Mermaid diagrams in `uml/`, and all 13 XML diagrams in `drawio/` to preserve a clean single source of truth.
 - **Sprint Phasing Status:** Sprint 1 (Enterprise Architecture & Level 2.2 Documentation Governance Suite) is 100% complete and approved. `src/` represents the upcoming Sprint 2 target implementation delivery blueprint.
 - **Level 2.2 Docstrings-Only:** Every public function and class must include contract docstrings specifying inputs, outputs, errors, and invariants. Redundant inline commentary narrating trivial statements is strictly banned.
 - **Ergonomics First:** Every visual design must respect phone lock screen constraints: top 25-30% reserved for system clock/date/widgets, middle 50% for countdown & milestones, bottom 10-15% for system indicators.

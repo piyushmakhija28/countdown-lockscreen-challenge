@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.3.3] - 2026-11-23
+### Added
+- **Two-Tier System Invariant Architecture (`SYS-INV-001..010` & `INV-001..020`):** Formalized Tier 1 System Architectural Invariants (`SYS-INV-001` through `SYS-INV-010`) in `docs/00-problem-statement.md` and harmonized with Tier 2 Mathematical Precision Invariants (`INV-001` through `INV-020`) derived in `DOC-LLD-09` and specified in `docs/05-srs.md` and `docs/management/03-traceability-matrix.md`.
+- **RTM Coverage Closure (`DOC-MGT-03`):** Added `INV-018` (Tabular Advance Width Invariance), `INV-019` (Dual-Constraint Hardware Buffer Allocation & Dynamic Scrim Bounds), and `INV-020` (Tri-Modal Sensory Synchronization Temporal Bound) to the Invariants Matrix; integrated `ADR-013`, `ADR-014`, and `ADR-015` into the ADR Matrix; and added dedicated traceability sections for `SYS-INV-001..010`, `DOC-UI-01..10`, and `DOC-LLD-01..11`.
+- **Canonical 9-Stage Canvas Wallpaper Composition Pipeline:** Upgraded `uml/composite_diagram.md` and `drawio/composite_diagram.drawio` to incorporate all 9 rasterization stages matching ADR-014, `activity_diagram.md`, and `DOC-LLD-09`.
+- **Comprehensive Edge & Client PWA Deployment Topology:** Upgraded `uml/deployment_diagram.md` and `drawio/deployment_diagram.drawio` to model the 3-tier Service Worker caching policy (Network-First Shell, SWR Static Assets, Network-Only AI), multi-threaded client execution (60Hz RAF, 1Hz Worker), storage adapters (IndexedDB/LocalStorage), and Web Locks Mutex.
+
+### Fixed
+- **Root `SRS.md` Parity Synchronization (Rule 11 & Rule 44):** Resolved dual-source divergence by bringing project root `SRS.md` into 100% SHA256 parity with `docs/05-srs.md` (317 lines), establishing ISO/IEC/IEEE 29148 compliance and appending v2.3.2/v2.3.3 change log entries.
+- **Service Orchestration DAG Drift:** Corrected stale references in `docs/management/02-service-orchestration-dag.md` (`ADRs 001-015`, `UI/UX 01-10`, and 24 architectural elements / 21 core classes).
+- **Documentation Governance Clause (`CLAUDE.md` & `README.md`):** Resolved root documentation governance clause in `CLAUDE.md` to formally recognize `SRS.md` per Rule 11, updated asset counts, and corrected ADR index in `README.md`.
+- **GitHub Issue Resolution:** Resolves GitHub Issue #9.
+
 ## [2.3.2] - 2026-11-23
 ### Added
 - **System Invariants Specification (`INV-018`, `INV-019`, `INV-020`):** Added Tabular Advance Width Invariance ($CLS = 0.000$), Dual-Constraint Hardware Buffer Allocation & Dynamic Scrim Bounds ($L^c \ge 75$), and Tri-Modal Sensory Synchronization Temporal Bound ($< 20\text{ms}$) across `docs/00`, `docs/01`, `docs/05`, `docs/lld/09`, and `docs/management/03`.

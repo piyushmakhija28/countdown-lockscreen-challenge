@@ -7,7 +7,7 @@
 **Reviewer:** Architecture Review Board  
 **Status:** APPROVED  
 **Standard:** Level 2.2 Documentation Governance (ISO/IEC/IEEE 29148 Standard)  
-**Version:** 2.3.2
+**Version:** 2.3.3
 
 ---
 
@@ -199,10 +199,25 @@ Each functional requirement is formally specified with unique identifier, descri
 
 ---
 
-### 3.2 System Invariants Specification (INV-001 to INV-020)
+### 3.2 System & Mathematical Invariants Specification
 
-All implementations across the codebase must satisfy the following 17 hard mathematical and architectural system invariants:
+All implementations across the codebase must strictly satisfy the two-tier invariant hierarchy:
 
+#### 3.2.1 System-Level Architectural Invariants (SYS-INV-001 to SYS-INV-010)
+Governed by `DOC-00-PROBLEM-STATEMENT`:
+1. **`SYS-INV-001` (Future Target Timestamp):** $t_{\text{deadline}} > t_{\text{current}} + 3600\text{s}$ ($\ge 1\text{ hour}$ into future via UTC epoch normalization).
+2. **`SYS-INV-002` (Milestone Cognitive Bounding):** $3 \le N_{\text{milestones}} \le 5$ (Miller's $7 \pm 2$ cognitive span, preventing overwhelm).
+3. **`SYS-INV-003` (Upper Clock Safe-Zone Clearance):** $Y_{\text{content\_start}} \ge 0.28 \times H_{\text{canvas}}$ ($708\text{px}$ on $2532\text{px}$ canvas, zero Dynamic Island occlusion).
+4. **`SYS-INV-004` (Bottom Gesture Safe-Zone Clearance):** $Y_{\text{content\_end}} \le 0.82 \times H_{\text{canvas}}$ ($2076\text{px}$ on $2532\text{px}$ canvas, clear of home indicator).
+5. **`SYS-INV-005` (High-DPI Wallpaper Resolution):** Canvas strictly conforms to $W = 1170\text{px}, H = 2532\text{px}$ ($9:19.48$ flagship ratio, $\text{DPR} \ge 2.0$).
+6. **`SYS-INV-006` (Zero Runtime Time Drift):** $\lim_{n \to \infty} \sum_{i=1}^n e(t_i) = 0$ (Self-correcting delta ticker anchored to `performance.now()`).
+7. **`SYS-INV-007` (Zero Server PII & Client Privacy):** $\text{Storage}_{\text{cloud}} = \emptyset$ (100% client-side persistence in LocalStorage / URL Hash).
+8. **`SYS-INV-008` (Outdoor Visual Contrast Compliance):** Contrast ratio $C \ge 4.5:1$ (WCAG AA) & APCA $L^c \ge 75$ under $750\text{ nits}$ sunlight.
+9. **`SYS-INV-009` (Sub-Second Edge Delivery):** Application interactive under $1.0\text{s}$ ($\text{FCP} \le 0.8\text{s}, \text{LCP} \le 1.2\text{s}, \text{CLS} = 0.0$).
+10. **`SYS-INV-010` (Clean Architecture Dependency Invariance):** Abstract ports decoupled with instable-to-stable inward dependency ($D \le 0.15$).
+
+#### 3.2.2 Mathematical & Micro-Architectural Precision Invariants (INV-001 to INV-020)
+Governed by `DOC-LLD-09-PIXEL-PERFECT-MATHEMATICAL-BLUEPRINT`:
 1. **`INV-001` (Sub-Pixel Snapping Invariant):** $|y_{\text{snap}} \cdot \text{DPR} - \text{round}(y_{\text{snap}} \cdot \text{DPR})| = 0.00000$ (Guarantees crisp typography on physical pixels).
 2. **`INV-002` (Oklab Gamut Preservation):** $L^* \in [0, 1], a^*, b^* \in [-0.5, 0.5]$ (Prevents gamut clipping in wide-gamut OLED color rendering).
 3. **`INV-003` (Monotone Spline Slope Invariant):** $y'(x) \ge 0.00000$ for all $x \in [0, 1]$ (Guarantees zero Fritsch-Carlson cubic overshoot).
@@ -315,3 +330,5 @@ To maintain a zero-infrastructure, client-side serverless architecture:
 | 2026-11-23 | 2.2.0 | Multi-Tab Sync & Mutex | BroadcastChannel state sync and Web Locks single-instance audio | Done |
 | 2026-11-23 | 2.3.0 | Foundational Architectural Hardening | Added FR-25..30, ADR-013..015, and canonical 92-asset alignment | Done |
 | 2026-11-23 | 2.3.1 | Test Triad & Lifecycle Hardening | Added ISO Change Log, TC-POS-21..26, TC-NEG-17..20, TC-EDGE-27..30, LLD FSMs | Done |
+| 2026-11-23 | 2.3.2 | Deep Mathematical Blueprint & LLD Hardening | Codified DOC-LLD-08..11, LLD sequence/class contracts & cross-doc gap hardening | Done |
+| 2026-11-23 | 2.3.3 | Foundational System Design & Parity Hardening | Unified SYS-INV vs MATH-INV, 100% root SRS parity, 9-stage UML composite, deployment model & complete RTM (#9) | Done |

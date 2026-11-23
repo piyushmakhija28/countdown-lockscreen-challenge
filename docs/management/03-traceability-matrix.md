@@ -7,7 +7,7 @@
 **Reviewer:** Architecture Review Board  
 **Status:** APPROVED  
 **Standard:** Level 2.2 Documentation Governance (Bidirectional Traceability Standard)  
-**Version:** 2.3.2
+**Version:** 2.3.3
 
 ---
 
@@ -97,6 +97,9 @@
 | **ADR-010**| Token Bucket History Limiter    | WebKit 100-call quota immunity    | `js/core/TokenBucketHistoryGuard.js`|
 | **ADR-011**| Cross-Tab State Synchronization | Native same-origin broadcast sync | `js/core/StateStore.js`              |
 | **ADR-012**| Single-Instance Alarm Mutex     | Non-blocking victory audio lock   | `js/services/AudioChimeService.js`   |
+| **ADR-013**| Tabular Numeral Typography       | Zero CLS and uniform glyph advance | `js/canvas/CanvasRenderer.js`, `tokens.css` |
+| **ADR-014**| Nine-Stage Canvas Wallpaper Engine| Hardware bounds & ambient scrim APCA | `js/canvas/CanvasRenderer.js`       |
+| **ADR-015**| Tri-Modal Sensory Synchronization| Unified visual ODE, Web Audio & haptics| `js/services/AudioChimeService.js` |
 +---------+-----------------------------------+-----------------------------------+-------------------------------------+
 ```
 
@@ -199,6 +202,66 @@
 | INV-015 | Cross-Font Fallback Floor         | S_effective >= S_floor = 10px         | DOC-LLD-09          | FontService.js       | TC-EDGE-24       |
 | INV-016 | Single-Instance Victory Mutex     | LocksHeld(alarm) <= 1                 | DOC-LLD-01, ADR-012 | AudioChimeService.js | TC-POS-116       |
 | INV-017 | Multi-Tab Eventual Consistency    | Delta t_sync <= 50ms, sender != self  | DOC-LLD-01, ADR-011 | StateStore.js        | TC-POS-115       |
+| INV-018 | Tabular Advance Width Invariance   | w(g1) == w(g2) == W_cell => CLS == 0.000 | DOC-LLD-09, ADR-013 | CanvasRenderer.js    | TC-POS-21, TC-POS-117 |
+| INV-019 | Dual-Constraint Scrim Buffer Ceiling| S* <= min(2.0, S_area, S_edge); APCA Lc>=75| DOC-LLD-09, ADR-014 | AdaptiveBufferAlloc  | TC-POS-23, TC-POS-24 |
+| INV-020 | Tri-Modal Sensory Temporal Bound   | abs(Delta t_vis - Delta t_aud) < 20ms    | DOC-LLD-09, ADR-015 | AudioChimeService.js | TC-POS-26, TC-POS-120 |
 +---------+-----------------------------------+---------------------------------------+---------------------+----------------------+------------------+
+```
+
+---
+
+## 8. System-Level Architectural Invariants Traceability Matrix (SYS-INV-001 to SYS-INV-010)
+
+```
++-----------------------------------------------------------------------------------------------------------------------------------------------------+
+|                                          SYSTEM-LEVEL ARCHITECTURAL INVARIANTS TRACEABILITY MATRIX                                                  |
++-------------+-----------------------------------+---------------------------------------+---------------------+----------------------+--------------+
+| Sys Inv ID  | Architectural Constraint Title    | Governing Formulation / Boundary      | Governing Spec      | Implementing Module  | Verified By  |
++-------------+-----------------------------------+---------------------------------------+---------------------+----------------------+--------------+
+| SYS-INV-001 | Future Target Timestamp           | t_deadline > t_now + 3600s            | DOC-00, DOC-05      | DualClockTimeEngine  | TC-POS-01    |
+| SYS-INV-002 | Milestone Cognitive Bounding      | 3 <= N_milestones <= 5 (Miller Span)  | DOC-00, DOC-05      | GeminiAiClient       | TC-POS-02    |
+| SYS-INV-003 | Upper Clock Safe-Zone Clearance   | Y_start >= 0.28 * H_canvas (708px)    | DOC-00, DOC-UI-02   | ResponsiveLayout     | TC-POS-08    |
+| SYS-INV-004 | Bottom Gesture Safe-Zone Clearance| Y_end <= 0.82 * H_canvas (2076px)     | DOC-00, DOC-UI-02   | CanvasRenderer       | TC-EDGE-14   |
+| SYS-INV-005 | High-DPI Wallpaper Resolution     | 1170x2532 px, DPR >= 2.0 (9:19.48)    | DOC-00, ADR-004     | OffscreenCanvas      | TC-POS-09    |
+| SYS-INV-006 | Zero Runtime Time Drift           | lim sum e(t_i) = 0 (RAF + monotonic)  | DOC-00, ADR-007     | DualClockTimeEngine  | TC-POS-05    |
+| SYS-INV-007 | Zero Server PII & Privacy         | Storage_cloud = empty_set (Client-only)| DOC-00, ADR-006    | ResilientStorage     | TC-POS-13    |
+| SYS-INV-008 | Outdoor Contrast Compliance       | Contrast C >= 4.5:1 & APCA Lc >= 75   | DOC-00, DOC-UI-03   | themes.js, ScrimNorm | TC-POS-11    |
+| SYS-INV-009 | Sub-Second Edge Delivery          | FCP <= 0.8s, LCP <= 1.2s, CLS = 0.0   | DOC-00, ADR-008     | Edge CDN / PWA Cache | TC-POS-15    |
+| SYS-INV-010 | Clean Architecture Acyclicity     | Inward stability coupling D <= 0.15   | DOC-00, DOC-LLD-07  | Core Ports & Adapters| Vitest CI    |
++-------------+-----------------------------------+---------------------------------------+---------------------+----------------------+--------------+
+```
+
+---
+
+## 9. Advanced UI/UX & Deep LLD Specifications Traceability Matrix
+
+```
++---------------------------------------------------------------------------------------------------------------+
+|                            ADVANCED UI/UX & DEEP LLD SPECIFICATIONS TRACEABILITY MATRIX                       |
++-------------+---------------------------------------------+--------------------+------------------------------+
+| Spec ID     | Specification Title                         | Category           | Governed Implementation Files|
++-------------+---------------------------------------------+--------------------+------------------------------+
+| **DOC-UI-01** | Design System Tokens & Color Science      | UI/UX Architecture | `src/css/tokens.css`, `themes.js`|
+| **DOC-UI-02** | Safe Zones & Touch Ergonomics             | UI/UX Architecture | `js/canvas/SafeZoneOverlay.js`|
+| **DOC-UI-03** | WCAG 2.2 AAA & APCA Contrast Math         | Accessibility      | `src/css/tokens.css`, `themes.js`|
+| **DOC-UI-04** | Component Interaction Specifications      | UI/UX Architecture | `src/js/app.js`, `tokens.css` |
+| **DOC-UI-05** | Information Architecture & User Journeys  | UX Strategy        | `src/index.html`, `app.js`   |
+| **DOC-UI-06** | Motion Choreography & Kinetic Physics     | Motion & Animation | `js/canvas/ParticleEngine.js` |
+| **DOC-UI-07** | Design Rationale & Anti-Pattern Defense   | UX Governance      | `docs/ui-ux/07-design-rationale.md`|
+| **DOC-UI-08** | Typographic Engineering & Font System     | Typography         | `js/services/FontService.js` |
+| **DOC-UI-09** | Canvas Wallpaper Composition Engine       | 2D Graphics Engine | `js/canvas/CanvasRenderer.js` |
+| **DOC-UI-10** | Cognitive Ergonomics & Usability Heuristics| Usability Science | `docs/ui-ux/10-cognitive-ergonomics.md`|
+| **DOC-LLD-01**| Class & Object Design Contracts           | Low-Level Design   | All 21 Classes in `src/js/`  |
+| **DOC-LLD-02**| Dynamic Interaction Sequences             | Low-Level Design   | `uml/sequence_diagram.md`    |
+| **DOC-LLD-03**| State Machine & Lifecycle FSM             | Low-Level Design   | `uml/state_diagram.md`       |
+| **DOC-LLD-04**| Concurrency & Threading Model             | Concurrency & Web  | `WorkerTickerAdapter.js`     |
+| **DOC-LLD-05**| Design Patterns & SOLID Principles        | Architecture       | `ports.js`, `StateStore.js`  |
+| **DOC-LLD-06**| Exception Hierarchy & Error Handling      | Resilience         | `src/js/core/errors.js`      |
+| **DOC-LLD-07**| Package Structure & Code Blueprint        | Implementation     | Complete `src/` Directory    |
+| **DOC-LLD-08**| 100-Vulnerability Engineering Audit       | System Resilience  | 44 Architectural Dimensions  |
+| **DOC-LLD-09**| Cross-Device Pixel-Perfect Math Blueprint | Mathematics & Grid | 10 Math Modules / INV-001..20|
+| **DOC-LLD-10**| Micro-Architectural Implementation Hazards | V8 & Browser APIs  | 40 Implementation Hazards    |
+| **DOC-LLD-11**| Deep-Dive Design Patterns & Security ASVS | Design Patterns    | GoF Catalogue & OWASP ASVS   |
++-------------+---------------------------------------------+--------------------+------------------------------+
 ```
 

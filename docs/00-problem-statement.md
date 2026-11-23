@@ -7,7 +7,7 @@
 **Reviewer:** Architecture Review Board  
 **Status:** APPROVED  
 **Standard:** Level 2.2 Documentation Governance (ISO/IEC/IEEE 29148 Standard)  
-**Version:** 2.3.2
+**Version:** 2.3.3
 
 ---
 
@@ -55,28 +55,48 @@ However, existing countdown apps and custom wallpaper generators fail ergonomica
 
 ## 2. Hard System Invariants & Mathematical Constraints
 
+The architecture enforces a strict two-tier invariant model: Tier 1 establishes **System-Level Architectural Invariants (`SYS-INV-001` to `SYS-INV-010`)**, and Tier 2 establishes **Mathematical & Micro-Architectural Precision Invariants (`INV-001` to `INV-020`)**.
+
+### 2.1 Tier 1: System-Level Architectural Invariants (SYS-INV-001 to SYS-INV-010)
+
 | Invariant ID | Constraint Description | Mathematical / Technical Formulation | Enforcement Mechanism |
 |:---|:---|:---|:---|
-| **INV-001** | **Future Target Timestamp:** Target deadline must strictly resolve to a valid future timestamp. | $t_{\text{deadline}} > t_{\text{current}} + 3600\text{s}$ ($\ge 1\text{ hour}$ into future) | ISO-8601 validation in `DualClockTimeEngine` with UTC epoch normalization. |
-| **INV-002** | **Milestone Cognitive Bounding:** Milestones must strictly be bounded between 3 and 5 sequential checkpoints. | $3 \le N_{\text{milestones}} \le 5$ (Conforming to Miller's $7 \pm 2$ cognitive span) | JSON schema assertion on Gemini 3.8 Flash response & heuristic fallback. |
-| **INV-003** | **Upper Clock Safe-Zone Clearance:** Top lock screen canvas must remain strictly unoccluded for OS clock. | $Y_{\text{content\_start}} \ge 0.28 \times H_{\text{canvas}} \quad (708\text{px on a } 2532\text{px canvas})$ | `CanvasRenderer` boundary clipping and mathematical layout assertions. |
-| **INV-004** | **Bottom Gesture Safe-Zone Clearance:** Bottom canvas must remain clear of home indicator / fingerprint pill. | $Y_{\text{content\_end}} \le 0.82 \times H_{\text{canvas}} \quad (2076\text{px on a } 2532\text{px canvas})$ | Canvas vertical coordinate bounds clamping. |
-| **INV-005** | **High-DPI Wallpaper Resolution:** Output wallpaper strictly conforms to modern flagship portrait ratio. | $W = 1170\text{px}, H = 2532\text{px} \quad (9:19.48 \text{ ratio}, \text{DPR} \ge 2.0)$ | HTML5 `OffscreenCanvas` buffer dimensions with $2\times$ supersampling. |
-| **INV-006** | **Zero Runtime Time Drift:** Real-time countdown loop must not drift over indefinite tab sessions. | $\lim_{n \to \infty} \sum_{i=1}^n e(t_i) = 0$ (Self-correcting delta ticker) | `requestAnimationFrame` anchored to hardware `performance.now()`. |
-| **INV-007** | **Zero Server PII & Client Privacy:** Zero personal data, goals, or telemetry stored on external servers. | $\text{Storage}_{\text{cloud}} = \emptyset$ (100% client-side persistence) | Client-side `LocalStorage` + URL Hash Base64 payload encoding. |
-| **INV-008** | **Outdoor Visual Contrast Compliance:** Critical typography readable under direct sunlight ($750\text{ nits}$). | $\text{Contrast Ratio } C \ge 4.5:1$ (WCAG AA) & APCA $L^c \ge 75$ | Mathematical relative luminance calculations across all color tokens. |
-| **INV-009** | **Sub-Second Edge Delivery:** Web application bundle must achieve interactive state under $1.0\text{s}$. | $\text{FCP} \le 0.8\text{s}, \text{LCP} \le 1.2\text{s}, \text{CLS} = 0.0$ | Pure ESM client architecture deployed on GitHub Pages Edge CDN. |
-| **INV-010** | **Sub-Pixel Snapping & Fractional DPR Snapping:** Hairline strokes align to physical pixel midpoints. | $x_{\text{snapped}} = \frac{\lfloor x \cdot \text{DPR} \rfloor + 0.5 \cdot (w_{\text{phys}} \bmod 2)}{\text{DPR}}$ | Odd-stroke centering eliminating anti-aliasing blur and fuzzy borders. |
-| **INV-011** | **Oklab Gamut Mapping & Chroma Bisection:** Colors mapped into sRGB without hue shift or clipping. | $C^* = \alpha \cdot C$ (10 iterations bisection, $\Delta E \le 0.001$) | Preserves perceptual lightness $L^*$ and hue $h$ with zero color rotation. |
-| **INV-012** | **Symplectic Drag Kinematic Bounding:** Celebration particles remain bounded and stable across any $\Delta t$. | $\mathbf{v}_{n+1} = \frac{\mathbf{v}_n + \mathbf{g}\Delta t}{1 + k_d \|\mathbf{v}_n\|\Delta t}, \quad v_{\text{term}} \le 738\text{ px/s}$ | Semi-implicit symplectic integration preventing explosive energy divergence. |
-| **INV-013** | **Dual-Constraint GPU Texture Ceiling:** Canvas allocation strictly stays within WebKit hardware limits. | $S^* = \min\left(\text{targetDPR}, \, \sqrt{\frac{A_{\max}}{W_{\text{base}} \times H_{\text{base}}}}, \, \frac{D_{\max}}{\max(W_{\text{base}}, H_{\text{base}})}\right)$ | Area $\le 16.7\text{MP}$ and max dimension $\le 4096\text{px}$ preventing OOM. |
-| **INV-014** | **Cross-Font Metric Scaling Floor:** Typography never overflows safe zone under fallback fonts. | $S_{\text{effective}} = \max\left(S_{\text{floor}}, \, S_{\text{nominal}} \times \min(1.0, \, k_{\text{font}})\right), \quad S_{\text{floor}} = 10\text{px}$ | Fallback compensation width ratio scaling with WCAG minimum legibility. |
-| **INV-015** | **Coupled Extent Zero-Seam Guard:** Adjacent glass cards share identical snapped physical edges. | $x_{\text{left,phys}} = x_{\text{right,prev,phys}} \implies \text{Seam} = 0\text{px}$ | Eliminates hairline background bleed between tiled glassmorphic cards. |
-| **INV-016** | **Single-Instance Victory Alarm Locking:** Strictly one tab synthesizes celebratory audio on timer expiry. | `navigator.locks.request('countdown_victory_alarm_lock', { ifAvailable: true })` | Prevents double-amplitude acoustic distortion across multi-tab sessions. |
-| **INV-017** | **Multi-Tab Eventual Consistency & Echo Shield:** Concurrent same-origin tabs converge state within 50ms without cyclic storms. | $\Delta t_{\text{sync}} \le 50\text{ms}, \quad \text{senderId} \neq \text{instanceId}$ | Native `BroadcastChannel('countdown_lockscreen_sync')` with UUID cycle filter. |
-| **INV-018** | **Tabular Advance Width Invariance & Zero Cumulative Layout Shift:** Countdown numerals maintain uniform glyph widths. | $\forall g_1, g_2 \in \{'0', \dots, '9'\}, \; w(g_1) = w(g_2) = W_{\text{cell}} \implies \Delta W \equiv 0 \implies CLS \equiv 0.000$ | OpenType `tabular-nums` / `tnum 1` eliminates 1Hz layout jitter and adjacent container movement. |
-| **INV-019** | **Dual-Constraint Hardware Buffer Allocation & Dynamic Scrim Luminance Bounds:** Canvas scale is bounded by GPU limits and background contrast. | $S^* = \min\left(2.0, \; \sqrt{\frac{16,777,216}{W \cdot H}}, \; \frac{4096}{\max(W, H)}\right), \quad \bar{Y}_{\text{bg}} > 0.35 \implies \alpha(y) \in [0.45, 0.75]$ | Area $\le 16.7\text{MP}$, edge $\le 4096\text{px}$ on iOS WebKit, with APCA $L^c \ge 75$ under sunlight. |
-| **INV-020** | **Tri-Modal Sensory Synchronization Temporal Bound:** Visual kinetic ODE, Web Audio ADSR, and haptic pulses fire in locked synchrony. | $|\Delta t_{\text{visual}} - \Delta t_{\text{audio}}| < 20\text{ms}, \quad |\Delta t_{\text{visual}} - \Delta t_{\text{haptic}}| < 20\text{ms}$ | Second-order underdamped harmonic oscillator ($m\ddot{x} + c\dot{x} + kx = 0$) coupled with procedural sound and haptics. |
+| **SYS-INV-001** | **Future Target Timestamp:** Target deadline must strictly resolve to a valid future timestamp. | $t_{\text{deadline}} > t_{\text{current}} + 3600\text{s}$ ($\ge 1\text{ hour}$ into future) | ISO-8601 validation in `DualClockTimeEngine` with UTC epoch normalization. |
+| **SYS-INV-002** | **Milestone Cognitive Bounding:** Milestones must strictly be bounded between 3 and 5 sequential checkpoints. | $3 \le N_{\text{milestones}} \le 5$ (Conforming to Miller's $7 \pm 2$ cognitive span) | JSON schema assertion on Gemini 3.8 Flash response & heuristic fallback. |
+| **SYS-INV-003** | **Upper Clock Safe-Zone Clearance:** Top lock screen canvas must remain strictly unoccluded for OS clock. | $Y_{\text{content\_start}} \ge 0.28 \times H_{\text{canvas}} \quad (708\text{px on a } 2532\text{px canvas})$ | `CanvasRenderer` boundary clipping and mathematical layout assertions. |
+| **SYS-INV-004** | **Bottom Gesture Safe-Zone Clearance:** Bottom canvas must remain clear of home indicator / fingerprint pill. | $Y_{\text{content\_end}} \le 0.82 \times H_{\text{canvas}} \quad (2076\text{px on a } 2532\text{px canvas})$ | Canvas vertical coordinate bounds clamping. |
+| **SYS-INV-005** | **High-DPI Wallpaper Resolution:** Output wallpaper strictly conforms to modern flagship portrait ratio. | $W = 1170\text{px}, H = 2532\text{px} \quad (9:19.48 \text{ ratio}, \text{DPR} \ge 2.0)$ | HTML5 `OffscreenCanvas` buffer dimensions with $2\times$ supersampling. |
+| **SYS-INV-006** | **Zero Runtime Time Drift:** Real-time countdown loop must not drift over indefinite tab sessions. | $\lim_{n \to \infty} \sum_{i=1}^n e(t_i) = 0$ (Self-correcting delta ticker) | `requestAnimationFrame` anchored to hardware `performance.now()`. |
+| **SYS-INV-007** | **Zero Server PII & Client Privacy:** Zero personal data, goals, or telemetry stored on external servers. | $\text{Storage}_{\text{cloud}} = \emptyset$ (100% client-side persistence) | Client-side `LocalStorage` + URL Hash Base64 payload encoding. |
+| **SYS-INV-008** | **Outdoor Visual Contrast Compliance:** Critical typography readable under direct sunlight ($750\text{ nits}$). | $\text{Contrast Ratio } C \ge 4.5:1$ (WCAG AA) & APCA $L^c \ge 75$ | Mathematical relative luminance calculations across all color tokens. |
+| **SYS-INV-009** | **Sub-Second Edge Delivery:** Web application bundle must achieve interactive state under $1.0\text{s}$. | $\text{FCP} \le 0.8\text{s}, \text{LCP} \le 1.2\text{s}, \text{CLS} = 0.0$ | Pure ESM client architecture deployed on GitHub Pages Edge CDN. |
+| **SYS-INV-010** | **Clean Architecture Dependency Acyclicity:** Strict inward dependency coupling without circular references. | $D = \frac{\|C_a - C_e\|}{C_a + C_e} \le 0.15$ (Inward stability metric) | Abstract ports and adapters (`ITickScheduler`, `IMilestonePlanner`). |
+
+### 2.2 Tier 2: Mathematical & Micro-Architectural Precision Invariants (INV-001 to INV-020)
+Derived in `docs/lld/09-pixel-perfect-mathematical-blueprint.md` (`DOC-LLD-09`) and governed by `docs/05-srs.md` (`DOC-05-SRS`):
+
+| Invariant ID | Mathematical / Precision Focus | Formulation | Governed Subsystem |
+|:---|:---|:---|:---|
+| **INV-001** | Sub-Pixel Snapping & Baseline Quantization | $\|y_{\text{snap}} \cdot \text{DPR} - \text{round}(y_{\text{snap}} \cdot \text{DPR})\| = 0$ | `CanvasRenderer.js` |
+| **INV-002** | Oklab Gamut Mapping & Perceptual Lightness | $L^* \in [0, 1], a^*, b^* \in [-0.5, 0.5]$ | `themes.js` |
+| **INV-003** | Monotone Spline Slope (No Overshoot) | $y'(x) \ge 0.00000 \quad \forall x \in [0, 1]$ | `CanvasRenderer.js` |
+| **INV-004** | Aspect Ratio Conformal Isotropy | $\|\text{scaleX} - \text{scaleY}\| = 0.00000$ | `ResponsiveLayoutEngine.js` |
+| **INV-005** | Fitts's Law Ergonomic Touch Difficulty | $\text{ID} = \log_2(1 + 2D/W) \le 3.50000\text{ bits}$ | `SafeZoneOverlay.js` |
+| **INV-006** | OLED Micro-Orbital Anti-Burn-In Shift | $\sqrt{\Delta x^2 + \Delta y^2} \le 2.00000\text{ px}$ | `CanvasRenderer.js` |
+| **INV-007** | Mazur Hyperbolic Urgency Bound | $V(D) \to A = 100$ as $D \to 0$ | `MilestoneManager.js` |
+| **INV-008** | Circular Progress Arc Boundary Singularity | $\theta_{\text{end}} - \theta_{\text{start}} \le 2\pi - 10^{-6}$ | `CanvasRenderer.js` |
+| **INV-009** | Thermal GPU Frame Clamp | $\text{FPS}_{\text{idle}} \le 15.0000$ | `DualClockTimeEngine.js` |
+| **INV-010** | Closed-Form Inverse Transform Precision | $\|M \cdot M^{-1} - I\| \le 10^{-12}$ | `CanvasRenderer.js` |
+| **INV-011** | Symplectic Particle Terminal Velocity | $\lim_{t \to \infty} \|\mathbf{v}(t)\| \le 738.00\text{ px/s}$ | `ParticleEngine.js` |
+| **INV-012** | Zero-Duration Arc IEEE 754 NaN Guard | $P = 1.00000 \text{ when } t_{\text{total}} \le 0$ | `DualClockTimeEngine.js` |
+| **INV-013** | Dual-Constraint WebKit Texture Scale Ceiling | $S^* \le \min\left(2.0, \sqrt{\frac{16.7\text{MP}}{W \cdot H}}, \frac{4096}{\max(W,H)}\right)$ | `AdaptiveBufferAllocator.js` |
+| **INV-014** | Oklab Chroma Bisection Convergence | $F(\alpha_{\text{final}}) = 1, \Delta E \le 0.001$ | `themes.js` |
+| **INV-015** | Cross-Font Fallback Metric Floor | $S_{\text{effective}} \ge S_{\text{floor}} = 10\text{px}$ | `FontService.js` |
+| **INV-016** | Single-Instance Victory Alarm Web Locks Mutex | $\text{LocksHeld}(\text{alarm}) \le 1$ | `AudioChimeService.js` |
+| **INV-017** | Multi-Tab Broadcast Sync & Echo Shield | $\Delta t_{\text{sync}} \le 50\text{ms}, \text{senderId} \neq \text{instanceId}$ | `StateStore.js` |
+| **INV-018** | Tabular Advance Width Invariance & Zero CLS | $\forall g_1, g_2, w(g_1) = w(g_2) = W_{\text{cell}} \implies CLS \equiv 0.000$ | `CanvasRenderer.js`, `tokens.css` |
+| **INV-019** | Dynamic Ambient Scrim Luminance Bounds | $\bar{Y}_{\text{bg}} > 0.35 \implies \alpha(y) \in [0.45, 0.75], L^c \ge 75$ | `CanvasRenderer.js` |
+| **INV-020** | Tri-Modal Sensory Synchronization Temporal Bound | $\|\Delta t_{\text{visual}} - \Delta t_{\text{audio}}\| < 20\text{ms}, \|\Delta t_{\text{visual}} - \Delta t_{\text{haptic}}\| < 20\text{ms}$ | `AudioChimeService.js`, `HapticService.js` |
 
 ---
 

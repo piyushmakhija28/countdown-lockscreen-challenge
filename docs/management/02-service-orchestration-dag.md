@@ -7,7 +7,7 @@
 **Reviewer:** Architecture Review Board  
 **Status:** APPROVED  
 **Standard:** Level 2.2 Documentation Governance (Directed Acyclic Graph Pipeline)  
-**Version:** 2.3.2
+**Version:** 2.3.3
 
 ---
 
@@ -22,11 +22,11 @@ graph TD
     end
 
     subgraph Architecture [Stage 2: Solution Architecture & ADRs]
-        SA[Systems Architecture: 02 HLD, 03 API Contracts, ADRs 001-010, 07 FAQ]
+        SA[Systems Architecture: 02 HLD, 03 API Contracts, ADRs 001-015, 07 FAQ]
     end
 
     subgraph DesignAndLLD [Stage 3: UI/UX & Low-Level Design]
-        UI[UI/UX Design: UI/UX 01-03 Design System, Safe Zones & a11y]
+        UI[UI/UX Design: UI/UX 01-10 Design System, Safe Zones & a11y]
         ReactEng[Frontend Engineering: LLD 01-04, 06 Classes, Sequences, FSM, Concurrency]
         Auditor[Architecture Compliance: LLD 05 SOLID, 07 Blueprint, 08-11 Deep Audits]
     end
@@ -64,8 +64,8 @@ Each pipeline stage is mapped to specialized subagent expertise from `claude-glo
 | Pipeline Stage           | Subagent Type (Global Library)      | Primary Execution Scope                     |
 +--------------------------+-------------------------------------+---------------------------------------------+
 | **Stage 1: Discovery**   | `business-analyst-agent`            | IEEE 29148 requirements & 4x25% rubric math.|
-| **Stage 2: Architecture**| `solution-architect`                | C4 models, Dual-Buffer canvas, ADRs 001-010.|
-| **Stage 3: Design & LLD**| `react-engineer` / `ui-ux-designer` | Classes, sequences, Tri-modal safe zones.   |
+| **Stage 2: Architecture**| `solution-architect`                | C4 models, Dual-Buffer canvas, ADRs 001-015.|
+| **Stage 3: Design & LLD**| `react-engineer` / `ui-ux-designer` | Classes, sequences, UI/UX 01-10 suite, Tri-modal safe zones.|
 | **Stage 4: Hardening**   | `security-defense-architect`        | Strict CSP Level 3, STRIDE, input sanitize. |
 | **Stage 4: SRE & DevOps**| `devops-engineer` / `site-rel-eng`  | Docker multi-stage, Fastly Anycast edge CDN.|
 | **Stage 5: Quality**     | `qa-testing-agent`                  | Positive, Negative, Edge Triad test catalog.|
@@ -75,7 +75,7 @@ Each pipeline stage is mapped to specialized subagent expertise from `claude-glo
 
 ---
 
-## 3. Application Runtime Service Orchestration DAG (All 17 Classes)
+## 3. Application Runtime Service Orchestration DAG (All 24 Architectural Elements & 21 Core Classes)
 
 The client-side runtime adheres to a strict Directed Acyclic Graph (DAG) with zero circular dependencies ($D \le 0.15$):
 

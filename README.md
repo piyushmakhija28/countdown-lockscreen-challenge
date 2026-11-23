@@ -38,7 +38,7 @@ countdown-lockscreen-challenge/
 │   ├── 03-api-contract.md              # Level 3: Gemini 3.8 Flash Schema, URL Codec & Component Contracts
 │   ├── 04-competition-and-platform-research.md # Level 4: 7-Page PDF Teardown, 4x25% Rubric Math & OS Specs
 │   ├── 05-srs.md                       # Level 5: Detailed Functional & Non-Functional Traceability
-│   ├── 06-adr/                         # Level 6: Architecture Decision Records (ADR-001 to ADR-012)
+│   ├── 06-adr/                         # Level 6: Architecture Decision Records (ADR-001 to ADR-015)
 │   │   ├── ADR-001-architecture-style-and-runtime.md
 │   │   ├── ADR-002-rendering-engine-canvas-vs-dom.md
 │   │   ├── ADR-003-state-serialization-and-sharing.md

@@ -30,7 +30,7 @@
       <mxGeometry x="10" y="82" width="125" height="36" as="geometry" />
     </mxCell>
     <mxCell id="10" value="SafeZoneOverlay" style="swimlane;fontStyle=1;align=center;startSize=26;container=1;collapsible=0;expand=0;html=1;fillColor=#E1D5E7;strokeColor=#9673A6;strokeWidth=2;" vertex="1" parent="1">
-      <mxGeometry x="40" y="300" width="280" height="180" as="geometry" />
+      <mxGeometry x="40" y="260" width="280" height="180" as="geometry" />
     </mxCell>
     <mxCell id="11" value="drawDynamicIsland()" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F0F0F0;strokeColor=#666666;" vertex="1" parent="10">
       <mxGeometry x="10" y="36" width="125" height="36" as="geometry" />
@@ -42,7 +42,7 @@
       <mxGeometry x="10" y="82" width="125" height="36" as="geometry" />
     </mxCell>
     <mxCell id="14" value="CanvasTextWrapper" style="swimlane;fontStyle=1;align=center;startSize=26;container=1;collapsible=0;expand=0;html=1;fillColor=#E1D5E7;strokeColor=#9673A6;strokeWidth=2;" vertex="1" parent="1">
-      <mxGeometry x="420" y="300" width="280" height="180" as="geometry" />
+      <mxGeometry x="420" y="260" width="280" height="180" as="geometry" />
     </mxCell>
     <mxCell id="15" value="wrapText()" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F0F0F0;strokeColor=#666666;" vertex="1" parent="14">
       <mxGeometry x="10" y="36" width="125" height="36" as="geometry" />
@@ -54,7 +54,7 @@
       <mxGeometry x="10" y="82" width="125" height="36" as="geometry" />
     </mxCell>
     <mxCell id="18" value="ParticleEngine" style="swimlane;fontStyle=1;align=center;startSize=26;container=1;collapsible=0;expand=0;html=1;fillColor=#E1D5E7;strokeColor=#9673A6;strokeWidth=2;" vertex="1" parent="1">
-      <mxGeometry x="40" y="560" width="280" height="180" as="geometry" />
+      <mxGeometry x="40" y="480" width="280" height="180" as="geometry" />
     </mxCell>
     <mxCell id="19" value="initBuffer()" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F0F0F0;strokeColor=#666666;" vertex="1" parent="18">
       <mxGeometry x="10" y="36" width="125" height="36" as="geometry" />
@@ -66,7 +66,7 @@
       <mxGeometry x="10" y="82" width="125" height="36" as="geometry" />
     </mxCell>
     <mxCell id="22" value="FontService" style="swimlane;fontStyle=1;align=center;startSize=26;container=1;collapsible=0;expand=0;html=1;fillColor=#E1D5E7;strokeColor=#9673A6;strokeWidth=2;" vertex="1" parent="1">
-      <mxGeometry x="420" y="560" width="280" height="180" as="geometry" />
+      <mxGeometry x="420" y="480" width="280" height="180" as="geometry" />
     </mxCell>
     <mxCell id="23" value="ensureFontsReady()" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F0F0F0;strokeColor=#666666;" vertex="1" parent="22">
       <mxGeometry x="10" y="36" width="125" height="36" as="geometry" />
@@ -76,6 +76,36 @@
     </mxCell>
     <mxCell id="25" value="preloadGlyphs()" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F0F0F0;strokeColor=#666666;" vertex="1" parent="22">
       <mxGeometry x="10" y="82" width="125" height="36" as="geometry" />
+    </mxCell>
+    <mxCell id="26" value="The Canonical 9-Stage Wallpaper Rasterization Pipeline (ADR-014)" style="swimlane;fontStyle=1;align=center;startSize=26;container=1;collapsible=0;expand=0;html=1;fillColor=#D5E8D4;strokeColor=#82B366;strokeWidth=2;" vertex="1" parent="1">
+      <mxGeometry x="740" y="40" width="380" height="620" as="geometry" />
+    </mxCell>
+    <mxCell id="27" value="Stage 1: Base OLED Background Layer" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F0F0F0;strokeColor=#666666;" vertex="1" parent="26">
+      <mxGeometry x="15" y="36" width="350" height="45" as="geometry" />
+    </mxCell>
+    <mxCell id="28" value="Stage 2: Dynamic Ambient Scrim Normalization (APCA Lc &gt;= 75)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F0F0F0;strokeColor=#666666;" vertex="1" parent="26">
+      <mxGeometry x="15" y="95" width="350" height="45" as="geometry" />
+    </mxCell>
+    <mxCell id="29" value="Stage 3: Safe-Zone Geometry Reservation (Top 28%, Bottom 18%)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F0F0F0;strokeColor=#666666;" vertex="1" parent="26">
+      <mxGeometry x="15" y="155" width="350" height="45" as="geometry" />
+    </mxCell>
+    <mxCell id="30" value="Stage 4: Milestone Progress Arcs &amp; Ticks (Monotone Splines)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F0F0F0;strokeColor=#666666;" vertex="1" parent="26">
+      <mxGeometry x="15" y="215" width="350" height="45" as="geometry" />
+    </mxCell>
+    <mxCell id="31" value="Stage 5: Tabular Numeral Countdown Digits (Zero CLS tnum)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F0F0F0;strokeColor=#666666;" vertex="1" parent="26">
+      <mxGeometry x="15" y="275" width="350" height="45" as="geometry" />
+    </mxCell>
+    <mxCell id="32" value="Stage 6: Milestone Checklist &amp; Checkmark Badges" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F0F0F0;strokeColor=#666666;" vertex="1" parent="26">
+      <mxGeometry x="15" y="335" width="350" height="45" as="geometry" />
+    </mxCell>
+    <mxCell id="33" value="Stage 7: Daily Affirmation Typography (Wrap &amp; Ellipsis)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F0F0F0;strokeColor=#666666;" vertex="1" parent="26">
+      <mxGeometry x="15" y="395" width="350" height="45" as="geometry" />
+    </mxCell>
+    <mxCell id="34" value="Stage 8: Sub-Pixel Sharpening &amp; Anti-Aliasing (INV-001)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F0F0F0;strokeColor=#666666;" vertex="1" parent="26">
+      <mxGeometry x="15" y="455" width="350" height="45" as="geometry" />
+    </mxCell>
+    <mxCell id="35" value="Stage 9: Export PNG Blob &amp; Free GPU Buffer" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F0F0F0;strokeColor=#666666;" vertex="1" parent="26">
+      <mxGeometry x="15" y="515" width="350" height="45" as="geometry" />
     </mxCell>
       </root>
     </mxGraphModel>
