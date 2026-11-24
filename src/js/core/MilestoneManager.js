@@ -73,6 +73,38 @@ export class MilestoneManager {
   }
 
   /**
+   * Validates milestone collection enforcing cognitive bounds (3 to 5 checkpoints).
+   *
+   * @param {readonly unknown[]} milestones Candidate milestone checkpoints
+   * @returns {boolean} True if count satisfies 3 <= N <= 5
+   * @throws {Error} If count is outside [3, 5]
+   */
+  static validateMilestones(milestones) {
+    if (!Array.isArray(milestones) || milestones.length < 3 || milestones.length > 5) {
+      const err = new Error('Milestone count must strictly be between 3 and 5 checkpoints (SYS-INV-002)');
+      err.code = 'ERR_MILESTONE_COUNT';
+      throw err;
+    }
+    return true;
+  }
+
+  /**
+   * Calculates Mazur hyperbolic urgency value V(D) = A / (1 + k*D).
+   *
+   * @param {number} remainingMs Remaining duration in milliseconds
+   * @param {number} [A=100] Asymptotic maximum urgency
+   * @param {number} [k=0.05] Impulsivity decay coefficient (per day)
+   * @returns {number} Urgency value bounded in (0, A]
+   */
+  static calculateUrgency(remainingMs, A = 100, k = 0.05) {
+    if (remainingMs <= 0) {
+      return A;
+    }
+    const days = remainingMs / 86400000;
+    return Number((A / (1 + k * days)).toFixed(2));
+  }
+
+  /**
    * Returns a deeply cloned read-only snapshot of the current milestone collection.
    *
    * @returns {readonly MilestoneItem[]} Snapshot array of milestones

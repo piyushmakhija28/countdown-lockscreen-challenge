@@ -277,7 +277,7 @@ export class DualClockTimeEngine {
    * @param {Date | string | number} [referenceTime=new Date()] Reference time
    * @returns {TimeRemaining} Snapshot of remaining time
    */
-  calculateRemaining(deadline, referenceTime = new Date()) {
+  static calculateRemaining(deadline, referenceTime = new Date()) {
     const targetDate = deadline instanceof Date ? deadline : new Date(deadline);
     const refDate = referenceTime instanceof Date ? referenceTime : new Date(referenceTime);
     const delta = Math.max(0, targetDate.getTime() - refDate.getTime());
@@ -287,14 +287,29 @@ export class DualClockTimeEngine {
     const hours = Math.floor((totalSeconds % 86400) / 3600);
     const minutes = Math.floor((totalSeconds % 3600) / 60);
     const seconds = totalSeconds % 60;
+    const isExpired = delta <= 0;
+    const progressPercent = isExpired ? 100 : 0;
 
     return {
       days,
       hours,
       minutes,
       seconds,
-      totalMilliseconds: delta
+      totalMilliseconds: delta,
+      isExpired,
+      progressPercent
     };
+  }
+
+  /**
+   * Instance delegate for calculateRemaining.
+   *
+   * @param {Date | string | number} deadline Target deadline date
+   * @param {Date | string | number} [referenceTime=new Date()] Reference time
+   * @returns {TimeRemaining} Snapshot of remaining time
+   */
+  calculateRemaining(deadline, referenceTime = new Date()) {
+    return DualClockTimeEngine.calculateRemaining(deadline, referenceTime);
   }
 
   /**

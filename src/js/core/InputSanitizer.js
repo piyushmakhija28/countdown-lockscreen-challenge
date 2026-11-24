@@ -111,6 +111,18 @@ export class InputSanitizer {
   }
 
   /**
+   * Alias for validateFutureDeadline enforcing future temporal bounds (SYS-INV-001).
+   *
+   * @param {Date | string | number} deadline Target timestamp
+   * @param {Date | string | number} [referenceTime=new Date()] Optional reference timestamp
+   * @returns {Date} Validated future Date instance
+   * @throws {ValidationError} If date is invalid, in the past, or exceeds maximum future threshold
+   */
+  static validateDeadline(deadline, referenceTime = new Date()) {
+    return InputSanitizer.validateFutureDeadline(deadline, referenceTime);
+  }
+
+  /**
    * Escapes XML and HTML entities for safe prompt interpolation and DOM injection.
    *
    * @param {string} input Unsafe text string
