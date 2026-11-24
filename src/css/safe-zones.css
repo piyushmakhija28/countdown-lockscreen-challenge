@@ -1,0 +1,76 @@
+/**
+ * Lock Screen Safe-Zone Ergonomics and Viewport Synchronization.
+ * Implements hardware exclusion corridors (Top 28% clock, Bottom 18% gesture) and Fitts's Law touch targets.
+ */
+
+:root {
+  /* Safe-Zone Normalized Corridor Thresholds */
+  --safe-zone-top-pct: 28%;
+  --safe-zone-bottom-pct: 18%;
+  --safe-zone-content-end-pct: 82%;
+
+  /* Viewport Height Fallback */
+  --visual-viewport-h: 100vh;
+}
+
+/* Safe Zone Indicator Guidelines */
+.safe-zone-guide-top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--safe-zone-top-pct);
+  border-bottom: 1px dashed rgba(239, 68, 68, 0.50);
+  background: rgba(239, 68, 68, 0.04);
+  pointer-events: none;
+  z-index: var(--z-safe-zone-guide, 30);
+}
+
+.safe-zone-guide-bottom {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: var(--safe-zone-bottom-pct);
+  border-top: 1px dashed rgba(59, 130, 246, 0.50);
+  background: rgba(59, 130, 246, 0.04);
+  pointer-events: none;
+  z-index: var(--z-safe-zone-guide, 30);
+}
+
+/* Safe Information Zone Content Container */
+.lockscreen-content-zone {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-sizing: border-box;
+  padding-top: var(--safe-zone-top-pct);
+  padding-bottom: var(--safe-zone-bottom-pct);
+  min-height: 100%;
+}
+
+/* Fitts's Law Touch Target Expansion (Minimum 48x48dp Envelope) */
+.fitts-touch-target {
+  position: relative;
+  min-width: 44px;
+  min-height: 44px;
+}
+
+.fitts-touch-target::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: max(100%, 48px);
+  height: max(100%, 48px);
+  transform: translate(-50%, -50%);
+  pointer-events: auto;
+}
+
+/* Mobile Virtual Viewport Dynamic Sizing */
+@supports (height: 100dvh) {
+  :root {
+    --visual-viewport-h: 100dvh;
+  }
+}
