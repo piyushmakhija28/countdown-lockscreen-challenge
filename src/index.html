@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content, viewport-fit=cover">
+  <meta name="theme-color" content="#08090d">
+  <meta name="description" content="Countdown Lock Screen Challenge — Handshake AI Skills Studio X Google. Create bespoke, high-DPI glassmorphic lock screen wallpapers with Gemini 3.8 Flash retrograde milestone planning.">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Countdown Lock Screen Challenge | Handshake X Google</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="./css/tokens.css">
+  <link rel="stylesheet" href="./css/safe-zones.css">
+  <link rel="stylesheet" href="./css/glassmorphism.css">
+
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-primary);
+      background-color: var(--bg-canvas);
+      color: var(--text-primary);
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .app-header {
+      padding: var(--space-md) var(--space-lg);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-specular);
+      background: rgba(8, 9, 13, 0.75);
+      backdrop-filter: blur(16px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .brand-title {
+      font-family: var(--font-heading);
+      font-size: var(--font-size-md);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+    }
+
+    .brand-badge {
+      font-family: var(--font-mono);
+      font-size: var(--font-size-2xs);
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: var(--radius-full);
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--accent-primary);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .app-shell {
+      display: grid;
+      grid-template-columns: minmax(360px, 480px) 1fr;
+      gap: var(--space-lg);
+      padding: var(--space-lg);
+      max-width: 1600px;
+      margin: 0 auto;
+      width: 100%;
+      flex: 1;
+    }
+
+    @media (max-width: 960px) {
+      .app-shell {
+        grid-template-columns: 1fr;
+        padding: var(--space-sm);
+      }
+    }
+
+    .editor-pane {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-md);
+      padding: var(--space-md);
+      height: fit-content;
+    }
+
+    .section-title {
+      font-size: var(--font-size-sm);
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.01em;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2xs);
+    }
+
+    .form-label {
+      font-size: var(--font-size-xs);
+      font-weight: 600;
+      color: var(--text-secondary);
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .glass-input {
+      font-family: var(--font-primary);
+      font-size: var(--font-size-sm);
+      color: var(--text-primary);
+      background: rgba(15, 23, 42, 0.60);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .glass-input:focus {
+      border-color: var(--accent-primary);
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.20);
+    }
+
+    .btn-primary {
+      font-family: var(--font-primary);
+      font-size: var(--font-size-sm);
+      font-weight: 600;
+      color: #08090d;
+      background: var(--accent-primary);
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 12px 20px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-xs);
+      transition: transform 0.15s, opacity 0.15s;
+    }
+
+    .btn-primary:hover {
+      opacity: 0.92;
+      transform: translateY(-1px);
+    }
+
+    .btn-primary:active {
+      transform: translateY(1px);
+    }
+
+    .btn-secondary {
+      font-family: var(--font-primary);
+      font-size: var(--font-size-xs);
+      font-weight: 600;
+      color: var(--text-primary);
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: var(--radius-sm);
+      padding: 8px 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.15s, border-color 0.15s;
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.14);
+      border-color: var(--accent-primary);
+    }
+
+    .theme-selector-group {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-xs);
+    }
+
+    .theme-chip {
+      font-size: var(--font-size-xs);
+      font-weight: 600;
+      padding: 10px 8px;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(15, 23, 42, 0.40);
+      color: var(--text-secondary);
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s;
+    }
+
+    .theme-chip[data-active="true"] {
+      border-color: var(--accent-primary);
+      color: var(--text-primary);
+      background: rgba(56, 189, 248, 0.12);
+    }
+
+    .milestone-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+      padding: 10px 12px;
+      border-radius: var(--radius-sm);
+      background: rgba(15, 23, 42, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      margin-bottom: 6px;
+      transition: all 0.2s;
+    }
+
+    .milestone-checkbox {
+      width: 20px;
+      height: 20px;
+      accent-color: var(--accent-primary);
+      cursor: pointer;
+    }
+
+    .milestone-title-text {
+      flex: 1;
+      font-size: var(--font-size-xs);
+      color: var(--text-primary);
+    }
+
+    .milestone-title-text[data-completed="true"] {
+      text-decoration: line-through;
+      color: var(--text-muted);
+    }
+
+    .milestone-offset-pill {
+      font-family: var(--font-mono);
+      font-size: var(--font-size-2xs);
+      padding: 2px 6px;
+      border-radius: var(--radius-full);
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--accent-primary);
+    }
+
+    .preview-pane {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--space-md);
+      padding: var(--space-md);
+    }
+
+    .preview-toolbar {
+      display: flex;
+      width: 100%;
+      max-width: 480px;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .canvas-viewport {
+      width: 100%;
+      max-width: 420px;
+      aspect-ratio: 9 / 19.5;
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      box-shadow: var(--shadow-elevation-3);
+      border: 1px solid var(--border-specular);
+      position: relative;
+      background: #000000;
+    }
+
+    #lockscreen-canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: contain;
+    }
+
+    .affirmation-box {
+      font-size: var(--font-size-xs);
+      font-style: italic;
+      color: var(--text-secondary);
+      padding: var(--space-xs) var(--space-sm);
+      border-left: 2px solid var(--accent-primary);
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 0 var(--radius-xs) var(--radius-xs) 0;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: var(--space-lg);
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      padding: 12px 24px;
+      border-radius: var(--radius-full);
+      background: rgba(15, 23, 42, 0.90);
+      border: 1px solid var(--accent-primary);
+      color: var(--text-primary);
+      font-size: var(--font-size-xs);
+      font-weight: 600;
+      box-shadow: var(--shadow-elevation-3);
+      z-index: 1000;
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      pointer-events: none;
+    }
+
+    .toast[data-visible="true"] {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <div id="aria-status" role="status" aria-live="polite" class="sr-only"></div>
+
+  <header class="app-header">
+    <div class="brand-title">
+      <span>Countdown Lock Screen</span>
+      <span class="brand-badge">Handshake X Google</span>
+    </div>
+    <div class="header-actions">
+      <button type="button" id="share-link-btn" class="btn-secondary fitts-touch-target" aria-label="Share Countdown URL">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="18" cy="5" r="3"></circle>
+          <circle cx="6" cy="12" r="3"></circle>
+          <circle cx="18" cy="19" r="3"></circle>
+          <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+          <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+        </svg>
+        <span>Share Link</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="app-shell">
+    <!-- Editor Pane -->
+    <section class="editor-pane glass-panel" aria-label="Goal Configuration">
+      <div class="section-title">
+        <span>Goal & Chronometry Ingress</span>
+        <span id="char-count" class="milestone-offset-pill">0/60</span>
+      </div>
+
+      <div class="form-group">
+        <label for="goal-title-input" class="form-label">
+          <span>Target Goal</span>
+          <span id="goal-hint" class="sr-only">Maximum 60 characters</span>
+        </label>
+        <input
+          type="text"
+          id="goal-title-input"
+          class="glass-input"
+          placeholder="e.g. Master AI Skills Studio Challenge"
+          maxlength="60"
+          autocomplete="off"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="deadline-input" class="form-label">Target Deadline</label>
+        <input
+          type="datetime-local"
+          id="deadline-input"
+          class="glass-input"
+        />
+      </div>
+
+      <button type="button" id="ai-generate-btn" class="btn-primary fitts-touch-target">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/>
+        </svg>
+        <span>Decompose with Gemini 3.8 Flash</span>
+      </button>
+
+      <div class="form-group">
+        <label class="form-label">Aesthetic Color Palette</label>
+        <div id="theme-picker" class="theme-selector-group" role="radiogroup" aria-label="Aesthetic Themes">
+          <button type="button" class="theme-chip" data-theme-id="cyber_obsidian" data-active="true" role="radio" aria-checked="true">
+            Cyber Obsidian
+          </button>
+          <button type="button" class="theme-chip" data-theme-id="deep_focus_zen" data-active="false" role="radio" aria-checked="false">
+            Deep Focus Zen
+          </button>
+          <button type="button" class="theme-chip" data-theme-id="aurora_botanical" data-active="false" role="radio" aria-checked="false">
+            Aurora Botanical
+          </button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="section-title">
+          <span>Retrograde Milestones</span>
+        </div>
+        <div id="milestones-container" role="list" aria-label="Goal Milestones"></div>
+      </div>
+
+      <div id="affirmation-container" class="affirmation-box" style="display: none;">
+        <span id="affirmation-text"></span>
+      </div>
+    </section>
+
+    <!-- Preview Pane -->
+    <section class="preview-pane glass-panel" aria-label="Lock Screen Wallpaper Preview">
+      <div class="preview-toolbar">
+        <button type="button" id="safe-zone-toggle-btn" class="btn-secondary fitts-touch-target" aria-pressed="false">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="3" y1="9" x2="21" y2="9"></line>
+            <line x1="9" y1="21" x2="9" y2="9"></line>
+          </svg>
+          <span>Toggle Safe Zones</span>
+        </button>
+
+        <span class="milestone-offset-pill">1170 x 2532 High-DPI</span>
+      </div>
+
+      <div class="canvas-viewport">
+        <canvas id="lockscreen-canvas" width="1170" height="2532"></canvas>
+      </div>
+
+      <button type="button" id="export-btn" class="btn-primary fitts-touch-target" style="width: 100%; max-width: 420px;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="7 10 12 15 17 10"></polyline>
+          <line x1="12" y1="15" x2="12" y2="3"></line>
+        </svg>
+        <span>Download Wallpaper PNG</span>
+      </button>
+    </section>
+  </main>
+
+  <div id="toast" class="toast" data-visible="false">
+    <span id="toast-text"></span>
+  </div>
+
+  <script type="module" src="./js/app.js"></script>
+</body>
+</html>
