@@ -1,0 +1,25 @@
+{
+  "name": "Countdown Lock Screen Challenge",
+  "short_name": "Countdown",
+  "description": "Bespoke, high-DPI glassmorphic lock screen wallpapers with Gemini retrograde milestone planning.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#08090d",
+  "theme_color": "#08090d",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='36' fill='%2308090d'/%3E%3Ccircle cx='96' cy='96' r='64' fill='none' stroke='%2338bdf8' stroke-width='12' stroke-dasharray='300 100'/%3E%3Ctext x='96' y='108' font-family='sans-serif' font-size='36' font-weight='bold' fill='%23ffffff' text-anchor='middle'%3E07%3C/text%3E%3C/svg%3E",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='96' fill='%2308090d'/%3E%3Ccircle cx='256' cy='256' r='180' fill='none' stroke='%2338bdf8' stroke-width='28' stroke-dasharray='800 250'/%3E%3Ctext x='256' y='288' font-family='sans-serif' font-size='96' font-weight='bold' fill='%23ffffff' text-anchor='middle'%3E07%3C/text%3E%3C/svg%3E",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

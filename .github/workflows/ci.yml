@@ -1,0 +1,74 @@
+name: Continuous Integration & Automated Edge Deployment
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  validate-and-test:
+    name: Code Quality, Escapes Audit & Automated Triad Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js Runtime
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Audit Escape Characters & Scaffolding Purity
+        run: |
+          echo "Auditing for forbidden escape characters..."
+          if grep -rn $'\t' src/; then
+            echo "FAILED: Tab escape characters detected in src/"
+            exit 1
+          fi
+          echo "Escape character audit passed."
+
+      - name: Execute Full Triad Regression Test Suite
+        run: |
+          node test/unit/test_batch_2_1.js
+          node test/unit/test_batch_2_2.js
+          node test/unit/test_batch_2_3.js
+          node test/unit/test_batch_3_1.js
+          node test/unit/test_batch_3_2.js
+          node test/unit/test_batch_3_3.js
+          node test/unit/test_batch_4_1.js
+          node test/unit/test_batch_4_2.js
+          node test/unit/test_batch_4_3.js
+
+  deploy-to-edge:
+    name: Deploy to GitHub Pages Edge CDN
+    needs: validate-and-test
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout Source
+        uses: actions/checkout@v4
+
+      - name: Setup GitHub Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload Static Artifacts
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './'
+
+      - name: Deploy to Fastly Edge CDN
+        id: deployment
+        uses: actions/deploy-pages@v4
