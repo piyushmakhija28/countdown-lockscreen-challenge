@@ -98,6 +98,24 @@ export class GeminiAiClient extends IMilestonePlanner {
   }
 
   /**
+   * Retrieves active Gemini model identifier.
+   *
+   * @returns {string} Model name
+   */
+  getModel() {
+    return this.#model;
+  }
+
+  /**
+   * Getter property for active model name.
+   *
+   * @returns {string} Model name
+   */
+  get model() {
+    return this.#model;
+  }
+
+  /**
    * Returns active circuit breaker state ('CLOSED', 'OPEN', 'HALF_OPEN').
    *
    * @returns {'CLOSED' | 'OPEN' | 'HALF_OPEN'}
