@@ -2,7 +2,7 @@
  * Automated Unit Test Suite for Sprint 2 (Batch 2.2).
  * Verifies InputSanitizer, UrlStateService, TokenBucketHistoryGuard, and ResilientStorageService.
  *
- * @module test/unit/test_batch_2_2
+ * @module test/unit/test_sanitizer_url_and_storage
  */
 
 import assert from 'node:assert/strict';

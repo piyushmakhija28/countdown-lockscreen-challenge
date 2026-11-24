@@ -2,7 +2,7 @@
  * Automated Unit Test Suite for Sprint 2 (Batch 2.3).
  * Verifies DualClockTimeEngine, WorkerTickerAdapter, and MilestoneManager.
  *
- * @module test/unit/test_batch_2_3
+ * @module test/unit/test_time_engine_and_milestones
  */
 
 import assert from 'node:assert/strict';

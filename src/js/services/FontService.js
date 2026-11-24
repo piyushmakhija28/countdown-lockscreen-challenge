@@ -48,10 +48,12 @@ export class FontService {
     this.#loadingPromise = (async () => {
       try {
         const loadPromises = fontDescriptors.map((descriptor) => this.#doc.fonts.load(descriptor));
-        await Promise.all(loadPromises);
-        if (this.#doc.fonts.ready) {
-          await this.#doc.fonts.ready;
-        }
+        const fontLoader = Promise.all([
+          Promise.all(loadPromises),
+          this.#doc.fonts.ready || Promise.resolve()
+        ]);
+        const timeout = new Promise((resolve) => setTimeout(resolve, 1500));
+        await Promise.race([fontLoader, timeout]);
         this.#loaded = true;
         return true;
       } catch {

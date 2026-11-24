@@ -2,7 +2,7 @@
  * Automated Unit Test Suite for Sprint 3 (Batch 3.1).
  * Verifies HeuristicGenerator, GeminiRateLimiter, and GeminiAiClient.
  *
- * @module test/unit/test_batch_3_1
+ * @module test/unit/test_gemini_ai_and_heuristics
  */
 
 import assert from 'node:assert/strict';

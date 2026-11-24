@@ -2,7 +2,7 @@
  * Automated Unit Test Suite for Sprint 2 (Batch 2.1).
  * Verifies Clean Architecture Ports, LifecycleScope, Domain Errors, and StateStore.
  *
- * @module test/unit/test_batch_2_1
+ * @module test/unit/test_ports_lifecycle_and_store
  */
 
 import assert from 'node:assert/strict';

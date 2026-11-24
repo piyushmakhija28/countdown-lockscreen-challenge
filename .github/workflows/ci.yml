@@ -39,15 +39,18 @@ jobs:
 
       - name: Execute Full Triad Regression Test Suite
         run: |
-          node test/unit/test_batch_2_1.js
-          node test/unit/test_batch_2_2.js
-          node test/unit/test_batch_2_3.js
-          node test/unit/test_batch_3_1.js
-          node test/unit/test_batch_3_2.js
-          node test/unit/test_batch_3_3.js
-          node test/unit/test_batch_4_1.js
-          node test/unit/test_batch_4_2.js
-          node test/unit/test_batch_4_3.js
+          node test/unit/test_ports_lifecycle_and_store.js
+          node test/unit/test_sanitizer_url_and_storage.js
+          node test/unit/test_time_engine_and_milestones.js
+          node test/unit/test_gemini_ai_and_heuristics.js
+          node test/unit/test_canvas_renderer_and_layout.js
+          node test/unit/test_design_tokens_and_themes.js
+          node test/unit/test_sensory_immersion_and_audio.js
+          node test/unit/test_app_controller_and_wiring.js
+          node test/unit/test_pwa_serviceworker_and_ci.js
+          node test/unit/test_mathematical_and_system_invariants.js
+          node test/soak/test_soak_10000_frames.js
+          node test/e2e/test_lighthouse_audit.js
 
   deploy-to-edge:
     name: Deploy to GitHub Pages Edge CDN

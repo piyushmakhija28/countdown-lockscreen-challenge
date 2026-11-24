@@ -291,6 +291,7 @@ export class CountdownApp {
     this.#unsubscribeStore = this.#store.subscribe((state) => {
       this.#syncUrlAndStorage(state);
       this.#syncDom(state);
+      this.#renderWallpaper();
     });
   }
 
@@ -390,6 +391,28 @@ export class CountdownApp {
       } else {
         affirmationBox.style.display = 'none';
       }
+    }
+
+    const milestones = state.milestones || [];
+    const completedCount = milestones.filter((m) => m.isCompleted || m.completed).length;
+    const totalCount = milestones.length;
+    const pct = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
+
+    const progressBadge = this.#document.getElementById('progress-badge-text');
+    if (progressBadge) {
+      progressBadge.textContent = `${completedCount} / ${totalCount} Complete (${pct}%)`;
+    }
+
+    const progressBar = this.#document.getElementById('milestone-progress-bar');
+    if (progressBar) {
+      progressBar.style.width = `${pct}%`;
+    }
+
+    const urgencyBadge = this.#document.getElementById('urgency-badge-text');
+    if (urgencyBadge && state.deadline) {
+      const remainingMs = new Date(state.deadline).getTime() - Date.now();
+      const remainingDays = Math.max(0, Math.ceil(remainingMs / 86400000));
+      urgencyBadge.textContent = `${remainingDays} Day${remainingDays === 1 ? '' : 's'} Left · ${remainingDays <= 3 ? 'Urgent Sprint' : 'High Focus'}`;
     }
 
     this.#renderMilestonesDom(state.milestones || []);
@@ -546,6 +569,14 @@ export class CountdownApp {
 
     const activeTheme = this.#store.getState().selectedTheme;
     await this.#sensoryCoordinator.triggerMilestoneFeedback(activeTheme);
+    this.#renderWallpaper();
+
+    const state = this.#store.getState();
+    const milestones = state.milestones || [];
+    const completed = milestones.filter((m) => m.isCompleted || m.completed).length;
+    const total = milestones.length;
+    const pct = total > 0 ? Math.round((completed / total) * 100) : 0;
+    this.showToast(`Milestone updated: ${completed}/${total} completed (${pct}%)`);
   }
 
   /**
@@ -562,6 +593,13 @@ export class CountdownApp {
       this.#canvasRenderer.updateThemePalette(themeId);
     }
     this.#renderWallpaper();
+
+    const themeNames = {
+      cyber_obsidian: 'Cyber Obsidian (OLED Black)',
+      deep_focus_zen: 'Deep Focus Zen (Warm Amber)',
+      aurora_botanical: 'Aurora Botanical (Emerald Mint)'
+    };
+    this.showToast(`Theme switched to ${themeNames[themeId] || themeId}`);
   }
 
   /**
@@ -576,6 +614,7 @@ export class CountdownApp {
       btn.setAttribute('aria-pressed', String(isVisible));
     }
     this.#renderWallpaper();
+    this.showToast(isVisible ? 'Lock Screen Simulator: ON (Dynamic Island & Gestures)' : 'Lock Screen Simulator: OFF');
     return isVisible;
   }
 

@@ -2,7 +2,7 @@
  * Unit Test Suite for Sprint 4 Batch 4.2: Ergonomic UI Shell & Safe-Zone Simulator.
  * Verifies SafeZoneOverlay geometry and guides, and CountdownApp compositional root.
  *
- * @module test/unit/test_batch_4_2
+ * @module test/unit/test_app_controller_and_wiring
  */
 
 import assert from 'node:assert';

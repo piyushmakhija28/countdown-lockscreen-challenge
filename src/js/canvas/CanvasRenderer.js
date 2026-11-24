@@ -11,6 +11,7 @@ import { Context2DUnavailableError, CanvasRenderError } from '../core/errors.js'
 import { AdaptiveBufferAllocator } from './AdaptiveBufferAllocator.js';
 import { ResponsiveLayoutEngine } from './ResponsiveLayoutEngine.js';
 import { CanvasTextWrapper } from './CanvasTextWrapper.js';
+import { SafeZoneOverlay } from './SafeZoneOverlay.js';
 
 /**
  * Master presentation-tier graphics coordinator rendering high-DPI wallpapers onto HTML5 Canvas 2D.
@@ -108,7 +109,7 @@ export class CanvasRenderer extends IWallpaperRenderer {
     this.#layoutEngine = layoutEngine || ResponsiveLayoutEngine;
     this.#fontService = fontService || null;
     this.#textWrapper = textWrapper || new CanvasTextWrapper();
-    this.#safeZoneOverlay = safeZoneOverlay || null;
+    this.#safeZoneOverlay = safeZoneOverlay || new SafeZoneOverlay();
   }
 
   /**
@@ -357,56 +358,116 @@ export class CanvasRenderer extends IWallpaperRenderer {
     if (!Array.isArray(milestones) || milestones.length === 0) return;
 
     ctx.save();
-    const { milestoneBox, fontSizeMilestone } = layout;
+    const { milestoneBox } = layout;
     const count = milestones.length;
     const availableHeight = milestoneBox.height;
-    const rowHeight = Math.min(68, availableHeight / Math.max(1, count));
-    const railX = milestoneBox.x + 24;
-
-    ctx.strokeStyle = palette.ringTrack;
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.moveTo(railX, milestoneBox.y + 16);
-    ctx.lineTo(railX, milestoneBox.y + 16 + (count - 1) * rowHeight);
-    ctx.stroke();
+    const rowHeight = Math.min(135, Math.floor(availableHeight / Math.max(1, count)));
+    const cardHeight = Math.max(68, rowHeight - 16);
+    const cardRadius = 20;
 
     for (let i = 0; i < count; i++) {
       const m = milestones[i];
-      const rowY = milestoneBox.y + 16 + i * rowHeight;
+      const cardY = milestoneBox.y + i * rowHeight;
+      const cardX = milestoneBox.x;
+      const cardW = milestoneBox.width;
       const isDone = Boolean(m.completed || m.isCompleted);
 
-      ctx.beginPath();
-      ctx.arc(railX, rowY, 9, 0, Math.PI * 2);
-
-      if (isDone) {
-        ctx.fillStyle = palette.primaryAccent;
-        ctx.fill();
-
-        ctx.strokeStyle = '#ffffff';
-        ctx.lineWidth = 2;
+      ctx.fillStyle = isDone ? 'rgba(15, 23, 42, 0.40)' : (palette.cardBg || 'rgba(15, 23, 42, 0.65)');
+      if (typeof ctx.roundRect === 'function') {
         ctx.beginPath();
-        ctx.moveTo(railX - 4, rowY);
-        ctx.lineTo(railX - 1, rowY + 3);
-        ctx.lineTo(railX + 4, rowY - 3);
-        ctx.stroke();
-      } else {
-        ctx.fillStyle = palette.bgBase;
+        ctx.roundRect(cardX, cardY, cardW, cardHeight, cardRadius);
         ctx.fill();
-        ctx.strokeStyle = palette.textSecondary;
-        ctx.lineWidth = 2;
+        ctx.strokeStyle = isDone ? 'rgba(255, 255, 255, 0.08)' : (palette.cardBorder || 'rgba(56, 189, 248, 0.25)');
+        ctx.lineWidth = isDone ? 1 : 2;
         ctx.stroke();
+      } else if (typeof ctx.rect === 'function') {
+        ctx.beginPath();
+        ctx.rect(cardX, cardY, cardW, cardHeight);
+        ctx.fill();
+        ctx.strokeStyle = isDone ? 'rgba(255, 255, 255, 0.08)' : (palette.cardBorder || 'rgba(56, 189, 248, 0.25)');
+        ctx.lineWidth = isDone ? 1 : 2;
+        ctx.stroke();
+      } else if (typeof ctx.fillRect === 'function') {
+        ctx.fillRect(cardX, cardY, cardW, cardHeight);
+        if (typeof ctx.strokeRect === 'function') {
+          ctx.strokeRect(cardX, cardY, cardW, cardHeight);
+        }
       }
+
+      const checkR = Math.round(cardHeight * 0.28);
+      const checkX = cardX + checkR + 24;
+      const checkY = cardY + cardHeight * 0.5;
+
+      if (typeof ctx.arc === 'function') {
+        ctx.beginPath();
+        ctx.arc(checkX, checkY, checkR, 0, Math.PI * 2);
+
+        if (isDone) {
+          ctx.fillStyle = palette.primaryAccent;
+          ctx.fill();
+
+          ctx.strokeStyle = '#08090d';
+          ctx.lineWidth = 4;
+          ctx.beginPath();
+          ctx.moveTo(checkX - checkR * 0.45, checkY);
+          ctx.lineTo(checkX - checkR * 0.1, checkY + checkR * 0.4);
+          ctx.lineTo(checkX + checkR * 0.48, checkY - checkR * 0.4);
+          ctx.stroke();
+        } else {
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.04)';
+          ctx.fill();
+          ctx.strokeStyle = palette.primaryAccent;
+          ctx.lineWidth = 3;
+          ctx.stroke();
+        }
+      }
+
+      const titleX = checkX + checkR + 24;
+      const pillW = 96;
+      const maxTitleW = cardW - (titleX - cardX) - pillW - 24;
 
       ctx.textAlign = 'left';
       ctx.textBaseline = 'middle';
-      ctx.font = `500 ${fontSizeMilestone}px "Inter", sans-serif`;
+      ctx.font = `600 ${Math.round(cardHeight * 0.36)}px "Inter", sans-serif`;
       ctx.fillStyle = isDone ? palette.textSecondary : palette.textPrimary;
 
-      const titleX = railX + 22;
-      const maxWidth = milestoneBox.width - 50;
-      const lines = this.#textWrapper.wrapText(ctx, m.title || `Phase ${i + 1}`, maxWidth);
+      const lines = this.#textWrapper.wrapText(ctx, m.title || `Phase ${i + 1}`, maxTitleW);
       const displayTitle = lines.length > 0 ? lines[0] : (m.title || `Phase ${i + 1}`);
-      ctx.fillText(displayTitle, titleX, rowY);
+      ctx.fillText(displayTitle, titleX, checkY);
+
+      if (isDone) {
+        const measuredW = Math.min(ctx.measureText(displayTitle).width, maxTitleW);
+        ctx.strokeStyle = palette.textSecondary;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(titleX, checkY);
+        ctx.lineTo(titleX + measuredW, checkY);
+        ctx.stroke();
+      }
+
+      const pillX = cardX + cardW - pillW - 20;
+      const pillH = Math.round(cardHeight * 0.48);
+      const pillY = checkY - pillH * 0.5;
+
+      ctx.fillStyle = isDone ? 'rgba(255, 255, 255, 0.06)' : 'rgba(56, 189, 248, 0.15)';
+      ctx.beginPath();
+      if (typeof ctx.roundRect === 'function') {
+        ctx.beginPath();
+        ctx.roundRect(pillX, pillY, pillW, pillH, pillH * 0.5);
+        ctx.fill();
+      } else if (typeof ctx.rect === 'function') {
+        ctx.beginPath();
+        ctx.rect(pillX, pillY, pillW, pillH);
+        ctx.fill();
+      } else if (typeof ctx.fillRect === 'function') {
+        ctx.fillRect(pillX, pillY, pillW, pillH);
+      }
+
+      ctx.font = `700 ${Math.round(pillH * 0.52)}px "JetBrains Mono", monospace`;
+      ctx.fillStyle = isDone ? palette.textSecondary : palette.primaryAccent;
+      ctx.textAlign = 'center';
+      const pct = Math.round((m.targetOffsetRatio || (i + 1) / count) * 100);
+      ctx.fillText(`${pct}%`, pillX + pillW * 0.5, checkY);
     }
 
     ctx.restore();
@@ -547,6 +608,11 @@ export class CanvasRenderer extends IWallpaperRenderer {
       this.#stage6_TabularChronometer(ctx, layout, renderState.timeRemaining, palette);
       this.#stage7_MilestoneLadder(ctx, layout, renderState.milestones || [], palette);
       this.#stage8_MotivationalBlock(ctx, layout, renderState.affirmation || '', palette);
+
+      if (renderState.showSafeZones && this.#safeZoneOverlay) {
+        this.#safeZoneOverlay.setVisible(true);
+        this.#safeZoneOverlay.drawGuides(ctx, baseW, baseH);
+      }
     } catch (err) {
       if (err instanceof Context2DUnavailableError) {
         throw err;

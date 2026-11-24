@@ -2,7 +2,7 @@
  * Automated Unit Test Suite for Sprint 3 (Batch 3.2).
  * Verifies AdaptiveBufferAllocator, ResponsiveLayoutEngine, CanvasTextWrapper, and CanvasRenderer.
  *
- * @module test/unit/test_batch_3_2
+ * @module test/unit/test_canvas_renderer_and_layout
  */
 
 import assert from 'node:assert/strict';

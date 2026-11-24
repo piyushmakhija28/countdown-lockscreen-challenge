@@ -2,7 +2,7 @@
  * Unit Test Suite for Sprint 4 Batch 4.3: Progressive Web App & Production Deployment.
  * Verifies Service Worker caching policies, manifest.json validity, and CI/CD workflow definitions.
  *
- * @module test/unit/test_batch_4_3
+ * @module test/unit/test_pwa_serviceworker_and_ci
  */
 
 import assert from 'node:assert';
@@ -97,9 +97,9 @@ it('.github/workflows/ci.yml: verifies GitHub Actions automated testing and depl
   assert.ok(ciContent.includes('deploy-to-edge:'));
   assert.ok(ciContent.includes('actions/configure-pages@v4'));
   assert.ok(ciContent.includes('actions/deploy-pages@v4'));
-  assert.ok(ciContent.includes('node test/unit/test_batch_4_1.js'));
-  assert.ok(ciContent.includes('node test/unit/test_batch_4_2.js'));
-  assert.ok(ciContent.includes('node test/unit/test_batch_4_3.js'));
+  assert.ok(ciContent.includes('node test/unit/test_sensory_immersion_and_audio.js'));
+  assert.ok(ciContent.includes('node test/unit/test_app_controller_and_wiring.js'));
+  assert.ok(ciContent.includes('node test/unit/test_pwa_serviceworker_and_ci.js'));
 });
 
 console.log(`\nTest Summary: ${passed} passed, ${failed} failed.\n`);

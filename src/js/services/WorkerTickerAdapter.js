@@ -72,7 +72,11 @@ export class WorkerTickerAdapter extends ITickScheduler {
         const blob = new Blob([workerScript], { type: 'application/javascript' });
         const url = URL.createObjectURL(blob);
         this.#worker = new Worker(url);
-        URL.revokeObjectURL(url);
+        setTimeout(() => {
+          try {
+            URL.revokeObjectURL(url);
+          } catch {}
+        }, 3000);
 
         this.#worker.onmessage = (e) => {
           if (e.data && e.data.type === 'tick') {

@@ -64,7 +64,13 @@ function startStaticServer(port) {
     server.listen(port, '127.0.0.1', () => {
       resolve(server);
     });
-    server.on('error', reject);
+    server.on('error', (err) => {
+      if (err.code === 'EADDRINUSE') {
+        resolve(null);
+      } else {
+        reject(err);
+      }
+    });
   });
 }
 
@@ -187,6 +193,7 @@ function launchHeadlessChrome(tempProfileDir) {
         '--no-sandbox',
         '--no-first-run',
         '--no-default-browser-check',
+        '--disable-extensions',
         '--window-size=1280,1024',
         'about:blank'
       ]
@@ -385,7 +392,9 @@ async function runEndToEndBrowserFlow() {
     } catch {
       // Process already terminated
     }
-    server.close();
+    if (server) {
+      server.close();
+    }
     try {
       fs.rmSync(tempProfileDir, { recursive: true, force: true });
     } catch {

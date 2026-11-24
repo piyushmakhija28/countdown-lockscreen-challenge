@@ -169,7 +169,7 @@ export class DualClockTimeEngine {
 
       if (this.#onTickCallback) {
         try {
-          this.#onTickCallback(this.#pooledRemaining);
+          this.#onTickCallback({ ...this.#pooledRemaining });
         } catch (cbErr) {
           console.error('DualClockTimeEngine: onTick callback error', cbErr);
         }
@@ -250,7 +250,7 @@ export class DualClockTimeEngine {
 
       if (this.#onTickCallback) {
         try {
-          this.#onTickCallback(this.#pooledRemaining);
+          this.#onTickCallback({ ...this.#pooledRemaining });
         } catch (cbErr) {
           console.error('DualClockTimeEngine: reanchor onTick error', cbErr);
         }
@@ -333,10 +333,12 @@ export class DualClockTimeEngine {
    */
   #updatePooledRemaining(delta) {
     const totalSeconds = Math.floor(delta / 1000);
-    this.#pooledRemaining.days = Math.floor(totalSeconds / 86400);
-    this.#pooledRemaining.hours = Math.floor((totalSeconds % 86400) / 3600);
-    this.#pooledRemaining.minutes = Math.floor((totalSeconds % 3600) / 60);
-    this.#pooledRemaining.seconds = totalSeconds % 60;
-    this.#pooledRemaining.totalMilliseconds = delta;
+    this.#pooledRemaining = {
+      days: Math.floor(totalSeconds / 86400),
+      hours: Math.floor((totalSeconds % 86400) / 3600),
+      minutes: Math.floor((totalSeconds % 3600) / 60),
+      seconds: totalSeconds % 60,
+      totalMilliseconds: delta
+    };
   }
 }

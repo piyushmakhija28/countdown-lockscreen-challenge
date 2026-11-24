@@ -11,7 +11,7 @@
  * - TC-POS-116: Web Locks Victory Alarm Mutex (navigator.locks.request())
  * - TC-POS-120: Tri-Modal Sensory Synchronization (temporal offset delta < 20ms)
  *
- * @module test/unit/test_batch_4_1
+ * @module test/unit/test_sensory_immersion_and_audio
  */
 
 import assert from 'node:assert';

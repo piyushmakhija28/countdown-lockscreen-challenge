@@ -2,7 +2,7 @@
  * Automated Unit Test Suite for Sprint 3 (Batch 3.3).
  * Verifies constants, themes, and CSS token architecture integrity.
  *
- * @module test/unit/test_batch_3_3
+ * @module test/unit/test_design_tokens_and_themes
  */
 
 import assert from 'node:assert/strict';
